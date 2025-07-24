@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Register - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; padding: 20px; }
+    .container { max-width: 480px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: #667eea; margin-bottom: 20px; }
+    label { display: block; margin-bottom: 6px; font-weight: 600; }
+    input, select, textarea, button { width: 100%; padding: 12px; margin-bottom: 16px; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; }
+    button { background: #667eea; color: white; border: none; cursor: pointer; }
+    button:hover:not(:disabled) { background: #5469d4; }
+    button:disabled { background: #999; cursor: not-allowed; }
+    .login-link { text-align: center; margin-top: 12px; }
+    .login-link a { color: #667eea; text-decoration: none; }
+    .error-message { color: #e74c3c; font-size: 0.9rem; margin-bottom: 12px; display: none; }
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: help;
+      border-bottom: 1px dotted black;
+    }
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 280px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 6px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%; left: 50%;
+      margin-left: -140px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .tooltip:hover .tooltiptext,
+    .tooltip:focus .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 400px;
+      position: relative;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px; right: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+    .success-message {
+      color: green;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    /* Social Sign-Up Styles */
+    .social-signup-section {
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .social-signup-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #fff;
+      color: #222;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 12px 18px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .social-btn:hover:not(:disabled) { 
+      background: #f0f0f0; 
+      border-color: #999;
+    }
+    .social-btn:disabled {
+      background: #f5f5f5;
+      color: #999;
+      cursor: not-allowed;
+    }
+    .social-btn img { 
+      width: 20px; 
+      height: 20px; 
+    }
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 20px 0;
+      color: #666;
+      font-size: 0.9rem;
+    }
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #ddd;
+    }
+    .divider span {
+      padding: 0 15px;
+    }
+    /* Tab buttons */
+    .tab-buttons {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 24px;
+      gap: 12px;
+    }
+    .tab-button {
+      padding: 10px 24px;
+      border-radius: 8px;
+      border: 1px solid #667eea;
+      background: white;
+      color: #667eea;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+    }
+    .tab-button.active {
+      background: #667eea;
+      color: white;
+      box-shadow: 0 2px 8px rgba(102,126,234,0.4);
+    }
+    /* Form containers */
+    .form-section {
+      display: none;
+    }
+    .form-section.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main" aria-labelledby="formTitle">
+    <h1 id="formTitle">Create Account</h1>
+
+    <div class="tab-buttons" role="tablist" aria-label="Registration options">
+      <button class="tab-button active" role="tab" aria-selected="true" aria-controls="individualSignup" id="tabIndividual">Individual Account</button>
+      <button class="tab-button" role="tab" aria-selected="false" aria-controls="tenantRequest" id="tabTenant">Tenant Signup Request</button>
+    </div>
+
+    <!-- Individual Account Signup -->
+    <section id="individualSignup" class="form-section active" role="tabpanel" aria-labelledby="tabIndividual">
+      <!-- Social Sign Up Section -->
+      <div class="social-signup-section">
+        <div class="social-signup-btns">
+          <button type="button" id="googleSignUpBtn" class="social-btn" aria-label="Sign up with Google">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png" alt="Google" />
+            Sign up with Google
+          </button>
+          <button type="button" id="microsoftSignUpBtn" class="social-btn" aria-label="Sign up with Microsoft">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft" />
+            Sign up with Microsoft
+          </button>
+        </div>
+        <div class="divider">
+          <span>or sign up with email</span>
+        </div>
+      </div>
+
+      <form id="signupForm" novalidate>
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" required placeholder="Your full name" aria-required="true" />
+
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required placeholder="you@example.com" aria-required="true" />
+        <div id="emailError" class="error-message" role="alert">Please enter a valid email address.</div>
+
+        <label for="role">Select Role <span class="tooltip" tabindex="0" aria-label="Some roles require admin approval or cannot be self-registered.">❓
+          <span class="tooltiptext">Roles like MD Collaborator, Administrator, Institution, and Clinic Staff require admin approval and cannot be self-registered.</span>
+        </span></label>
+        <select id="role" name="role" required aria-required="true" aria-describedby="roleHelp">
+          <option value="">Choose your role...</option>
+          <option value="student">Student</option>
+          <option value="jobseeker">Job Seeker</option>
+          <option value="preceptor">Preceptor</option>
+          <option value="md-collaborator" disabled>MD Collaborator (Contact Admin)</option>
+          <option value="admin" disabled>Administrator (Contact Admin)</option>
+          <option value="institution" disabled>Institution (Contact Admin)</option>
+          <option value="clinic" disabled>Clinic Staff (Contact Admin)</option>
+        </select>
+        <div id="roleError" class="error-message" role="alert">Please select a valid role.</div>
+
+        <!-- Institution lookup for Students -->
+        <div id="institution-container" style="display:none;">
+          <label for="institution">Select Your Institution</label>
+          <input type="text" id="institution" name="institution" placeholder="Start typing to search..." aria-describedby="institutionHelp" autocomplete="off" />
+          <div id="institutionHelp" style="font-size:0.85rem; color:#555;">
+            Can't find your institution? <a href="#" id="openRequestInstitution">Request it here</a>.
+          </div>
+          <div id="institutionError" class="error-message" role="alert">Please select your institution from the list.</div>
+          <ul id="institution-list" style="list-style:none; padding-left:0; max-height:120px; overflow-y:auto; border:1px solid #ccc; border-radius:8px; display:none; margin-top:-12px; margin-bottom:16px;"></ul>
+        </div>
+
+        <!-- Clinics multi-select for Preceptors -->
+        <div id="clinics-container" style="display:none;">
+          <label for="clinics">Select Clinic(s) You Work With</label>
+          <select id="clinics" name="clinics" multiple size="4" aria-describedby="clinicsHelp">
+            <option value="metro-general">Metro General Hospital</option>
+            <option value="city-health">City Health Clinic</option>
+            <option value="downtown-medical">Downtown Medical Center</option>
+          </select>
+          <div id="clinicsHelp" style="font-size:0.85rem; color:#555;">
+            If your clinic is not listed, please contact admin.
+          </div>
+          <div id="clinicsError" class="error-message" role="alert">Please select at least one clinic.</div>
+        </div>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required placeholder="Create a password" aria-required="true" />
+
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm your password" aria-required="true" />
+        <div id="passwordError" class="error-message" role="alert">Passwords do not match.</div>
+
+        <button type="submit" id="submitBtn">Sign Up</button>
+      </form>
+      <div class="login-link">
+        Already have an account? <a href="index.html">Sign In</a>
+      </div>
+    </section>
+
+    <!-- Tenant Signup Request -->
+    <section id="tenantRequest" class="form-section" role="tabpanel" aria-labelledby="tabTenant">
+      <h2 style="text-align:center; color:#667eea; margin-bottom: 20px;">Tenant Signup Request</h2>
+      <form id="tenantRequestForm" novalidate>
+        <label for="tenantOrgName">Organization Name</label>
+        <input type="text" id="tenantOrgName" name="tenantOrgName" required placeholder="Full organization name" aria-required="true" />
+
+        <label for="tenantContactName">Contact Person Name</label>
+        <input type="text" id="tenantContactName" name="tenantContactName" required placeholder="Your full name" aria-required="true" />
+
+        <label for="tenantContactEmail">Contact Email</label>
+        <input type="email" id="tenantContactEmail" name="tenantContactEmail" required placeholder="contact@example.com" aria-required="true" />
+        <div id="tenantEmailError" class="error-message" role="alert">Please enter a valid email address.</div>
+
+        <label for="tenantPhone">Phone Number (optional)</label>
+        <input type="tel" id="tenantPhone" name="tenantPhone" placeholder="(123) 456-7890" />
+
+        <label for="tenantAdditionalInfo">Additional Information</label>
+        <textarea id="tenantAdditionalInfo" name="tenantAdditionalInfo" rows="4" placeholder="Tell us more about your organization or needs"></textarea>
+
+        <button type="submit" id="tenantSubmitBtn">Submit Request</button>
+      </form>
+      <div class="login-link" style="margin-top: 12px;">
+        Already a tenant? <a href="index.html">Sign In</a>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal for Institution Request -->
+  <div id="institutionModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
+    <div class="modal-content">
+      <button class="close-btn" id="closeModal" aria-label="Close">&times;</button>
+      <h2 id="modalTitle">Request Institution Signup</h2>
+      <p id="modalDesc">If your institution is not listed, please submit a request below.</p>
+      <form id="requestInstitutionForm" novalidate>
+        <label for="institutionName">Institution Name</label>
+        <input type="text" id="institutionName" name="institutionName" required placeholder="Institution full name" aria-required="true" />
+
+        <label for="contactEmail">Contact Email</label>
+        <input type="email" id="contactEmail" name="contactEmail" required placeholder="Contact email" aria-required="true" />
+
+        <label for="additionalInfo">Additional Information (optional)</label>
+        <textarea id="additionalInfo" name="additionalInfo" rows="4" placeholder="Any details or questions"></textarea>
+
+        <button type="submit" id="requestSubmitBtn">Submit Request</button>
+        <p id="requestSuccess" class="success-message" style="display:none;">Your request has been submitted. We will contact you soon.</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Firebase Social Auth Script -->
+  <script type="module">
+    import { getAuth, signInWithPopup, GoogleAuthProvider, OAuthProvider, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    import { app } from './firebase-init.js';
+
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Expose Firestore functions for use in non-module scripts
+    window.addDoc = addDoc;
+    window.collection = collection;
+
+    // Helper function to save user data to Firestore
+    async function saveUserToFirestore(user, additionalData = {}) {
+      try {
+        await setDoc(doc(db, 'users', user.uid), {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || additionalData.name || '',
+          photoURL: user.photoURL || '',
+          role: additionalData.role || 'jobseeker', // Default role
+          institution: additionalData.institution || null,
+          clinics: additionalData.clinics || null,
+          createdAt: new Date(),
+          provider: additionalData.provider || 'email',
+          emailVerified: user.emailVerified
+        });
+      } catch (error) {
+        console.error('Error saving user to Firestore:', error);
+      }
+    }
+
+    // Google Sign Up
+    document.getElementById('googleSignUpBtn').onclick = async function() {
+      const btn = this;
+      btn.disabled = true;
+      btn.textContent = 'Signing up with Google...';
+
+      const provider = new GoogleAuthProvider();
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+
+        // Save user to Firestore
+        await saveUserToFirestore(user, { 
+          provider: 'google',
+          role: 'jobseeker' // Default role, user can change later
+        });
+
+        alert(`Welcome ${user.displayName}! Your account has been created successfully.`);
+        window.location.href = "dashboard.html"; // Change to your dashboard page
+      } catch (error) {
+        console.error('Google sign up error:', error);
+        alert("Google sign up failed: " + error.message);
+        btn.disabled = false;
+        btn.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png" alt="Google" style="width:20px;height:20px;margin-right:8px;"> Sign up with Google';
+      }
+    };
+
+    // Microsoft Sign Up
+    document.getElementById('microsoftSignUpBtn').onclick = async function() {
+      const btn = this;
+      btn.disabled = true;
+      btn.textContent = 'Signing up with Microsoft...';
+
+      const provider = new OAuthProvider('microsoft.com');
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+
+        // Save user to Firestore
+        await saveUserToFirestore(user, { 
+          provider: 'microsoft',
+          role: 'jobseeker' // Default role, user can change later
+        });
+
+        alert(`Welcome ${user.displayName}! Your account has been created successfully.`);
+        window.location.href = "dashboard.html"; // Change to your dashboard page
+      } catch (error) {
+        console.error('Microsoft sign up error:', error);
+        alert("Microsoft sign up failed: " + error.message);
+        btn.disabled = false;
+        btn.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft" style="width:20px;height:20px;margin-right:8px;"> Sign up with Microsoft';
+      }
+    };
+
+    // Make Firebase auth and db available globally
+    window.firebaseAuth = auth;
+    window.firebaseDb = db;
+    window.saveUserToFirestore = saveUserToFirestore;
+    window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+  </script>
+
+  <!-- Regular Registration Script -->
+  <script>
+    const form = document.getElementById('signupForm');
+    const emailInput = form.email;
+    const roleSelect = form.role;
+    const passwordInput = form.password;
+    const confirmPasswordInput = form.confirmPassword;
+    const submitBtn = document.getElementById('submitBtn');
+
+    const emailError = document.getElementById('emailError');
+    const roleError = document.getElementById('roleError');
+    const passwordError = document.getElementById('passwordError');
+
+    const institutionContainer = document.getElementById('institution-container');
+    const institutionInput = document.getElementById('institution');
+    const institutionList = document.getElementById('institution-list');
+    const institutionError = document.getElementById('institutionError');
+
+    const clinicsContainer = document.getElementById('clinics-container');
+    const clinicsSelect = document.getElementById('clinics');
+    const clinicsError = document.getElementById('clinicsError');
+
+    // Modal elements
+    const institutionModal = document.getElementById('institutionModal');
+    const openRequestInstitution = document.getElementById('openRequestInstitution');
+    const closeModal = document.getElementById('closeModal');
+    const requestInstitutionForm = document.getElementById('requestInstitutionForm');
+    const requestSubmitBtn = document.getElementById('requestSubmitBtn');
+    const requestSuccess = document.getElementById('requestSuccess');
+
+    // Sample institutions for autocomplete
+    const institutions = [
+      "State University NP Program",
+      "City College Nursing",
+      "Metro Health Institute",
+      "Regional Medical School",
+      "Community Nursing Academy"
+    ];
+
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    // Show/hide institution and clinics fields based on role
+    roleSelect.addEventListener('change', () => {
+      const role = roleSelect.value;
+      institutionContainer.style.display = role === 'student' ? 'block' : 'none';
+      clinicsContainer.style.display = role === 'preceptor' ? 'block' : 'none';
+      institutionError.style.display = 'none';
+      clinicsError.style.display = 'none';
+      institutionInput.value = '';
+      institutionList.style.display = 'none';
+      clinicsSelect.selectedIndex = -1;
+    });
+
+    // Institution autocomplete logic
+    institutionInput.addEventListener('input', () => {
+      const query = institutionInput.value.toLowerCase().trim();
+      institutionList.innerHTML = '';
+      if (!query) {
+        institutionList.style.display = 'none';
+        return;
+      }
+      const matches = institutions.filter(inst => inst.toLowerCase().includes(query));
+      if (matches.length === 0) {
+        institutionList.style.display = 'none';
+        return;
+      }
+      matches.forEach(match => {
+        const li = document.createElement('li');
+        li.textContent = match;
+        li.style.padding = '8px';
+        li.style.cursor = 'pointer';
+        li.addEventListener('click', () => {
+          institutionInput.value = match;
+          institutionList.style.display = 'none';
+        });
+        institutionList.appendChild(li);
+      });
+      institutionList.style.display = 'block';
+    });
+
+    // Hide institution list if clicking outside
+    document.addEventListener('click', (e) => {
+      if (!institutionContainer.contains(e.target)) {
+        institutionList.style.display = 'none';
+      }
+    });
+
+    // Open modal
+    openRequestInstitution.addEventListener('click', (e) => {
+      e.preventDefault();
+      institutionModal.style.display = 'block';
+      requestSuccess.style.display = 'none';
+      requestInstitutionForm.style.display = 'block';
+      requestInstitutionForm.reset();
+    });
+
+    // Close modal
+    closeModal.addEventListener('click', () => {
+      institutionModal.style.display = 'none';
+    });
+
+    // Close modal on outside click
+    window.addEventListener('click', (e) => {
+      if (e.target === institutionModal) {
+        institutionModal.style.display = 'none';
+      }
+    });
+
+    // Handle institution request form submit
+    requestInstitutionForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const instName = requestInstitutionForm.institutionName.value.trim();
+      const contactEmail = requestInstitutionForm.contactEmail.value.trim();
+
+      if (!instName || !contactEmail || !isValidEmail(contactEmail)) {
+        alert('Please fill in all required fields with valid information.');
+        return;
+      }
+
+      requestSubmitBtn.disabled = true;
+      requestSubmitBtn.textContent = 'Submitting...';
+
+      // Simulate API call - replace with actual Firestore save
+      setTimeout(() => {
+        console.log('Institution signup request:', {
+          institutionName: instName,
+          contactEmail: contactEmail,
+          additionalInfo: requestInstitutionForm.additionalInfo.value.trim()
+        });
+
+        requestSubmitBtn.disabled = false;
+        requestSubmitBtn.textContent = 'Submit Request';
+        requestInstitutionForm.style.display = 'none';
+        requestSuccess.style.display = 'block';
+      }, 1500);
+    });
+
+    // Registration form submit
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      emailError.style.display = 'none';
+      roleError.style.display = 'none';
+      passwordError.style.display = 'none';
+      institutionError.style.display = 'none';
+      clinicsError.style.display = 'none';
+
+      let valid = true;
+
+      if (!isValidEmail(emailInput.value.trim())) {
+        emailError.style.display = 'block';
+        valid = false;
+      }
+
+      if (!roleSelect.value || roleSelect.options[roleSelect.selectedIndex].disabled) {
+        roleError.style.display = 'block';
+        valid = false;
+      }
+
+      if (passwordInput.value !== confirmPasswordInput.value) {
+        passwordError.style.display = 'block';
+        valid = false;
+      }
+
+      // Validate institution for students
+      if (roleSelect.value === 'student') {
+        if (!institutionInput.value.trim() || !institutions.includes(institutionInput.value.trim())) {
+          institutionError.style.display = 'block';
+          valid = false;
+        }
+      }
+
+      // Validate clinics for preceptors
+      if (roleSelect.value === 'preceptor') {
+        const selectedClinics = Array.from(clinicsSelect.options).filter(opt => opt.selected);
+        if (selectedClinics.length === 0) {
+          clinicsError.style.display = 'block';
+          valid = false;
+        }
+      }
+
+      if (!valid) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating Account...';
+
+      try {
+        // Create user with Firebase Auth
+        const userCredential = await window.createUserWithEmailAndPassword(
+          window.firebaseAuth, 
+          emailInput.value.trim(), 
+          passwordInput.value
+        );
+        
+        const user = userCredential.user;
+
+        // Prepare user data
+        const userData = {
+          name: form.name.value.trim(),
+          role: roleSelect.value,
+          provider: 'email',
+          institution: roleSelect.value === 'student' ? institutionInput.value.trim() : null,
+          clinics: roleSelect.value === 'preceptor' ? Array.from(clinicsSelect.options).filter(o => o.selected).map(o => o.value) : null
+        };
+
+        // Save to Firestore
+        await window.saveUserToFirestore(user, userData);
+
+        alert(`Thanks for registering, ${userData.name}! Please check your email to verify your account.`);
+        window.location.href = 'index.html';
+        
+      } catch (error) {
+        console.error('Registration error:', error);
+        alert('Registration failed: ' + error.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign Up';
+      }
+    });
+
+    // Tenant Signup Request form submit
+    const tenantForm = document.getElementById('tenantRequestForm');
+    const tenantEmailInput = tenantForm.tenantContactEmail;
+    const tenantEmailError = document.getElementById('tenantEmailError');
+    const tenantSubmitBtn = document.getElementById('tenantSubmitBtn');
+
+    tenantForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      tenantEmailError.style.display = 'none';
+
+      if (!isValidEmail(tenantEmailInput.value.trim())) {
+        tenantEmailError.style.display = 'block';
+        return;
+      }
+
+      tenantSubmitBtn.disabled = true;
+      tenantSubmitBtn.textContent = 'Submitting...';
+
+      try {
+        await window.addDoc(
+          window.collection(window.firebaseDb, 'tenantRequests'),
+          {
+            organizationName: tenantForm.tenantOrgName.value.trim(),
+            contactName: tenantForm.tenantContactName.value.trim(),
+            contactEmail: tenantEmailInput.value.trim(),
+            phone: tenantForm.tenantPhone.value.trim(),
+            additionalInfo: tenantForm.tenantAdditionalInfo.value.trim(),
+            requestedAt: new Date()
+          }
+        );
+      } catch (error) {
+        console.error('Tenant request submission error:', error);
+        alert('Failed to submit request: ' + error.message);
+        tenantSubmitBtn.disabled = false;
+        tenantSubmitBtn.textContent = 'Submit Request';
+        return;
+      }
+
+      tenantSubmitBtn.disabled = false;
+      tenantSubmitBtn.textContent = 'Submit Request';
+      tenantForm.reset();
+      alert('Thank you! Your tenant signup request has been submitted. We will contact you soon.');
+    });
+
+    // Tab switching logic
+    const tabIndividual = document.getElementById('tabIndividual');
+    const tabTenant = document.getElementById('tabTenant');
+    const individualSection = document.getElementById('individualSignup');
+    const tenantSection = document.getElementById('tenantRequest');
+
+    function switchTab(tab) {
+      if (tab === 'individual') {
+        tabIndividual.classList.add('active');
+        tabIndividual.setAttribute('aria-selected', 'true');
+        tabTenant.classList.remove('active');
+        tabTenant.setAttribute('aria-selected', 'false');
+        individualSection.classList.add('active');
+        tenantSection.classList.remove('active');
+      } else {
+        tabTenant.classList.add('active');
+        tabTenant.setAttribute('aria-selected', 'true');
+        tabIndividual.classList.remove('active');
+        tabIndividual.setAttribute('aria-selected', 'false');
+        tenantSection.classList.add('active');
+        individualSection.classList.remove('active');
+      }
+    }
+
+    tabIndividual.addEventListener('click', () => switchTab('individual'));
+    tabTenant.addEventListener('click', () => switchTab('tenant'));
+  </script>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Clinic Messaging - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      color: #2d3e50;
+    }
+    .header {
+      background: #2d3e50;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .logout-btn {
+      background: transparent;
+      border: 1px solid white;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .main {
+      display: flex;
+      min-height: calc(100vh - 64px);
+    }
+    .sidebar {
+      width: 250px;
+      background: #34495e;
+      color: white;
+      padding: 24px 0;
+    }
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      color: white;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .nav-item:hover,
+    .nav-item.active {
+      background: #2c3e50;
+      border-left-color: #3498db;
+    }
+    .content {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      margin-top: 0;
+      color: #2d3e50;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+    th {
+      background: #f8f9fa;
+      font-weight: 600;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    input[type="text"], select, textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      font-size: 1rem;
+      resize: vertical;
+    }
+    textarea {
+      min-height: 100px;
+    }
+    @media (max-width: 768px) {
+      .main {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Clinic Messaging</h1>
+    <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+  </div>
+  <div class="main">
+    <nav class="sidebar">
+      <a href="clinic-dashboard.html" class="nav-item">🏠 Dashboard</a>
+      <a href="clinic-applications.html" class="nav-item">📝 Applications</a>
+      <a href="clinic-students.html" class="nav-item">👩‍🎓 Students</a>
+      <a href="clinic-preceptors.html" class="nav-item">👨‍⚕️ Preceptors</a>
+      <a href="clinic-messages.html" class="nav-item active">💬 Messages</a>
+      <a href="clinic-schedule.html" class="nav-item">📅 Schedule</a>
+      <a href="clinic-billing.html" class="nav-item">💳 Billing</a>
+      <a href="clinic-reports.html" class="nav-item">📈 Reports</a>
+      <a href="clinic-settings.html" class="nav-item">⚙️ Settings</a>
+      <a href="clinic-job-postings.html" class="nav-item">📋 Job Postings</a>
+    </nav>
+    <main class="content">
+      <div class="card">
+        <h2>Compose New Message</h2>
+        <form id="message-form">
+          <label for="recipient-type">Recipient Type</label>
+          <select id="recipient-type" required>
+            <option value="" disabled selected>Select recipient type</option>
+            <option value="students">Students</option>
+            <option value="preceptors">Preceptors</option>
+            <option value="admins">Admins</option>
+          </select>
+          <label for="recipient">Recipient</label>
+          <select id="recipient" required>
+            <option value="" disabled selected>Select recipient</option>
+          </select>
+          <label for="message-subject">Subject</label>
+          <input type="text" id="message-subject" required />
+          <label for="message-body">Message</label>
+          <textarea id="message-body" required></textarea>
+          <button type="submit" class="btn-primary">Send Message</button>
+        </form>
+      </div>
+      <div class="card">
+        <h2>Recent Messages</h2>
+        <table id="messages-table">
+          <thead>
+            <tr>
+              <th>To</th>
+              <th>Subject</th>
+              <th>Date Sent</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Messages will be dynamically inserted here -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+  <script>
+    // Sample recipients data
+    const recipientsData = {
+      students: [
+        { id: 1, name: 'Mike Wilson' },
+        { id: 2, name: 'Lisa Chen' }
+      ],
+      preceptors: [
+        { id: 1, name: 'Dr. Sarah Johnson' },
+        { id: 2, name: 'Dr. Michael Chen' }
+      ],
+      admins: [
+        { id: 1, name: 'Clinic Admin' }
+      ]
+    };
+
+    let messages = [
+      { id: 1, toType: 'students', toName: 'Mike Wilson', subject: 'Welcome!', dateSent: '2025-07-06' },
+      { id: 2, toType: 'preceptors', toName: 'Dr. Sarah Johnson', subject: 'Schedule Update', dateSent: '2025-07-05' }
+    ];
+
+    const recipientTypeSelect = document.getElementById('recipient-type');
+    const recipientSelect = document.getElementById('recipient');
+    const messagesTableBody = document.querySelector('#messages-table tbody');
+    const messageForm = document.getElementById('message-form');
+
+    // Populate recipients based on selected type
+    recipientTypeSelect.addEventListener('change', () => {
+      const type = recipientTypeSelect.value;
+      recipientSelect.innerHTML = '<option value="" disabled selected>Select recipient</option>';
+      if (recipientsData[type]) {
+        recipientsData[type].forEach(recipient => {
+          const option = document.createElement('option');
+          option.value = recipient.id;
+          option.textContent = recipient.name;
+          recipientSelect.appendChild(option);
+        });
+      }
+    });
+
+    // Render messages table
+    function renderMessages() {
+      messagesTableBody.innerHTML = '';
+      if (messages.length === 0) {
+        messagesTableBody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#888;">No messages found.</td></tr>';
+        return;
+      }
+      messages.forEach(msg => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${msg.toName} (${msg.toType})</td>
+          <td>${msg.subject}</td>
+          <td>${msg.dateSent}</td>
+        `;
+        messagesTableBody.appendChild(tr);
+      });
+    }
+
+    // Handle message form submit
+    messageForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const toType = recipientTypeSelect.value;
+      const toId = recipientSelect.value;
+      const subject = document.getElementById('message-subject').value.trim();
+      const body = document.getElementById('message-body').value.trim();
+
+      if (!toType || !toId || !subject || !body) {
+        alert('Please fill all required fields.');
+        return;
+      }
+
+      const recipient = recipientsData[toType].find(r => r.id == toId);
+      if (!recipient) {
+        alert('Invalid recipient selected.');
+        return;
+      }
+
+      const newMessage = {
+        id: messages.length ? Math.max(...messages.map(m => m.id)) + 1 : 1,
+        toType,
+        toName: recipient.name,
+        subject,
+        dateSent: new Date().toISOString().split('T')[0]
+      };
+
+      messages.unshift(newMessage);
+      renderMessages();
+      messageForm.reset();
+      recipientSelect.innerHTML = '<option value="" disabled selected>Select recipient</option>';
+      recipientTypeSelect.value = '';
+      alert('Message sent successfully!');
+    });
+
+    // Initial render
+    renderMessages();
+  </script>
+</body>
+</html>

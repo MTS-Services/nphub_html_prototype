@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Super Admin – Tenant Detail | NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #F8FAFC;
+      --color-white: #fff;
+      --color-muted: #6c757d;
+      --border-radius: 14px;
+      --box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      --sidebar-width: 250px;
+    }
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 24px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header .user-info {
+      font-size: 1rem;
+      color: var(--color-secondary);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header .logout-btn {
+      background: #dc3545;
+      border: none;
+      color: var(--color-white);
+      padding: 8px 18px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: 24px;
+      transition: background-color 0.2s;
+    }
+    .header .logout-btn:hover {
+      background: #b02a37;
+    }
+    .main {
+      display: flex;
+      flex: 1 1 auto;
+      min-height: 0;
+      height: calc(100vh - 72px);
+      overflow: hidden;
+    }
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 36px 0;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      height: 100%;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 36px;
+      color: var(--color-white);
+      text-decoration: none;
+      border-left: 4px solid transparent;
+      background: none;
+      transition: background 0.18s, border-color 0.18s, font-weight 0.18s;
+      font-size: 1.08rem;
+      font-weight: 500;
+      cursor: pointer;
+      outline: none;
+    }
+    .nav-item.active {
+      background: var(--color-primary);
+      border-left: 4px solid var(--color-secondary);
+      color: var(--color-secondary);
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(10,37,64,0.07);
+    }
+    .nav-item:hover:not(.active) {
+      background: var(--color-primary);
+      border-left: 4px solid var(--color-secondary);
+      color: var(--color-secondary);
+      font-weight: 600;
+    }
+    .content {
+      flex: 1;
+      padding: 48px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 0;
+      max-width: 100vw;
+      box-sizing: border-box;
+      margin-left: 0;
+      overflow-y: auto;
+    }
+    .dashboard-container {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      max-width: 1100px;
+      width: 100%;
+      padding: 40px 48px 32px 48px;
+      margin: 0 24px;
+      box-sizing: border-box;
+    }
+    .dashboard-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .tenant-actions-bar {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .tenant-actions-bar button {
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tenant-actions-bar button.suspend { background: #dc3545; }
+    .tenant-actions-bar button.suspend:hover { background: #b02a37; }
+    .tenant-actions-bar button.activate { background: #28a745; }
+    .tenant-actions-bar button.activate:hover { background: #1e7e34; }
+    .tenant-actions-bar button:hover { background: var(--color-primary-dark); }
+    .tenant-detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px 48px;
+      margin-bottom: 32px;
+      width: 100%;
+    }
+    .tenant-detail-col {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+    .tenant-detail-label {
+      color: var(--color-muted);
+      font-size: 1.02rem;
+      font-weight: 500;
+      margin-bottom: 2px;
+      word-break: break-word;
+    }
+    .tenant-detail-value {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-bottom: 8px;
+      word-break: break-word;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-size: 0.95em;
+      font-weight: 600;
+      color: #fff;
+    }
+    .status-active { background: #28a745; }
+    .status-suspended { background: #dc3545; }
+    .status-trial { background: #ffc107; color: #222; }
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--color-primary-dark);
+      margin: 32px 0 12px 0;
+    }
+    .usage-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+      font-size: 1rem;
+    }
+    .usage-table th, .usage-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e0e0e0;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .usage-table th {
+      background: var(--color-primary);
+      color: var(--color-white);
+      font-weight: 700;
+      user-select: none;
+    }
+    .usage-table tbody tr:hover {
+      background: #f0f4ff;
+      cursor: pointer;
+    }
+    @media (max-width: 900px) {
+      .dashboard-container { padding: 24px 8px; }
+      .sidebar { width: 100px; }
+      .tenant-detail-grid { grid-template-columns: 1fr; gap: 18px; }
+    }
+    @media (max-width: 600px) {
+      .sidebar { display: none; }
+      .content { padding: 8px 0; }
+      .dashboard-container { margin: 0 2px; }
+      .tenant-actions-bar { flex-direction: column; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1><i class="fa-solid fa-shield-halved"></i> Super Admin Dashboard</h1>
+    <div class="user-info">
+      <i class="fa-solid fa-user-shield"></i> superadmin@npclinicalhub.com
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <nav class="sidebar" aria-label="Super Admin navigation">
+      <a class="nav-item" href="super-admin-dashboard.html"><i class="fa-solid fa-gauge"></i> Platform Overview</a>
+      <a class="nav-item active" href="super-admin-tenants.html"><i class="fa-solid fa-users"></i> Tenants</a>
+      <a class="nav-item" href="super-admin-users.html"><i class="fa-solid fa-user-group"></i> Users</a>
+      <a class="nav-item" href="super-admin-billing.html"><i class="fa-solid fa-credit-card"></i> Billing</a>
+      <a class="nav-item" href="super-admin-settings.html"><i class="fa-solid fa-gear"></i> Platform Settings</a>
+      <a class="nav-item" href="super-admin-analytics.html"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+      <a class="nav-item" href="super-admin-audit-logs.html"><i class="fa-solid fa-file-alt"></i> Audit Logs</a>
+      <a class="nav-item" href="super-admin-support.html"><i class="fa-solid fa-headset"></i> Support</a>
+      <a class="nav-item" href="super-admin-system-health.html"><i class="fa-solid fa-heart-pulse"></i> System Health</a>
+    </nav>
+    <div class="content">
+      <div class="dashboard-container">
+        <div class="dashboard-title">
+          <i class="fa-solid fa-building"></i> Tenant Details: State University
+        </div>
+        <div class="tenant-actions-bar">
+          <button onclick="editTenant()"><i class="fa-solid fa-pen"></i> Edit</button>
+          <button onclick="resetTenantPassword()"><i class="fa-solid fa-key"></i> Reset Admin Password</button>
+          <button class="suspend" onclick="suspendTenant()"><i class="fa-solid fa-ban"></i> Suspend</button>
+          <button class="activate" onclick="activateTenant()"><i class="fa-solid fa-check"></i> Activate</button>
+        </div>
+        <div class="tenant-detail-grid">
+          <div class="tenant-detail-col">
+            <div>
+              <div class="tenant-detail-label">Tenant Name</div>
+              <div class="tenant-detail-value">State University</div>
+            </div>
+            <div>
+              <div class="tenant-detail-label">Tenant ID</div>
+              <div class="tenant-detail-value">su-00123</div>
+            </div>
+            <div>
+              <div class="tenant-detail-label">Organization Type</div>
+              <div class="tenant-detail-value">University</div>
+            </div>
+            <div>
+              <div class="tenant-detail-label">Plan</div>
+              <div class="tenant-detail-value">Premium</div>
+            </div>
+            <div>
+              <div class="tenant-detail-label">Status</div>
+              <div class="tenant-detail-value"><span class="status-badge status-active">Active</span></div>
+            </div>
+          </div>
+          <div class="tenant-detail-col">
+            <div>
+              <div class="tenant-detail-label">Primary Admin</div>
+              <div class="tenant-detail-value">Dr. Jane Doe (jane.doe@stateuniversity.edu)</div>
+            </div>
+            <div>
+              <div class="tenant-detail-label">Billing Email</div>
+              <div class="tenant-detail-value">billing@stateuniversity.edu</div>
+            </div>
+            <div>
+              <div class="tenant-detail-label">Contact Phone</div>
+              <div class="tenant-detail-value">(555) 123-4567</div>
+            </div>
+            <div>
+              <div class="tenant-detail-label">Next Billing Date</div>
+              <div class="tenant-detail-value">2024-08-01</div>
+            </div>
+            <div>
+              <div class="tenant-detail-label">Created</div>
+              <div class="tenant-detail-value">2022-03-15</div>
+            </div>
+          </div>
+        </div>
+        <div class="section-title">Usage & Activity</div>
+        <table class="usage-table">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Current</th>
+              <th>Limit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Active Users</td>
+              <td>320</td>
+              <td>500</td>
+            </tr>
+            <tr>
+              <td>Active Rotations</td>
+              <td>12</td>
+              <td>50</td>
+            </tr>
+            <tr>
+              <td>Job Postings</td>
+              <td>8</td>
+              <td>Unlimited</td>
+            </tr>
+            <tr>
+              <td>Storage Used</td>
+              <td>2.1 GB</td>
+              <td>10 GB</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="section-title">Recent Activity</div>
+        <table class="usage-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Event</th>
+              <th>User</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>2025-07-20</td>
+              <td>Login</td>
+              <td>Dr. Jane Doe</td>
+              <td>Admin login</td>
+            </tr>
+            <tr>
+              <td>2025-07-18</td>
+              <td>Rotation Created</td>
+              <td>Mary Smith</td>
+              <td>Added new clinical rotation</td>
+            </tr>
+            <tr>
+              <td>2025-07-15</td>
+              <td>Billing</td>
+              <td>System</td>
+              <td>Invoice #12345 paid</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script>
+    function logout() {
+      localStorage.removeItem('userToken');
+      window.location.href = 'index.html';
+    }
+    function editTenant() { alert('Edit tenant details'); }
+    function resetTenantPassword() { alert('Reset admin password'); }
+    function suspendTenant() { alert('Suspend tenant'); }
+    function activateTenant() { alert('Activate tenant'); }
+  </script>
+</body>
+</html>

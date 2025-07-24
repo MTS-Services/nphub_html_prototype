@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Super Admin – Billing | NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #F8FAFC;
+      --color-white: #fff;
+      --color-muted: #6c757d;
+      --border-radius: 14px;
+      --box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      --sidebar-width: 250px;
+    }
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 24px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header .user-info {
+      font-size: 1rem;
+      color: var(--color-secondary);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header .logout-btn {
+      background: #dc3545;
+      border: none;
+      color: var(--color-white);
+      padding: 8px 18px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: 24px;
+      transition: background-color 0.2s;
+    }
+    .header .logout-btn:hover {
+      background: #b02a37;
+    }
+    .main {
+      display: flex;
+      flex: 1 1 auto;
+      min-height: 0;
+      height: calc(100vh - 72px);
+      overflow: hidden;
+    }
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 36px 0;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      height: 100%;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 36px;
+      color: var(--color-white);
+      text-decoration: none;
+      border-left: 4px solid transparent;
+      background: none;
+      transition: background 0.18s, border-color 0.18s, font-weight 0.18s;
+      font-size: 1.08rem;
+      font-weight: 500;
+      cursor: pointer;
+      outline: none;
+    }
+    .nav-item.active {
+      background: var(--color-primary);
+      border-left: 4px solid var(--color-secondary);
+      color: var(--color-secondary);
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(10,37,64,0.07);
+    }
+    .nav-item:hover:not(.active) {
+      background: var(--color-primary);
+      border-left: 4px solid var(--color-secondary);
+      color: var(--color-secondary);
+      font-weight: 600;
+    }
+    .content {
+      flex: 1;
+      padding: 48px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 0;
+      max-width: 100vw;
+      box-sizing: border-box;
+      margin-left: 0;
+      overflow-y: auto;
+    }
+    .dashboard-container {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      max-width: 1300px;
+      width: 100%;
+      padding: 40px 48px 32px 48px;
+      margin: 0 24px;
+      box-sizing: border-box;
+    }
+    .dashboard-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .billing-summary {
+      display: flex;
+      gap: 28px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .billing-card {
+      background: #f6f8fa;
+      border-radius: 10px;
+      padding: 28px 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      box-shadow: 0 2px 8px rgba(10,37,64,0.04);
+      min-width: 180px;
+      flex: 1 1 180px;
+    }
+    .billing-card .card-label {
+      color: var(--color-muted);
+      font-size: 1.02rem;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .billing-card .card-value {
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 4px;
+    }
+    .billing-card .card-icon {
+      font-size: 1.5rem;
+      color: var(--color-secondary);
+      margin-bottom: 10px;
+    }
+    .billing-actions {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .billing-actions input[type="text"], .billing-actions select {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      min-width: 180px;
+    }
+    .billing-actions button {
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .billing-actions button.export {
+      background: #28a745;
+    }
+    .billing-actions button.export:hover {
+      background: #1e7e34;
+    }
+    .billing-actions button.new-invoice {
+      background: var(--color-secondary);
+      color: #222;
+    }
+    .billing-actions button.new-invoice:hover {
+      background: #e6c200;
+    }
+    .billing-actions button:hover {
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+    }
+    .billing-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 1rem;
+    }
+    .billing-table th, .billing-table td {
+      padding: 14px 12px;
+      border-bottom: 1px solid #e0e0e0;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .billing-table th {
+      background: var(--color-primary);
+      color: var(--color-white);
+      font-weight: 700;
+      user-select: none;
+    }
+    .billing-table tbody tr:hover {
+      background: #f0f4ff;
+      cursor: pointer;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-size: 0.95em;
+      font-weight: 600;
+      color: #fff;
+    }
+    .status-paid { background: #28a745; }
+    .status-outstanding { background: #ffc107; color: #222; }
+    .status-overdue { background: #dc3545; }
+    .action-link {
+      color: var(--color-primary);
+      text-decoration: underline;
+      cursor: pointer;
+      font-weight: 600;
+      margin-right: 10px;
+    }
+    .action-link:hover { color: var(--color-secondary); }
+    @media (max-width: 1100px) {
+      .dashboard-container { padding: 24px 8px; }
+      .billing-summary { flex-direction: column; gap: 12px; }
+    }
+    @media (max-width: 900px) {
+      .sidebar { width: 100px; }
+    }
+    @media (max-width: 600px) {
+      .sidebar { display: none; }
+      .content { padding: 8px 0; }
+      .dashboard-container { margin: 0 2px; }
+      .billing-actions { flex-direction: column; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1><i class="fa-solid fa-shield-halved"></i> Super Admin Dashboard</h1>
+    <div class="user-info">
+      <i class="fa-solid fa-user-shield"></i> superadmin@npclinicalhub.com
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <nav class="sidebar" aria-label="Super Admin navigation">
+      <a class="nav-item" href="super-admin-dashboard.html"><i class="fa-solid fa-gauge"></i> Platform Overview</a>
+      <a class="nav-item" href="super-admin-tenants.html"><i class="fa-solid fa-users"></i> Tenants</a>
+      <a class="nav-item" href="super-admin-users.html"><i class="fa-solid fa-user-group"></i> Users</a>
+      <a class="nav-item active" href="super-admin-billing.html"><i class="fa-solid fa-credit-card"></i> Billing</a>
+      <a class="nav-item" href="super-admin-settings.html"><i class="fa-solid fa-gear"></i> Platform Settings</a>
+      <a class="nav-item" href="super-admin-analytics.html"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+      <a class="nav-item" href="super-admin-audit-logs.html"><i class="fa-solid fa-file-alt"></i> Audit Logs</a>
+      <a class="nav-item" href="super-admin-support.html"><i class="fa-solid fa-headset"></i> Support</a>
+      <a class="nav-item" href="super-admin-system-health.html"><i class="fa-solid fa-heart-pulse"></i> System Health</a>
+    </nav>
+    <div class="content">
+      <div class="dashboard-container">
+        <div class="dashboard-title">
+          <i class="fa-solid fa-credit-card"></i> Billing
+        </div>
+        <div class="billing-summary">
+          <div class="billing-card">
+            <div class="card-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+            <div class="card-label">Total Revenue (YTD)</div>
+            <div class="card-value">$128,400</div>
+          </div>
+          <div class="billing-card">
+            <div class="card-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+            <div class="card-label">Outstanding</div>
+            <div class="card-value">$7,200</div>
+          </div>
+          <div class="billing-card">
+            <div class="card-icon"><i class="fa-solid fa-exclamation-triangle"></i></div>
+            <div class="card-label">Overdue</div>
+            <div class="card-value">$1,800</div>
+          </div>
+          <div class="billing-card">
+            <div class="card-icon"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="card-label">Paid (This Month)</div>
+            <div class="card-value">$10,500</div>
+          </div>
+        </div>
+        <div class="billing-actions">
+          <input type="text" placeholder="Search by tenant, invoice, or email..." />
+          <select>
+            <option value="">All Statuses</option>
+            <option value="paid">Paid</option>
+            <option value="outstanding">Outstanding</option>
+            <option value="overdue">Overdue</option>
+          </select>
+          <input type="month" />
+          <button class="export"><i class="fa-solid fa-file-export"></i> Export</button>
+          <button class="new-invoice"><i class="fa-solid fa-plus"></i> New Invoice</button>
+        </div>
+        <table class="billing-table">
+          <thead>
+            <tr>
+              <th>Tenant</th>
+              <th>Invoice #</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Due Date</th>
+              <th>Contact</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>State University</td>
+              <td>INV-2024-00123</td>
+              <td>2024-07-01</td>
+              <td>$2,500</td>
+              <td><span class="status-badge status-outstanding">Outstanding</span></td>
+              <td>2024-07-31</td>
+              <td>billing@stateuniversity.edu</td>
+              <td>
+                <span class="action-link" onclick="viewInvoice('INV-2024-00123')">View</span>
+                <span class="action-link" onclick="markPaid('INV-2024-00123')">Mark Paid</span>
+                <span class="action-link" onclick="sendReminder('INV-2024-00123')">Send Reminder</span>
+              </td>
+            </tr>
+            <tr>
+              <td>Metro Hospital</td>
+              <td>INV-2024-00110</td>
+              <td>2024-06-15</td>
+              <td>$1,800</td>
+              <td><span class="status-badge status-overdue">Overdue</span></td>
+              <td>2024-07-01</td>
+              <td>admin@metrohospital.org</td>
+              <td>
+                <span class="action-link" onclick="viewInvoice('INV-2024-00110')">View</span>
+                <span class="action-link" onclick="markPaid('INV-2024-00110')">Mark Paid</span>
+                <span class="action-link" onclick="sendReminder('INV-2024-00110')">Send Reminder</span>
+              </td>
+            </tr>
+            <tr>
+              <td>City Health Group</td>
+              <td>INV-2024-00098</td>
+              <td>2024-06-01</td>
+              <td>$3,200</td>
+              <td><span class="status-badge status-paid">Paid</span></td>
+              <td>2024-06-30</td>
+              <td>mary@cityhealth.com</td>
+              <td>
+                <span class="action-link" onclick="viewInvoice('INV-2024-00098')">View</span>
+              </td>
+            </tr>
+            <!-- More rows as needed -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script>
+    function logout() {
+      localStorage.removeItem('userToken');
+      window.location.href = 'index.html';
+    }
+    function viewInvoice(id) { alert('View invoice: ' + id); }
+    function markPaid(id) { alert('Mark as paid: ' + id); }
+    function sendReminder(id) { alert('Send reminder for: ' + id); }
+  </script>
+</body>
+</html>

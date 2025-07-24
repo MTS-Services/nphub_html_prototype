@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Institution Applications - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background: #2d3e50;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .logout-btn {
+      background: transparent;
+      border: 1px solid white;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .main {
+      display: flex;
+      min-height: calc(100vh - 64px);
+    }
+    .sidebar {
+      width: 250px;
+      background: #34495e;
+      color: white;
+      padding: 24px 0;
+    }
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      color: white;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .nav-item:hover,
+    .nav-item.active {
+      background: #2c3e50;
+      border-left-color: #3498db;
+    }
+    .content {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      margin-top: 0;
+      color: #2d3e50;
+    }
+    .filter-group {
+      margin-bottom: 16px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    select, input[type="text"] {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+    th {
+      background: #f8f9fa;
+      font-weight: 600;
+    }
+    .status {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-block;
+    }
+    .status.pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    .status.approved {
+      background: #d4edda;
+      color: #155724;
+    }
+    .status.rejected {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    @media (max-width: 768px) {
+      .main {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+      }
+      .filter-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Institution Applications</h1>
+    <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+  </div>
+  <div class="main">
+    <nav class="sidebar">
+      <a href="institution-dashboard.html" class="nav-item">🏠 Dashboard</a>
+      <a href="institution-students.html" class="nav-item">👩‍🎓 Students</a>
+      <a href="institution-applications.html" class="nav-item active">📄 Applications</a>
+      <a href="institution-rotations.html" class="nav-item">🔄 Rotations</a>
+      <a href="institution-messages.html" class="nav-item">💬 Messages</a>
+      <a href="institution-reports.html" class="nav-item">📊 Reports</a>
+      <a href="institution-settings.html" class="nav-item">⚙️ Settings</a>
+    </nav>
+    <main class="content">
+      <div class="card">
+        <h2>Student Applications</h2>
+        <div class="filter-group">
+          <label>
+            Status:
+            <select>
+              <option>All</option>
+              <option>Pending</option>
+              <option>Approved</option>
+              <option>Rejected</option>
+            </select>
+          </label>
+          <label>
+            Search:
+            <input type="text" placeholder="Student or Clinic name" />
+          </label>
+          <button class="btn-primary" onclick="alert('Apply filters')">Filter</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Clinic</th>
+              <th>Rotation</th>
+              <th>Status</th>
+              <th>Submitted</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Jane Smith</td>
+              <td>Sunrise Health Clinic</td>
+              <td>Family Medicine</td>
+              <td><span class="status pending">Pending</span></td>
+              <td>2025-07-01</td>
+              <td>
+                <button class="btn-primary" onclick="alert('View application')">View</button>
+                <button class="btn-primary" onclick="alert('Approve application')">Approve</button>
+                <button class="btn-primary" onclick="alert('Reject application')">Reject</button>
+              </td>
+            </tr>
+            <tr>
+              <td>John Doe</td>
+              <td>Metro Medical Center</td>
+              <td>Pediatrics</td>
+              <td><span class="status approved">Approved</span></td>
+              <td>2025-06-28</td>
+              <td>
+                <button class="btn-primary" onclick="alert('View application')">View</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Mary Johnson</td>
+              <td>Downtown Urgent Care</td>
+              <td>Women's Health</td>
+              <td><span class="status rejected">Rejected</span></td>
+              <td>2025-06-20</td>
+              <td>
+                <button class="btn-primary" onclick="alert('View application')">View</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

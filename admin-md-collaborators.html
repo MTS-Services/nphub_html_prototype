@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MD Collaborators - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #F5F7FA;
+      --color-text: #2D2D2D;
+      --color-white: #FFF;
+      --border-radius: 10px;
+      --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      --transition: 0.3s ease;
+      --gap: 24px;
+      --status-active: #28a745;
+      --status-inactive: #dc3545;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    nav.sidebar {
+      width: 260px;
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+      user-select: none;
+      overflow-y: auto;
+    }
+    nav.sidebar .sidebar-section {
+      margin-bottom: 32px;
+    }
+    nav.sidebar .sidebar-section h3 {
+      padding-left: 24px;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+    }
+    nav.sidebar a.nav-item {
+      display: block;
+      padding: 14px 28px;
+      color: var(--color-white);
+      text-decoration: none;
+      border-left: 4px solid transparent;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background var(--transition), border-color var(--transition);
+      cursor: pointer;
+    }
+    nav.sidebar a.nav-item:hover,
+    nav.sidebar a.nav-item.active {
+      background: var(--color-primary);
+      border-left-color: var(--color-secondary);
+    }
+    main.content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: var(--gap);
+      overflow: hidden;
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin: 24px;
+      min-width: 0;
+    }
+    .top-buttons {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 18px;
+      align-items: center;
+    }
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1rem;
+      user-select: none;
+      transition: background var(--transition);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .btn-primary {
+      background-color: var(--color-primary);
+      color: var(--color-white);
+    }
+    .btn-primary:hover {
+      background-color: var(--color-primary-dark);
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 18px;
+      align-items: center;
+    }
+    .controls input[type="text"], .controls select {
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    section.list-container {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      flex: 1;
+      min-width: 0;
+    }
+    section.list-container h2 {
+      margin: 0;
+      padding: 20px 24px;
+      background: var(--color-primary);
+      color: var(--color-white);
+      font-weight: 700;
+      font-size: 1.3rem;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .list-content {
+      padding: 20px 24px;
+      overflow-y: auto;
+      flex: 1;
+      background: #f9fafb;
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-primary) transparent;
+    }
+    .list-content::-webkit-scrollbar {
+      width: 8px;
+    }
+    .list-content::-webkit-scrollbar-thumb {
+      background-color: var(--color-primary);
+      border-radius: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    thead {
+      background-color: var(--color-primary);
+      color: var(--color-white);
+      user-select: none;
+    }
+    thead th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 700;
+      border-bottom: 2px solid var(--color-secondary);
+    }
+    tbody tr {
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    tbody tr:hover {
+      background-color: #e9f0ff;
+    }
+    tbody td {
+      padding: 12px 16px;
+      vertical-align: middle;
+    }
+    tbody td a {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    tbody td a:hover {
+      text-decoration: underline;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: white;
+      user-select: none;
+    }
+    .status-active {
+      background-color: var(--status-active);
+    }
+    .status-inactive {
+      background-color: var(--status-inactive);
+    }
+    .actions a, .actions button {
+      color: #0A2540;
+      text-decoration: underline;
+      margin-right: 8px;
+      font-size: 0.97rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    .actions button:hover {
+      color: #c00;
+      text-decoration: underline;
+    }
+    .no-results {
+      color: #888;
+      text-align: center;
+      padding: 24px 0;
+    }
+    @media (max-width: 900px) {
+      main.content {
+        margin: 12px;
+      }
+      .top-buttons {
+        justify-content: center;
+        margin-bottom: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="sidebar" aria-label="Admin navigation">
+    <div class="sidebar-section">
+      <h3>People</h3>
+      <a href="admin-md-collaborators.html" class="nav-item active">👨‍⚕️ MD Collaborators</a>
+      <a href="admin-nps.html" class="nav-item">🩺 NPs / Job Seekers</a>
+      <a href="admin-students.html" class="nav-item">🎓 Students</a>
+      <a href="admin-program-coordinators.html" class="nav-item">👩‍💼 Program Coordinators</a>
+      <a href="admin-preceptors.html" class="nav-item">👨‍⚕️ Preceptors</a>
+    </div>
+    <div class="sidebar-section">
+      <h3>Services</h3>
+      <a href="admin-rotation-applications.html" class="nav-item">📝 Rotations</a>
+      <a href="admin-job-applications.html" class="nav-item">📄 Job Applications</a>
+      <a href="admin-job-postings.html" class="nav-item">📋 Job Postings</a>
+      <a href="admin-scheduling.html" class="nav-item">📅 Scheduling</a>
+      <a href="admin-billing.html" class="nav-item">💳 Billing</a>
+      <a href="admin-messaging.html" class="nav-item">💬 Messaging</a>
+      <a href="admin-md-collaborations.html" class="nav-item">👨‍⚕️ MD Collaborations</a>
+      <a href="admin-practice-launchpad.html" class="nav-item">🚀 Practice Launchpad</a>
+    </div>
+    <div class="sidebar-section">
+      <h3>Organization</h3>
+      <a href="admin-clinics.html" class="nav-item">🏥 Clinics</a>
+      <a href="admin-institutions.html" class="nav-item">🏫 Institutions</a>
+      <a href="admin-programs.html" class="nav-item">📋 Programs</a>
+    </div>
+    <div class="sidebar-section">
+      <h3>System</h3>
+      <a href="admin-dashboard.html" class="nav-item">🏠 Dashboard</a>
+      <a href="admin-reports.html" class="nav-item">📊 Reports</a>
+      <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+    </div>
+  </nav>
+  <main class="content" role="main">
+    <div class="top-buttons">
+      <button id="btn-add-collaborator" class="btn btn-primary">+ Add MD Collaborator</button>
+    </div>
+    <section class="list-container" aria-label="MD Collaborators">
+      <h2>MD Collaborators</h2>
+      <div class="controls">
+        <input type="text" id="searchInput" placeholder="Search by any field..." />
+        <select id="statusFilter">
+          <option value="">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <select id="specialtyFilter">
+          <option value="">All Specialties</option>
+          <!-- Specialty options will be populated dynamically -->
+        </select>
+      </div>
+      <div class="list-content">
+        <table id="collaboratorsTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Specialty</th>
+              <th>Credentials</th>
+              <th>Phone</th>
+              <th>Office</th>
+              <th>Languages</th>
+              <th>Experience</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Collaborators will be inserted here -->
+          </tbody>
+        </table>
+        <div id="noResults" class="no-results" style="display:none;">No collaborators found.</div>
+      </div>
+    </section>
+  </main>
+  <script type="module">
+    import { collection, getDocs, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    import { db } from './firebase-init.js';
+
+    document.getElementById('btn-add-collaborator').addEventListener('click', () => {
+      window.location.href = 'admin-md-collaborator-create.html';
+    });
+
+    let allCollaborators = [];
+
+    function formatDate(ts) {
+      if (!ts) return '';
+      const d = ts.toDate();
+      return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
+    }
+
+    function renderTable(collaborators) {
+      const tableBody = document.querySelector('#collaboratorsTable tbody');
+      const noResults = document.getElementById('noResults');
+      tableBody.innerHTML = '';
+      if (!collaborators.length) {
+        noResults.style.display = 'block';
+        return;
+      }
+      noResults.style.display = 'none';
+      collaborators.forEach(item => {
+        const data = item.data;
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${data.name || ''}</td>
+          <td>${data.email || ''}</td>
+          <td>${data.specialty || ''}</td>
+          <td>${data.credentials || ''}</td>
+          <td>${data.phone || ''}</td>
+          <td>${data.office || ''}</td>
+          <td>${data.languages || ''}</td>
+          <td>${data.experience || ''}</td>
+          <td>${data.status || ''}</td>
+          <td>${data.createdAt ? formatDate(data.createdAt) : ''}</td>
+          <td class="actions">
+            <a href="admin-md-collaborator-detail.html?id=${item.id}">View</a>
+            <a href="admin-md-collaborator-edit.html?id=${item.id}">Edit</a>
+            <button data-id="${item.id}" class="deleteBtn">Delete</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+      // Attach delete handlers
+      document.querySelectorAll('.deleteBtn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const id = btn.getAttribute('data-id');
+          if (confirm('Are you sure you want to delete this collaborator?')) {
+            await deleteDoc(doc(db, 'mdcollaborators', id));
+            allCollaborators = allCollaborators.filter(c => c.id !== id);
+            renderTable(applyFilters(allCollaborators));
+          }
+        });
+      });
+    }
+
+    function applyFilters(collaborators) {
+      const search = document.getElementById('searchInput').value.trim().toLowerCase();
+      const status = document.getElementById('statusFilter').value;
+      const specialty = document.getElementById('specialtyFilter').value;
+
+      return collaborators.filter(item => {
+        const d = item.data;
+        // Search: match any field
+        const searchString = [
+          d.name, d.email, d.specialty, d.credentials, d.phone, d.office,
+          d.languages, d.experience, d.status
+        ].map(x => (x || '').toLowerCase()).join(' ');
+        const matchesSearch = !search || searchString.includes(search);
+        const matchesStatus = !status || d.status === status;
+        const matchesSpecialty = !specialty || d.specialty === specialty;
+        return matchesSearch && matchesStatus && matchesSpecialty;
+      });
+    }
+
+    function populateSpecialtyFilter(collaborators) {
+      const specialtySet = new Set();
+      collaborators.forEach(item => {
+        if (item.data.specialty) specialtySet.add(item.data.specialty);
+      });
+      const specialtyFilter = document.getElementById('specialtyFilter');
+      specialtyFilter.innerHTML = '<option value="">All Specialties</option>';
+      Array.from(specialtySet).sort().forEach(spec => {
+        const opt = document.createElement('option');
+        opt.value = spec;
+        opt.textContent = spec;
+        specialtyFilter.appendChild(opt);
+      });
+    }
+
+    async function loadCollaborators() {
+      const tableBody = document.querySelector('#collaboratorsTable tbody');
+      tableBody.innerHTML = '<tr><td colspan="11">Loading...</td></tr>';
+      try {
+        const q = query(collection(db, 'mdcollaborators'), orderBy('createdAt', 'desc'));
+        const querySnapshot = await getDocs(q);
+        allCollaborators = [];
+        querySnapshot.forEach(docSnap => {
+          allCollaborators.push({ id: docSnap.id, data: docSnap.data() });
+        });
+        populateSpecialtyFilter(allCollaborators);
+        renderTable(applyFilters(allCollaborators));
+      } catch (error) {
+        tableBody.innerHTML = `<tr><td colspan="11" style="color:red;">Error loading collaborators.</td></tr>`;
+        console.error('Error loading collaborators:', error);
+      }
+    }
+
+    // Event listeners for search and filters
+    document.getElementById('searchInput').addEventListener('input', () => {
+      renderTable(applyFilters(allCollaborators));
+    });
+    document.getElementById('statusFilter').addEventListener('change', () => {
+      renderTable(applyFilters(allCollaborators));
+    });
+    document.getElementById('specialtyFilter').addEventListener('change', () => {
+      renderTable(applyFilters(allCollaborators));
+    });
+
+    loadCollaborators();
+  </script>
+</body>
+</html>
