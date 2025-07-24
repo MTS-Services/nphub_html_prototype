@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rotation Applications - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-success: #27ae60;
+      --color-success-dark: #388e3c;
+      --color-warning: #f39c12;
+      --color-warning-dark: #f57c00;
+      --color-info: #cce5ff;
+      --color-info-dark: #004085;
+      --color-bg: #ECECEC;
+      --color-text: #2D2D2D;
+      --color-muted: #6c757d;
+      --color-muted-light: #888;
+      --color-white: #FFF;
+      --border-radius: 12px;
+      --transition: 0.3s ease;
+      --color-danger: #e74c3c;
+      --color-danger-dark: #c0392b;
+      --box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      --sidebar-width: 250px;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+    }
+    .header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      flex-shrink: 0;
+      user-select: none;
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      flex-grow: 1;
+    }
+    .header-right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      white-space: nowrap;
+    }
+    .upgrade-btn {
+      background: var(--color-danger);
+      color: var(--color-white);
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background-color var(--transition);
+    }
+    .upgrade-btn:hover,
+    .upgrade-btn:focus {
+      background: var(--color-danger-dark);
+      outline: none;
+    }
+    .logout-btn {
+      background: #dc3545;
+      color: var(--color-white);
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color var(--transition);
+    }
+    .logout-btn:hover,
+    .logout-btn:focus {
+      background: #b02a37;
+      outline: none;
+    }
+    .main {
+      display: flex;
+      min-height: calc(100vh - 64px);
+      overflow: hidden;
+    }
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 24px 0;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all var(--transition);
+      color: var(--color-white);
+      text-decoration: none;
+      user-select: none;
+    }
+    .nav-item:hover,
+    .nav-item:focus,
+    .nav-item.active {
+      background: var(--color-primary);
+      border-left-color: var(--color-secondary);
+      outline: none;
+    }
+    .content {
+      flex: 1;
+      padding: 32px 48px;
+      overflow-y: auto;
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      margin: 24px;
+      box-shadow: var(--box-shadow);
+      min-width: 0;
+    }
+    .card {
+      background: var(--color-bg);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      overflow-x: auto;
+    }
+    .card h3 {
+      margin-bottom: 20px;
+      color: var(--color-primary-dark);
+      font-weight: 700;
+      font-size: 1.4rem;
+    }
+    .new-application-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--color-success);
+      color: var(--color-white);
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color var(--transition);
+      margin-bottom: 24px;
+    }
+    .new-application-btn:hover,
+    .new-application-btn:focus {
+      background: var(--color-success-dark);
+      outline: none;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 0.95rem;
+      table-layout: fixed;
+      word-wrap: break-word;
+      min-width: 700px;
+    }
+    th,
+    td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      white-space: normal;
+      word-break: break-word;
+      min-width: 100px;
+    }
+    td:last-child {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      max-width: 260px;
+      min-width: 120px;
+    }
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background-color var(--transition);
+      margin-bottom: 4px;
+      margin-right: 0;
+      flex: 1 1 auto;
+      min-width: 80px;
+      box-sizing: border-box;
+    }
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-white);
+    }
+    .btn-primary:hover,
+    .btn-primary:focus {
+      background: var(--color-primary-dark);
+      outline: none;
+    }
+    .btn-success {
+      background: var(--color-success);
+      color: var(--color-white);
+    }
+    .btn-success:hover,
+    .btn-success:focus {
+      background: var(--color-success-dark);
+      outline: none;
+    }
+    .btn-warning {
+      background: var(--color-warning);
+      color: var(--color-white);
+    }
+    .btn-warning:hover,
+    .btn-warning:focus {
+      background: var(--color-warning-dark);
+      outline: none;
+    }
+    .btn-danger {
+      background: var(--color-danger);
+      color: var(--color-white);
+    }
+    .btn-danger:hover,
+    .btn-danger:focus {
+      background: var(--color-danger-dark);
+      outline: none;
+    }
+    .status {
+      padding: 6px 12px;
+      border-radius: var(--border-radius);
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+    .status.pending,
+    .status['under review'] {
+      background: #fff3cd;
+      color: #856404;
+    }
+    .status.active,
+    .status.accepted {
+      background: #d4edda;
+      color: #155724;
+    }
+    .status.completed {
+      background: var(--color-info);
+      color: var(--color-info-dark);
+    }
+    .status.rejected {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    .status.withdrawn {
+      background: #e2e3e5;
+      color: #383d41;
+    }
+    .no-results {
+      text-align: center;
+      color: var(--color-muted);
+      padding: 48px 0;
+    }
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 32px;
+      box-shadow: var(--box-shadow);
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: transparent;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--color-muted);
+      transition: color var(--transition);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    .modal-close:hover {
+      color: var(--color-danger);
+      background: #f8f9fa;
+    }
+    .modal-details div {
+      margin-bottom: 8px;
+    }
+    @media (max-width: 1024px) {
+      .content {
+        padding: 24px;
+        margin: 16px;
+      }
+    }
+    @media (max-width: 900px) {
+      .card {
+        padding: 12px;
+      }
+      .content {
+        padding: 8px;
+        margin: 4px;
+      }
+      table {
+        font-size: 0.85rem;
+        min-width: 600px;
+      }
+      th, td {
+        padding: 8px 8px;
+        min-width: 80px;
+      }
+      td:last-child {
+        max-width: 180px;
+        min-width: 80px;
+      }
+    }
+    @media (max-width: 600px) {
+      .sidebar {
+        width: 220px;
+      }
+      .card {
+        padding: 4px;
+      }
+      table {
+        font-size: 0.8rem;
+        min-width: 500px;
+      }
+      th, td {
+        padding: 6px 4px;
+        min-width: 60px;
+      }
+      td:last-child {
+        max-width: 120px;
+        min-width: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Rotation Applications</h1>
+    <div class="header-right">
+      <span>Welcome, Taylor Jones</span>
+      <button class="upgrade-btn" onclick="window.location.href='student-upgrade.html'">Upgrade to Pro</button>
+      <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="sidebar">
+      <a class="nav-item" href="student-dashboard.html">📊 Overview</a>
+      <a class="nav-item" href="student-rotations.html">🏥 My Rotations</a>
+      <a class="nav-item" href="student-log-hours.html">⏰ Log Hours</a>
+      <a class="nav-item active" href="student-applications.html">📝 Applications</a>
+      <a class="nav-item" href="student-evaluations.html">⭐ Evaluations</a>
+      <a class="nav-item" href="student-payment-history.html">💳 Payment History</a>
+      <a class="nav-item" href="student-profile.html">👤 Profile</a>
+      <a class="nav-item" href="student-support.html">🆘 Support</a>
+      <a class="nav-item" href="student-job-search.html">🔍 Job Search & Apply</a>
+    </div>
+    <div class="content">
+      <div class="card">
+        <h3>Rotation Applications</h3>
+        <a class="new-application-btn" href="student-new-application.html">
+          <span>+</span> New Rotation Application
+        </a>
+        <table>
+          <thead>
+            <tr>
+              <th>Clinical Site</th>
+              <th>Specialty</th>
+              <th>Preferred Dates</th>
+              <th>Application Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="applicationsTableBody"></tbody>
+        </table>
+        <div class="no-results" id="noApplications" style="display:none;">
+          <h4>No applications submitted yet.</h4>
+          <p>Click "New Rotation Application" to get started!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for application details -->
+  <div class="modal-overlay" id="applicationModal" role="dialog" aria-modal="true">
+    <div class="modal" tabindex="-1">
+      <button class="modal-close" aria-label="Close" onclick="closeApplicationModal()">&times;</button>
+      <div id="modalAppTitle" class="rotation-title" style="font-size:1.2rem;font-weight:700;margin-bottom:8px;"></div>
+      <div id="modalAppMeta" class="rotation-meta" style="margin-bottom:8px;"></div>
+      <div id="modalAppDetails" class="modal-details" style="margin-bottom:12px;"></div>
+      <div id="modalAppStatus" style="margin-bottom:8px;"></div>
+      <div id="modalAppFeedback" style="margin-top:12px;"></div>
+      <div id="modalAppActions"></div>
+    </div>
+  </div>
+
+  <script>
+    // Sample application data (replace with Firestore integration as needed)
+    let applications = [
+      {
+        id: 1,
+        clinicalSite: "Metro General Hospital",
+        specialty: "Emergency Medicine",
+        preferredDates: "Oct 2025 - Dec 2025",
+        applicationDate: "2025-06-15",
+        status: "Under Review",
+        statement: "I am passionate about emergency medicine and want to learn in a high-acuity setting.",
+        feedback: "",
+        canEdit: true,
+        canWithdraw: true,
+        details: {
+          preceptor: "Dr. Michael Chen",
+          program: "Acute Care",
+          coordinator: "Jane Smith",
+          rotationCode: "EM-2025-MGH",
+          requiredDocs: ["Immunization Record", "Background Check"],
+          paid: "Unpaid",
+          applicationDeadline: "2025-08-01",
+          existingAffiliations: ["Duke University", "UNC Chapel Hill"],
+          preceptorCredential: "MD, FACEP",
+          avgPatientsPerDay: 30,
+          preceptorSchedule: "Mon-Fri 7am-3pm",
+          dressCode: "Scrubs",
+          patientPopulation: "Adults, Trauma"
+        }
+      },
+      {
+        id: 2,
+        clinicalSite: "City Cardiology Clinic",
+        specialty: "Cardiology",
+        preferredDates: "Jan 2026 - Mar 2026",
+        applicationDate: "2025-07-01",
+        status: "Accepted",
+        statement: "I want to deepen my experience in cardiology and work with a diverse patient population.",
+        feedback: "Congratulations! You have been accepted. Please check your email for next steps.",
+        canEdit: false,
+        canWithdraw: false,
+        details: {
+          preceptor: "Dr. Sarah Johnson",
+          program: "Cardiology",
+          coordinator: "Mark Davis",
+          rotationCode: "CARD-2026-CCC",
+          requiredDocs: ["CPR Certification"],
+          paid: "Paid",
+          applicationDeadline: "2025-12-01",
+          existingAffiliations: ["UNC Chapel Hill"],
+          preceptorCredential: "MD, FACC",
+          avgPatientsPerDay: 22,
+          preceptorSchedule: "Tue-Thu 9am-4pm",
+          dressCode: "Business Casual",
+          patientPopulation: "Adults, Cardiac"
+        }
+      },
+      {
+        id: 3,
+        clinicalSite: "Regional Medical Center",
+        specialty: "Orthopedics",
+        preferredDates: "Sep 2025 - Nov 2025",
+        applicationDate: "2025-05-20",
+        status: "Completed",
+        statement: "I completed this rotation and gained valuable orthopedic skills.",
+        feedback: "",
+        canEdit: false,
+        canWithdraw: false,
+        details: {
+          preceptor: "Dr. Lisa Rodriguez",
+          program: "Orthopedics",
+          coordinator: "Susan Clark",
+          rotationCode: "ORTHO-2025-RMC",
+          requiredDocs: ["Background Check"],
+          paid: "Unpaid",
+          applicationDeadline: "2025-08-15",
+          existingAffiliations: [],
+          preceptorCredential: "MD",
+          avgPatientsPerDay: 18,
+          preceptorSchedule: "Mon-Wed 8am-2pm",
+          dressCode: "Scrubs",
+          patientPopulation: "Adults, Sports Medicine"
+        }
+      }
+    ];
+
+    function renderApplications() {
+      const tbody = document.getElementById('applicationsTableBody');
+      const noApps = document.getElementById('noApplications');
+      tbody.innerHTML = '';
+      if (!applications.length) {
+        noApps.style.display = '';
+        return;
+      }
+      noApps.style.display = 'none';
+      applications.forEach(app => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${app.clinicalSite}</td>
+          <td>${app.specialty}</td>
+          <td>${app.preferredDates}</td>
+          <td>${app.applicationDate}</td>
+          <td><span class="status ${statusClass(app.status)}">${app.status}</span></td>
+          <td>
+            <button class="btn btn-primary" onclick="openApplicationModal(${app.id})">View</button>
+            ${app.canEdit ? `<button class="btn btn-warning" onclick="editApplication(${app.id})">Edit</button>` : ''}
+            ${app.canWithdraw ? `<button class="btn btn-danger" onclick="withdrawApplication(${app.id})">Withdraw</button>` : ''}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function statusClass(status) {
+      const s = status.toLowerCase();
+      if (s === 'pending' || s === 'under review') return 'pending';
+      if (s === 'active' || s === 'accepted') return 'active';
+      if (s === 'completed') return 'completed';
+      if (s === 'rejected') return 'rejected';
+      if (s === 'withdrawn') return 'withdrawn';
+      return '';
+    }
+
+    function openApplicationModal(id) {
+      const app = applications.find(a => a.id === id);
+      if (!app) return;
+      document.getElementById('modalAppTitle').textContent = app.clinicalSite + " - " + app.specialty;
+      document.getElementById('modalAppMeta').innerHTML = `
+        <span>Preferred Dates: ${app.preferredDates}</span> |
+        <span>Application Date: ${app.applicationDate}</span>
+      `;
+      document.getElementById('modalAppDetails').innerHTML = `
+        <div><strong>Statement of Interest:</strong> ${app.statement}</div>
+        <div><strong>Preceptor:</strong> ${app.details.preceptor}</div>
+        <div><strong>Program:</strong> ${app.details.program}</div>
+        <div><strong>Coordinator:</strong> ${app.details.coordinator}</div>
+        <div><strong>Rotation Code:</strong> ${app.details.rotationCode}</div>
+        <div><strong>Required Documents:</strong> ${app.details.requiredDocs.join(', ')}</div>
+        <div><strong>Paid/Unpaid:</strong> ${app.details.paid}</div>
+        <div><strong>Application Deadline:</strong> ${app.details.applicationDeadline}</div>
+        <div><strong>Existing Affiliations:</strong> ${app.details.existingAffiliations.length ? app.details.existingAffiliations.join(', ') : 'None'}</div>
+        <div><strong>Preceptor Credential:</strong> ${app.details.preceptorCredential}</div>
+        <div><strong>Avg Patients/Day:</strong> ${app.details.avgPatientsPerDay}</div>
+        <div><strong>Preceptor Schedule:</strong> ${app.details.preceptorSchedule}</div>
+        <div><strong>Dress Code:</strong> ${app.details.dressCode}</div>
+        <div><strong>Patient Population:</strong> ${app.details.patientPopulation}</div>
+      `;
+      document.getElementById('modalAppStatus').innerHTML = `<strong>Status:</strong> <span class="status ${statusClass(app.status)}">${app.status}</span>`;
+      document.getElementById('modalAppFeedback').innerHTML = app.feedback ? `<strong>Feedback:</strong> ${app.feedback}` : '';
+      // Modal actions
+      let actions = '';
+      if (app.canEdit) actions += `<button class="btn btn-warning" onclick="editApplication(${app.id})">Edit</button>`;
+      if (app.canWithdraw) actions += `<button class="btn btn-danger" onclick="withdrawApplication(${app.id})">Withdraw</button>`;
+      document.getElementById('modalAppActions').innerHTML = actions;
+      document.getElementById('applicationModal').classList.add('active');
+    }
+
+    function closeApplicationModal() {
+      document.getElementById('applicationModal').classList.remove('active');
+    }
+
+    function editApplication(id) {
+      // Simulate edit by redirecting to the new application form with a query param
+      closeApplicationModal();
+      window.location.href = `student-new-application.html?edit=${id}`;
+    }
+
+    function withdrawApplication(id) {
+      if (confirm('Are you sure you want to withdraw this application?')) {
+        applications = applications.map(app =>
+          app.id === id ? { ...app, status: "Withdrawn", canEdit: false, canWithdraw: false } : app
+        );
+        renderApplications();
+        closeApplicationModal();
+        alert('Application withdrawn.');
+      }
+    }
+
+    // Modal close on overlay click or ESC
+    document.getElementById('applicationModal').addEventListener('click', function (e) {
+      if (e.target === this) closeApplicationModal();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === "Escape") closeApplicationModal();
+    });
+
+    renderApplications();
+  </script>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Job Details - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #3498db;
+      --color-primary-dark: #1976d2;
+      --color-secondary: #7b1fa2;
+      --color-success: #27ae60;
+      --color-success-dark: #388e3c;
+      --color-warning: #f39c12;
+      --color-warning-dark: #f57c00;
+      --color-info: #cce5ff;
+      --color-info-dark: #004085;
+      --color-bg: #f5f7fa;
+      --color-text: #2d3e50;
+      --color-muted: #6c757d;
+      --color-muted-light: #888;
+      --color-white: #fff;
+      --border-radius: 8px;
+      --transition: 0.3s ease;
+      --color-danger: #e74c3c;
+      --color-danger-dark: #c0392b;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      flex-grow: 1;
+      user-select: none;
+    }
+
+    .header-right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .upgrade-btn {
+      background: var(--color-danger);
+      color: var(--color-white);
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background-color var(--transition);
+    }
+
+    .upgrade-btn:hover,
+    .upgrade-btn:focus {
+      background: var(--color-danger-dark);
+      outline: none;
+    }
+
+    .logout-btn {
+      background: transparent;
+      color: var(--color-white);
+      border: 1px solid var(--color-white);
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color var(--transition);
+    }
+
+    .logout-btn:hover,
+    .logout-btn:focus {
+      background-color: rgba(255, 255, 255, 0.2);
+      outline: none;
+    }
+
+    .main {
+      display: flex;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #34495e;
+      color: var(--color-white);
+      padding: 24px 0;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    nav.sidebar a.nav-item {
+      display: block;
+      padding: 12px 24px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all var(--transition);
+      color: var(--color-white);
+      text-decoration: none;
+      user-select: none;
+    }
+
+    nav.sidebar a.nav-item:hover,
+    nav.sidebar a.nav-item:focus,
+    nav.sidebar a.nav-item.active {
+      background: #2c3e50;
+      border-left-color: var(--color-primary);
+      outline: none;
+    }
+
+    .content {
+      flex: 1 1 auto;
+      padding: 24px 32px;
+      overflow-y: auto;
+      min-width: 0;
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin: 24px 24px 24px 0;
+    }
+
+    h2 {
+      margin-bottom: 16px;
+      color: var(--color-primary);
+    }
+
+    .job-header {
+      margin-bottom: 24px;
+    }
+
+    .job-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .job-company {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--color-muted);
+      margin-bottom: 4px;
+    }
+
+    .job-meta {
+      font-size: 0.95rem;
+      color: var(--color-muted-light);
+      margin-bottom: 24px;
+    }
+
+    .job-description {
+      font-size: 1rem;
+      line-height: 1.5;
+      margin-bottom: 32px;
+      white-space: pre-wrap;
+    }
+
+    form.apply-form {
+      max-width: 600px;
+    }
+
+    form.apply-form label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--color-text);
+    }
+
+    form.apply-form input[type="text"],
+    form.apply-form input[type="email"],
+    form.apply-form textarea,
+    form.apply-form input[type="file"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      margin-bottom: 16px;
+      transition: border-color var(--transition);
+    }
+
+    form.apply-form input[type="text"]:focus,
+    form.apply-form input[type="email"]:focus,
+    form.apply-form textarea:focus,
+    form.apply-form input[type="file"]:focus {
+      border-color: var(--color-primary);
+      outline: none;
+      box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+    }
+
+    form.apply-form textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .apply-button {
+      background: var(--color-success);
+      color: var(--color-white);
+      border: none;
+      padding: 12px 24px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background-color var(--transition);
+    }
+
+    .apply-button:hover,
+    .apply-button:focus {
+      background: var(--color-success-dark);
+      outline: none;
+    }
+
+    .confirmation {
+      margin-top: 24px;
+      padding: 16px;
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+    }
+
+    @media (max-width: 900px) {
+      .main {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+      }
+      .content {
+        margin: 16px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header" role="banner">
+    <h1>Student Dashboard</h1>
+    <div class="header-right">
+      <span>Good afternoon, Taylor Jones</span>
+      <button class="upgrade-btn" onclick="window.location.href='student-upgrade.html'" aria-label="Upgrade to Pro plan">Upgrade to Pro</button>
+      <button class="logout-btn" onclick="window.location.href='index.html'" aria-label="Logout">Logout</button>
+    </div>
+  </header>
+  <div class="main">
+    <nav class="sidebar" aria-label="Student navigation">
+      <a class="nav-item" href="student-dashboard.html">📊 Overview</a>
+      <a class="nav-item" href="student-rotations.html">🏥 My Rotations</a>
+      <a class="nav-item" href="student-log-hours.html">⏰ Log Hours</a>
+      <a class="nav-item" href="student-applications.html">📝 Applications</a>
+      <a class="nav-item" href="student-evaluations.html">⭐ Evaluations</a>
+      <a class="nav-item" href="student-payment-history.html">💳 Payment History</a>
+      <a class="nav-item" href="student-profile.html">👤 Profile</a>
+      <a class="nav-item" href="student-support.html">🆘 Support</a>
+      <a class="nav-item" href="student-job-search.html">🔍 Job Search & Apply</a>
+    </nav>
+    <main class="content" role="main" tabindex="0">
+      <section class="job-header" aria-label="Job details header">
+        <div class="job-title" id="jobTitle">Family Nurse Practitioner</div>
+        <div class="job-company" id="jobCompany">Sunrise Health Clinic</div>
+        <div class="job-meta" id="jobMeta">
+          Location: New York, NY | Full-time | Posted: July 1, 2025 | On-site
+        </div>
+      </section>
+
+      <section class="job-description" id="jobDescription" aria-label="Job description">
+        Provide primary care services in a busy urban clinic. Responsibilities include patient assessment, diagnosis, treatment planning, and collaboration with healthcare teams. Must be licensed and have 2+ years clinical experience.
+      </section>
+
+      <section aria-label="Apply for job">
+        <h3>Apply for this job</h3>
+        <form class="apply-form" id="applyForm" novalidate>
+          <label for="applicantName">Full Name</label>
+          <input type="text" id="applicantName" name="applicantName" required placeholder="Your full name" />
+
+          <label for="applicantEmail">Email Address</label>
+          <input type="email" id="applicantEmail" name="applicantEmail" required placeholder="you@example.com" />
+
+          <label for="applicantResume">Upload Resume (PDF, DOC)</label>
+          <input type="file" id="applicantResume" name="applicantResume" accept=".pdf,.doc,.docx" required />
+
+          <label for="applicantCoverLetter">Cover Letter (optional)</label>
+          <textarea id="applicantCoverLetter" name="applicantCoverLetter" placeholder="Write a brief cover letter"></textarea>
+
+          <button type="submit" class="apply-button">Submit Application</button>
+        </form>
+        <div id="confirmationMessage" class="confirmation" role="alert" style="display:none;">
+          Thank you for applying! We will review your application and get back to you soon.
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const applyForm = document.getElementById('applyForm');
+    const confirmationMessage = document.getElementById('confirmationMessage');
+
+    applyForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      // Simple validation
+      if (!applyForm.checkValidity()) {
+        applyForm.reportValidity();
+        return;
+      }
+
+      // Here you would normally send form data to backend API
+      // For demo, just show confirmation message and reset form
+      confirmationMessage.style.display = 'block';
+      applyForm.reset();
+      applyForm.querySelector('input, textarea').focus();
+    });
+  </script>
+</body>
+</html>

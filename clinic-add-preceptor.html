@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Preceptor - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; }
+    .header { background: #2d3e50; color: #fff; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 1.5rem; }
+    .header-right { display: flex; gap: 12px; align-items: center; }
+    .logout-btn { background: transparent; color: #fff; border: 1px solid #fff; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+    .back-btn { background: #95a5a6; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-bottom: 16px; }
+    .main { display: flex; min-height: calc(100vh - 64px); }
+    .sidebar { width: 250px; background: #34495e; color: #fff; padding: 24px 0; }
+    .content { flex: 1; padding: 24px; }
+    .nav-item { display: block; padding: 12px 24px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.3s; color: #fff; text-decoration: none; }
+    .nav-item:hover, .nav-item.active { background: #2c3e50; border-left-color: #3498db; }
+    .card { background: #fff; border-radius: 8px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .card h3 { margin-bottom: 16px; color: #2d3e50; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 500; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .tooltip { font-size: 0.9em; color: #888; margin-left: 6px; }
+    .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-right: 8px; }
+    .btn-primary { background: #3498db; color: #fff; }
+    .btn-success { background: #27ae60; color: #fff; }
+    .btn-warning { background: #f39c12; color: #fff; }
+    .btn-danger { background: #e74c3c; color: #fff; }
+    .btn-secondary { background: #6c757d; color: #fff; }
+    
+    /* Multi-select styling */
+    .multi-select { position: relative; }
+    .multi-select select { height: auto; min-height: 42px; }
+    .selected-items { display: flex; flex-wrap: gap: 4px; margin-top: 8px; }
+    .selected-item { background: #e3f2fd; color: #1976d2; padding: 4px 8px; border-radius: 12px; font-size: 0.85rem; display: flex; align-items: center; gap: 4px; }
+    .selected-item .remove { cursor: pointer; font-weight: bold; }
+    
+    /* Availability section styling */
+    .availability-section { border: 1px solid #ddd; border-radius: 6px; padding: 16px; background: #f8f9fa; }
+    .availability-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .calendar-link { color: #3498db; text-decoration: none; font-weight: 500; }
+    .calendar-link:hover { text-decoration: underline; }
+    
+    @media (max-width: 900px) {
+      .main { flex-direction: column; }
+      .sidebar { width: 100%; }
+      .form-row, .form-row-3 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Add Preceptor</h1>
+    <div class="header-right">
+      <span>Clinic Admin</span>
+      <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="sidebar">
+      <a class="nav-item" href="clinic-dashboard.html">🏠 Dashboard</a>
+      <a class="nav-item" href="clinic-applications.html">📝 Applications</a>
+      <a class="nav-item" href="clinic-students.html">👩‍🎓 Students</a>
+      <a class="nav-item" href="clinic-preceptors.html">👨‍⚕️ Preceptors</a>
+      <a class="nav-item" href="clinic-messages.html">💬 Messages</a>
+      <a class="nav-item" href="clinic-schedule.html">📅 Schedule</a>
+      <a class="nav-item" href="clinic-billing.html">💳 Billing</a>
+      <a class="nav-item" href="clinic-reports.html">📈 Reports</a>
+      <a class="nav-item" href="clinic-settings.html">⚙️ Settings</a>
+    </div>
+    <div class="content">
+      <button class="back-btn" onclick="history.back()">← Back</button>
+      <div class="card">
+        <h3>Add New Preceptor</h3>
+        <form onsubmit="event.preventDefault();alert('Preceptor added successfully!');window.location.href='clinic-preceptors.html';">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" required>
+            </div>
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Phone Number *</label>
+              <input type="tel" required>
+            </div>
+            <div class="form-group">
+              <label>Date of Birth</label>
+              <input type="date">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group multi-select">
+              <label>Specialties * <span class="tooltip">(select multiple)</span></label>
+              <select multiple size="6" id="specialties" onchange="updateSelectedSpecialties()">
+                <option value="family-medicine">Family Medicine</option>
+                <option value="internal-medicine">Internal Medicine</option>
+                <option value="pediatrics">Pediatrics</option>
+                <option value="womens-health">Women's Health</option>
+                <option value="geriatrics">Geriatrics</option>
+                <option value="cardiology">Cardiology</option>
+                <option value="endocrinology">Endocrinology</option>
+                <option value="psychiatry">Psychiatry</option>
+                <option value="dermatology">Dermatology</option>
+                <option value="emergency-medicine">Emergency Medicine</option>
+                <option value="urgent-care">Urgent Care</option>
+                <option value="oncology">Oncology</option>
+                <option value="neurology">Neurology</option>
+                <option value="orthopedics">Orthopedics</option>
+                <option value="other">Other</option>
+              </select>
+              <div class="selected-items" id="selectedSpecialties"></div>
+            </div>
+            <div class="form-group">
+              <label>Professional Title *</label>
+              <select required>
+                <option value="">Select</option>
+                <option>NP</option>
+                <option>PA</option>
+                <option>MD</option>
+                <option>DO</option>
+                <option>RN</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>License Number *</label>
+              <input type="text" required>
+            </div>
+            <div class="form-group">
+              <label>License State *</label>
+              <input type="text" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>License Expiry Date *</label>
+              <input type="date" required>
+            </div>
+            <div class="form-group">
+              <label>NPI Number <span class="tooltip">(if applicable)</span></label>
+              <input type="text">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Years of Experience *</label>
+              <input type="number" min="0" required>
+            </div>
+            <div class="form-group">
+              <label>Status</label>
+              <select>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- Availability Section with Calendar Link -->
+          <div class="form-group">
+            <div class="availability-section">
+              <div class="availability-header">
+                <label style="margin: 0;">Availability Schedule</label>
+                <a href="clinic-schedule.html" class="calendar-link" target="_blank">📅 Open Calendar Module</a>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Quick Availability Notes</label>
+                  <input type="text" placeholder="e.g. Mon, Wed, Fri mornings">
+                </div>
+                <div class="form-group">
+                  <label>Max Students per Week</label>
+                  <input type="number" min="1" max="10" value="2">
+                </div>
+              </div>
+              <p style="font-size: 0.9rem; color: #666; margin-top: 8px;">
+                💡 Use the Calendar Module to set detailed availability, block dates, and manage student rotations.
+              </p>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Payment Preference</label>
+            <select>
+              <option value="">Select</option>
+              <option value="check">Check</option>
+              <option value="direct_deposit">Direct Deposit</option>
+              <option value="paypal">PayPal</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Upload CV/Resume</label>
+              <input type="file" accept=".pdf,.doc,.docx">
+            </div>
+            <div class="form-group">
+              <label>Upload License Document</label>
+              <input type="file" accept=".pdf,.jpg,.png">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Bio / Notes</label>
+            <textarea rows="3" placeholder="Short bio, teaching philosophy, or notes"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Emergency Contact Name</label>
+              <input type="text">
+            </div>
+            <div class="form-group">
+              <label>Emergency Contact Phone</label>
+              <input type="tel">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Assign Students Now?</label>
+            <select>
+              <option value="">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-success">Add Preceptor</button>
+          <button type="button" class="btn btn-warning" onclick="window.location.href='clinic-preceptors.html'">Cancel</button>
+          <button type="button" class="btn btn-secondary" onclick="window.open('clinic-schedule.html', '_blank')">📅 Open Calendar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateSelectedSpecialties() {
+      const select = document.getElementById('specialties');
+      const container = document.getElementById('selectedSpecialties');
+      const selected = Array.from(select.selectedOptions);
+      
+      container.innerHTML = '';
+      selected.forEach(option => {
+        const item = document.createElement('div');
+        item.className = 'selected-item';
+        item.innerHTML = `
+          ${option.text}
+          <span class="remove" onclick="removeSpecialty('${option.value}')">&times;</span>
+        `;
+        container.appendChild(item);
+      });
+    }
+    
+    function removeSpecialty(value) {
+      const select = document.getElementById('specialties');
+      const option = select.querySelector(`option[value="${value}"]`);
+      if (option) {
+        option.selected = false;
+        updateSelectedSpecialties();
+      }
+    }
+  </script>
+</body>
+</html>
