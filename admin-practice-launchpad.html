@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Practice Launchpad - Admin Panel | NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+    --color-primary: #0A2540;
+    --color-primary-dark: #021426;
+    --color-secondary: #FFD700;
+    --color-bg: #ECECEC;
+    --color-white: #FFFF;
+    --color-text: #2D2D2D;
+    --border-radius: 12px;
+    --box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    --transition: 0.3s ease;
+    --sidebar-width: 250px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html {
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    }
+    .header {
+    background: var(--color-primary);
+    color: var(--color-white);
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    user-select: none;
+    }
+    .header h1 { font-size: 1.5rem; font-weight: 700; }
+    .logout-btn {
+    background: #dc3545;
+    border: none;
+    color: var(--color-white);
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--transition);
+    user-select: none;
+    }
+    .logout-btn:hover { background: #b02a37; }
+    .main {
+    display: flex;
+    flex: 1 1 auto;
+    height: calc(100vh - 64px);
+    overflow: hidden;
+    }
+    nav.sidebar {
+    width: var(--sidebar-width);
+    background: var(--color-primary-dark);
+    color: var(--color-white);
+    padding: 24px 0;
+    overflow-y: auto;
+    flex-shrink: 0;
+    }
+    nav.sidebar .sidebar-section { margin-bottom: 24px; }
+    nav.sidebar .sidebar-section h3 {
+    padding-left: 24px;
+    margin-bottom: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    user-select: none;
+    }
+    nav.sidebar a {
+    display: block;
+    padding: 12px 24px;
+    color: var(--color-white);
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: background var(--transition), border-color var(--transition);
+    cursor: pointer;
+    user-select: none;
+    }
+    nav.sidebar a:hover,
+    nav.sidebar a.active {
+    background: var(--color-primary);
+    border-left-color: var(--color-secondary);
+    }
+    main.content {
+    flex: 1 1 auto;
+    padding: 32px 48px;
+    overflow-y: auto;
+    background: var(--color-white);
+    border-radius: var(--border-radius);
+    margin: 24px;
+    box-shadow: var(--box-shadow);
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    }
+    main.content h1 {
+    margin-bottom: 24px;
+    color: var(--color-primary);
+    user-select: none;
+    }
+    section { margin-bottom: 40px; }
+    h2 {
+    color: var(--color-primary-dark);
+    margin-bottom: 16px;
+    user-select: none;
+    }
+    p {
+    line-height: 1.5;
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+    }
+    .ideas-filter {
+    margin-bottom: 24px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    }
+    .ideas-filter button {
+    background: #e0e4ff;
+    border: none;
+    padding: 10px 20px;
+    font-weight: 700;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color var(--transition);
+    font-size: 1rem;
+    user-select: none;
+    }
+    .ideas-filter button.active,
+    .ideas-filter button:hover {
+    background: var(--color-primary);
+    color: var(--color-white);
+    }
+    .ideas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
+    gap: 16px;
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: 8px;
+    }
+    .idea-card {
+    background: var(--color-bg);
+    border-radius: var(--border-radius);
+    padding: 16px 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    user-select: none;
+    transition: box-shadow 0.3s ease;
+    }
+    .idea-card:hover {
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
+    .idea-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: var(--color-primary-dark);
+    }
+    .idea-details {
+    flex-grow: 1;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    color: var(--color-text);
+    }
+    .idea-actions {
+    display: flex;
+    gap: 8px;
+    }
+    .btn-secondary {
+    background: #f0f0f0;
+    border: none;
+    padding: 8px 12px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--color-primary);
+    transition: background-color var(--transition);
+    user-select: none;
+    flex: 1;
+    text-align: center;
+    }
+    .btn-secondary:hover {
+    background: var(--color-primary);
+    color: var(--color-white);
+    }
+    .btn-primary {
+    background: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    padding: 10px 16px;
+    font-weight: 700;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color var(--transition);
+    user-select: none;
+    flex: 1;
+    text-align: center;
+    }
+    .btn-primary:hover {
+    background: var(--color-primary-dark);
+    }
+    #ideaModal {
+    display: none;
+    position: fixed;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-white);
+    padding: 24px 32px;
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius);
+    z-index: 10000;
+    max-width: 700px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+    user-select: none;
+    }
+    #ideaModal h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: var(--color-primary-dark);
+    }
+    #ideaModal button.close-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--color-primary-dark);
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    }
+    #modalOverlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    }
+    #servicePackageForm label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    user-select: none;
+    }
+    #servicePackageForm input,
+    #servicePackageForm textarea,
+    #servicePackageForm select {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    border: 2px solid #ccc;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color var(--transition);
+    font-family: inherit;
+    color: var(--color-text);
+    }
+    #servicePackageForm input:focus,
+    #servicePackageForm textarea:focus,
+    #servicePackageForm select:focus {
+    border-color: var(--color-primary);
+    outline: none;
+    box-shadow: 0 0 8px rgba(10,37,64,0.3);
+    }
+    table {
+    border-collapse: collapse;
+    width: 100%;
+    }
+    th, td {
+    border: 1px solid #e0e0e0;
+    padding: 8px;
+    text-align: left;
+    }
+    th { background: #f0f0f0; }
+    .package-img-thumb {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    }
+    .features-list {
+    font-size: 0.95em;
+    color: #444;
+    margin: 0;
+    padding-left: 18px;
+    }
+    .action-buttons {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    }
+    .action-buttons .btn-secondary {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+    flex: none;
+    }
+    .form-section {
+    border-top: 1px solid #eee;
+    padding-top: 16px;
+    margin-top: 16px;
+    }
+    .form-section:first-child {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+    }
+    .form-section h4 {
+    color: var(--color-primary);
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Practice Launchpad</h1>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="main">
+    <nav class="sidebar" aria-label="Admin navigation">
+    <div class="sidebar-section">
+    <h3>People</h3>
+    <a href="admin-md-collaborators.html" class="nav-item">👨‍⚕️ MD Collaborators</a>
+    <a href="admin-nps.html" class="nav-item">🩺 NPs / Job Seekers</a>
+    <a href="admin-students.html" class="nav-item">🎓 Students</a>
+    <a href="admin-program-coordinators.html" class="nav-item">👩‍💼 Program Coordinators</a>
+    <a href="admin-preceptors.html" class="nav-item">👨‍⚕️ Preceptors</a>
+    </div>
+    <div class="sidebar-section">
+    <h3>Services</h3>
+    <a href="admin-rotation-applications.html" class="nav-item">📝 Rotations</a>
+    <a href="admin-job-applications.html" class="nav-item">📄 Job Applications</a>
+    <a href="admin-job-postings.html" class="nav-item">📋 Job Postings</a>
+    <a href="admin-scheduling.html" class="nav-item">📅 Scheduling</a>
+    <a href="admin-messaging.html" class="nav-item">💬 Messaging</a>
+    <a href="admin-billing.html" class="nav-item">💳 Billing</a>
+    <a href="admin-md-collaborations.html" class="nav-item">👨‍⚕️ MD Collaborations</a>
+    <a href="admin-practice-launchpad.html" class="nav-item active">🚀 Practice Launchpad</a>
+    </div>
+    <div class="sidebar-section">
+    <h3>Organization</h3>
+    <a href="admin-clinics.html" class="nav-item">🏥 Clinics</a>
+    <a href="admin-institutions.html" class="nav-item">🏫 Institutions</a>
+    <a href="admin-programs.html" class="nav-item">📋 Programs</a>
+    </div>
+    <div class="sidebar-section">
+    <h3>System</h3>
+    <a href="admin-dashboard.html" class="nav-item">🏠 Dashboard</a>
+    <a href="admin-reports.html" class="nav-item">📊 Reports</a>
+    <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+    </div>
+    </nav>
+
+    <main class="content" role="main" aria-label="Practice Launchpad Business Ideas and Monetization">
+    <section aria-label="Business Idea Categories">
+    <h2>Business Ideas</h2>
+    <p style="margin-bottom:18px;">Browse ideas and click <b>Create Service Package</b> to start building a new offering for clients.</p>
+    <div class="ideas-filter" role="tablist" aria-label="Business Idea Categories">
+    <button class="tab-button active" data-category="all" aria-selected="true" role="tab" tabindex="0">All</button>
+    <button class="tab-button" data-category="clinical" aria-selected="false" role="tab" tabindex="-1">Clinical</button>
+    <button class="tab-button" data-category="telehealth" aria-selected="false" role="tab" tabindex="-1">Telehealth</button>
+    <button class="tab-button" data-category="entrepreneurship" aria-selected="false" role="tab" tabindex="-1">Entrepreneurship</button>
+    <button class="tab-button" data-category="specialty" aria-selected="false" role="tab" tabindex="-1">Specialty</button>
+    </div>
+    <div class="ideas-grid" role="list" aria-live="polite" aria-relevant="additions"></div>
+    </section>
+
+    <section>
+    <h2>Service Packages</h2>
+    <div id="servicePackagesList"></div>
+    <button class="btn-primary" id="newServicePackageBtn" style="margin-bottom:16px;">+ New Service Package</button>
+    </section>
+
+    <section aria-label="Introduction">
+    <h1>Practice Launchpad - Business Ideas & Monetization</h1>
+    <p>Explore 50 curated business ideas for Nurse Practitioners. Convert these ideas into sellable services and workshops to monetize your platform.</p>
+    </section>
+    </main>
+  </div>
+
+  <div id="modalOverlay" tabindex="-1"></div>
+  <div id="ideaModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
+    <button class="close-btn" aria-label="Close" onclick="closeModal()">&times;</button>
+    <h3 id="modalTitle"></h3>
+    <p id="modalDesc"></p>
+
+    <!-- Service Package Creation Form -->
+    <form id="servicePackageForm" style="display: none; flex-direction: column; gap: 12px;">
+    
+    <!-- Basic Information -->
+    <div class="form-section">
+    <h4>Basic Information</h4>
+    <label for="packageName">Package Name</label>
+    <input type="text" id="packageName" name="packageName" required />
+
+    <label for="packageDescription">Description</label>
+    <textarea id="packageDescription" name="packageDescription" rows="3" required></textarea>
+
+    <label for="packagePrice">Price (USD)</label>
+    <input type="number" id="packagePrice" name="packagePrice" min="0" step="0.01" required />
+
+    <label for="packageCategory">Category</label>
+    <input type="text" id="packageCategory" name="packageCategory" placeholder="E.g., Legal, Marketing" />
+
+    <label for="packageStatus">Status</label>
+    <select id="packageStatus" name="packageStatus">
+    <option value="active">Active</option>
+    <option value="inactive">Inactive</option>
+    </select>
+    </div>
+
+    <!-- Features & Highlights -->
+    <div class="form-section">
+    <h4>Features & Highlights</h4>
+    <label for="packageFeatures">Features (one per line)</label>
+    <textarea id="packageFeatures" name="packageFeatures" rows="3" placeholder="Feature 1&#10;Feature 2"></textarea>
+
+    <label for="packageHighlights">Highlights (one per line)</label>
+    <textarea id="packageHighlights" name="packageHighlights" rows="2" placeholder="Key highlight 1&#10;Key highlight 2"></textarea>
+
+    <label for="packageTags">Tags (comma separated)</label>
+    <input type="text" id="packageTags" name="packageTags" placeholder="tag1, tag2, tag3" />
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="form-section">
+    <h4>FAQ Section</h4>
+    <label for="packageFaqs">FAQs (format: Question|Answer per line)</label>
+    <textarea id="packageFaqs" name="packageFaqs" rows="3" placeholder="What is this service?|This is a comprehensive package...&#10;How long does it take?|Typically 5-7 business days"></textarea>
+    </div>
+
+    <!-- Testimonials & Resources -->
+    <div class="form-section">
+    <h4>Testimonials & Resources</h4>
+    <label for="packageTestimonials">Testimonials (one per line)</label>
+    <textarea id="packageTestimonials" name="packageTestimonials" rows="2" placeholder="Great service! - John D.&#10;Highly recommend - Sarah M."></textarea>
+
+    <label for="packageDownloadableResources">Downloadable Resources (one URL per line)</label>
+    <textarea id="packageDownloadableResources" name="packageDownloadableResources" rows="2" placeholder="https://example.com/guide.pdf&#10;https://example.com/template.docx"></textarea>
+    </div>
+
+    <!-- Provider Information -->
+    <div class="form-section">
+    <h4>Provider Information</h4>
+    <label for="packageProvider">Provider Name</label>
+    <input type="text" id="packageProvider" name="packageProvider" placeholder="E.g., NP Clinical Hub" />
+
+    <label for="packageProviderBio">Provider Bio</label>
+    <textarea id="packageProviderBio" name="packageProviderBio" rows="2" placeholder="Brief bio about the provider..."></textarea>
+
+    <label for="packageProviderImage">Provider Image URL</label>
+    <input type="url" id="packageProviderImage" name="packageProviderImage" placeholder="https://..." />
+
+    <label for="packageContactEmail">Contact Email</label>
+    <input type="email" id="packageContactEmail" name="packageContactEmail" />
+    </div>
+
+    <!-- Media & Delivery -->
+    <div class="form-section">
+    <h4>Media & Delivery</h4>
+    <label for="packageHeroImage">Hero Image URL</label>
+    <input type="url" id="packageHeroImage" name="packageHeroImage" placeholder="https://..." />
+
+    <label for="packageImageUrl">Package Image URL</label>
+    <input type="url" id="packageImageUrl" name="packageImageUrl" placeholder="https://..." />
+
+    <label for="packageDeliveryTime">Delivery Time</label>
+    <input type="text" id="packageDeliveryTime" name="packageDeliveryTime" placeholder="E.g., 5-7 business days" />
+
+    <label for="packagePurchaseUrl">Purchase URL</label>
+    <input type="url" id="packagePurchaseUrl" name="packagePurchaseUrl" />
+    </div>
+
+    <!-- Availability -->
+    <div class="form-section">
+    <h4>Availability</h4>
+    <label for="packageStart">Available From</label>
+    <input type="date" id="packageStart" name="packageStart" required />
+
+    <label for="packageEnd">Available Until</label>
+    <input type="date" id="packageEnd" name="packageEnd" required />
+    </div>
+
+    <div style="display: flex; gap: 12px; margin-top: 12px;">
+    <button type="submit" class="btn-primary" style="flex: 1;">Save Package</button>
+    <button type="button" class="btn-secondary" onclick="closeModal()" style="flex: 1;">Cancel</button>
+    </div>
+    </form>
+
+    <!-- Old buttons hidden when form is shown -->
+    <div id="oldModalButtons" style="margin-top: 20px;">
+    <button class="btn-primary" id="createServiceBtn">Create Service Package</button>
+    <button class="btn-secondary" id="addWorkshopBtn">Add to Workshop</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    import { db } from './firebase-init.js';
+
+    // Business ideas data
+    const businessIdeas = {
+    clinical: [
+    { title: "Primary Care Clinic", details: "Start a full-service primary care clinic serving your community with comprehensive care." },
+    { title: "Urgent Care Center", details: "Provide walk-in urgent care services for non-life-threatening conditions." },
+    { title: "Mobile Health Clinic", details: "Bring healthcare to underserved areas with a mobile clinic." },
+    { title: "Chronic Disease Management", details: "Specialize in managing chronic illnesses like diabetes and hypertension." },
+    { title: "Home Health Care Services", details: "Offer nursing and therapy services in patients' homes." },
+    { title: "Geriatric Care", details: "Focus on healthcare for elderly patients with specialized needs." },
+    { title: "Pediatric Clinic", details: "Provide healthcare services specifically for children and adolescents." },
+    { title: "Women's Health Clinic", details: "Specialize in reproductive and general health for women." },
+    { title: "School Health Services", details: "Provide health services and education in school settings." },
+    { title: "Occupational Health Clinic", details: "Offer workplace health and safety services." },
+    { title: "Community Health Center", details: "Operate a center focused on community wellness and preventive care." },
+    { title: "Pain Management Clinic", details: "Help patients manage chronic pain with multidisciplinary approaches." },
+    { title: "Rehabilitation Services", details: "Provide physical and occupational therapy services." }
+    ],
+    telehealth: [
+    { title: "Telehealth Primary Care", details: "Deliver primary care consultations remotely via video and phone." },
+    { title: "Mental Health Teletherapy", details: "Offer counseling and therapy sessions online." },
+    { title: "Remote Patient Monitoring", details: "Use technology to monitor patients' health data remotely." },
+    { title: "Teledermatology", details: "Provide skin care consultations and follow-ups virtually." },
+    { title: "Telepharmacy Services", details: "Support medication management and counseling remotely." },
+    { title: "Virtual Wellness Coaching", details: "Guide clients on lifestyle and wellness goals online." },
+    { title: "Tele-nutrition Counseling", details: "Provide dietary advice and meal planning virtually." },
+    { title: "Tele-palliative Care", details: "Support patients with serious illnesses remotely." },
+    { title: "Tele-rehabilitation", details: "Deliver rehab therapy sessions via telehealth platforms." },
+    { title: "Virtual Smoking Cessation Program", details: "Help patients quit smoking through online coaching." },
+    { title: "Tele-urgent Care", details: "Provide urgent care consultations remotely." },
+    { title: "Tele-consultation for Specialists", details: "Connect patients with specialists via telehealth." },
+    { title: "Virtual Chronic Disease Coaching", details: "Support chronic disease management remotely." }
+    ],
+    entrepreneurship: [
+    { title: "Health Coaching Business", details: "Start a business coaching clients on health and lifestyle changes." },
+    { title: "Medical Billing Services", details: "Offer billing and coding services to healthcare providers." },
+    { title: "Healthcare Staffing Agency", details: "Provide temporary and permanent staffing solutions." },
+    { title: "NP Practice Management Consulting", details: "Consult other NPs on running their practices efficiently." },
+    { title: "Medical Equipment Sales", details: "Sell or lease medical devices and supplies." },
+    { title: "Health App Development", details: "Create apps focused on health tracking and management." },
+    { title: "Wellness Retreats", details: "Organize retreats focused on health and wellness." },
+    { title: "Medical Writing and Content Creation", details: "Produce health-related content for websites and publications." },
+    { title: "CPR and First Aid Training", details: "Offer certification courses to individuals and organizations." },
+    { title: "Health Product Line", details: "Develop and sell health-related products or supplements." },
+    { title: "Medical Transcription Services", details: "Provide transcription for medical records and reports." },
+    { title: "Healthcare Marketing Agency", details: "Specialize in marketing for healthcare providers." },
+    { title: "Patient Advocacy Services", details: "Help patients navigate healthcare systems and insurance." }
+    ],
+    specialty: [
+    { title: "Sports Medicine Clinic", details: "Focus on injury prevention and treatment for athletes." },
+    { title: "Addiction Counseling", details: "Provide support and treatment for substance abuse." },
+    { title: "Sleep Disorder Clinic", details: "Diagnose and treat sleep-related conditions." },
+    { title: "Diabetes Education Center", details: "Offer education and management plans for diabetes." },
+    { title: "Asthma and Allergy Clinic", details: "Specialize in respiratory and allergy care." },
+    { title: "Women's Wellness and Hormone Therapy", details: "Provide hormone replacement and wellness services." },
+    { title: "Palliative Care Services", details: "Support patients with serious or terminal illnesses." },
+    { title: "Infectious Disease Clinic", details: "Manage and treat infectious diseases." },
+    { title: "Dermatology Services", details: "Offer skin care and treatment services." },
+    { title: "Gastroenterology Clinic", details: "Specialize in digestive system disorders." },
+    { title: "Neurology Clinic", details: "Provide care for neurological conditions." },
+    { title: "Oncology Support Services", details: "Support cancer patients with symptom management." },
+    { title: "Rheumatology Clinic", details: "Treat autoimmune and musculoskeletal diseases." }
+    ]
+    };
+
+    const ideasGrid = document.querySelector('.ideas-grid');
+    const filterButtons = document.querySelectorAll('.ideas-filter button');
+    const modal = document.getElementById('ideaModal');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDesc = document.getElementById('modalDesc');
+    const servicePackageForm = document.getElementById('servicePackageForm');
+    const oldModalButtons = document.getElementById('oldModalButtons');
+    const servicePackagesList = document.getElementById('servicePackagesList');
+    const newServicePackageBtn = document.getElementById('newServicePackageBtn');
+
+    let currentCategory = 'all';
+    let currentIdea = null;
+    let editingPackageId = null;
+
+    // Load and render all service packages from Firestore
+    async function loadServicePackages() {
+    servicePackagesList.innerHTML = 'Loading...';
+    const snap = await getDocs(collection(db, 'servicePackages'));
+    const packages = [];
+    snap.forEach(docSnap => {
+    packages.push({ id: docSnap.id, ...docSnap.data() });
+    });
+    renderServicePackages(packages);
+    }
+
+    function renderServicePackages(packages) {
+    if (!packages.length) {
+    servicePackagesList.innerHTML = '<div style="color:#888;">No service packages yet.</div>';
+    return;
+    }
+    servicePackagesList.innerHTML = `
+    <table>
+    <thead>
+    <tr>
+    <th>Image</th>
+    <th>Name</th>
+    <th>Category</th>
+    <th>Price</th>
+    <th>Status</th>
+    <th>Provider</th>
+    <th>Features</th>
+    <th>Available</th>
+    <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    ${packages.map(pkg => `
+    <tr>
+    <td>${pkg.imageUrl ? `<img src="${pkg.imageUrl}" class="package-img-thumb" alt="Image" />` : ''}</td>
+    <td>${pkg.title || pkg.name || 'Untitled'}</td>
+    <td>${pkg.category || ''}</td>
+    <td>$${pkg.price}</td>
+    <td>${pkg.status || ''}</td>
+    <td>${pkg.provider || ''}</td>
+    <td>
+    ${Array.isArray(pkg.features) && pkg.features.length
+    ? `<ul class="features-list">${pkg.features.map(f => `<li>${f}</li>`).join('')}</ul>`
+    : ''}
+    </td>
+    <td>${pkg.availableFrom || '-'} to ${pkg.availableUntil || '-'}</td>
+    <td>
+    <div class="action-buttons">
+    <a class="btn-secondary" href="admin-service-package-detail.html?id=${pkg.id}" style="text-decoration:none;">View</a>
+    <button class="btn-secondary" data-edit="${pkg.id}">Edit</button>
+    <button class="btn-secondary" data-delete="${pkg.id}">Delete</button>
+    </div>
+    </td>
+    </tr>
+    `).join('')}
+    </tbody>
+    </table>
+    `;
+
+    // Attach edit/delete handlers
+    servicePackagesList.querySelectorAll('[data-edit]').forEach(btn => {
+    btn.onclick = () => openEditPackage(packages.find(p => p.id === btn.dataset.edit));
+    });
+    servicePackagesList.querySelectorAll('[data-delete]').forEach(btn => {
+    btn.onclick = async () => {
+    if (confirm('Delete this service package?')) {
+    await deleteDoc(doc(db, 'servicePackages', btn.dataset.delete));
+    loadServicePackages();
+    }
+    };
+    });
+    }
+
+    // Open modal for new package
+    newServicePackageBtn.onclick = () => {
+    editingPackageId = null;
+    currentIdea = null;
+    openModal({
+    title: '',
+    description: '',
+    price: '',
+    features: [],
+    highlights: [],
+    faqs: [],
+    tags: [],
+    testimonials: [],
+    downloadableResources: [],
+    category: '',
+    deliveryTime: '',
+    provider: '',
+    providerProfile: { name: '', bio: '', image: '' },
+    contactEmail: '',
+    purchaseUrl: '',
+    status: 'active',
+    imageUrl: '',
+    heroImage: '',
+    availableFrom: '',
+    availableUntil: ''
+    });
+    };
+
+    // Open modal for editing
+    function openEditPackage(pkg) {
+    editingPackageId = pkg.id;
+    currentIdea = null;
+    openModal(pkg);
+    }
+
+    // Open modal for idea (from grid) or for editing
+    function openModal(ideaOrPkg) {
+    modalTitle.textContent = ideaOrPkg.title || '';
+    modalDesc.textContent = ideaOrPkg.details || ideaOrPkg.description || '';
+    
+    // Basic fields
+    servicePackageForm.packageName.value = ideaOrPkg.title || ideaOrPkg.name || '';
+    servicePackageForm.packageDescription.value = ideaOrPkg.details || ideaOrPkg.description || '';
+    servicePackageForm.packagePrice.value = ideaOrPkg.price || '';
+    servicePackageForm.packageFeatures.value = Array.isArray(ideaOrPkg.features) ? ideaOrPkg.features.join('\n') : (ideaOrPkg.features || '');
+    servicePackageForm.packageCategory.value = ideaOrPkg.category || '';
+    servicePackageForm.packageDeliveryTime.value = ideaOrPkg.deliveryTime || '';
+    servicePackageForm.packageProvider.value = ideaOrPkg.provider || '';
+    servicePackageForm.packageContactEmail.value = ideaOrPkg.contactEmail || '';
+    servicePackageForm.packagePurchaseUrl.value = ideaOrPkg.purchaseUrl || '';
+    servicePackageForm.packageStatus.value = ideaOrPkg.status || 'active';
+    servicePackageForm.packageImageUrl.value = ideaOrPkg.imageUrl || '';
+    servicePackageForm.packageStart.value = ideaOrPkg.availableFrom || '';
+    servicePackageForm.packageEnd.value = ideaOrPkg.availableUntil || '';
+    
+    // New fields
+    servicePackageForm.packageHighlights.value = Array.isArray(ideaOrPkg.highlights) ? ideaOrPkg.highlights.join('\n') : '';
+    servicePackageForm.packageFaqs.value = Array.isArray(ideaOrPkg.faqs)
+      ? ideaOrPkg.faqs.map(f => `${f.question}|${f.answer}`).join('\n') : '';
+    servicePackageForm.packageTags.value = Array.isArray(ideaOrPkg.tags) ? ideaOrPkg.tags.join(', ') : '';
+    servicePackageForm.packageTestimonials.value = Array.isArray(ideaOrPkg.testimonials) ? ideaOrPkg.testimonials.join('\n') : '';
+    servicePackageForm.packageDownloadableResources.value = Array.isArray(ideaOrPkg.downloadableResources) ? ideaOrPkg.downloadableResources.join('\n') : '';
+    servicePackageForm.packageHeroImage.value = ideaOrPkg.heroImage || '';
+    servicePackageForm.packageProviderBio.value = ideaOrPkg.providerProfile?.bio || '';
+    servicePackageForm.packageProviderImage.value = ideaOrPkg.providerProfile?.image || '';
+    
+    servicePackageForm.style.display = 'flex';
+    oldModalButtons.style.display = 'none';
+    modal.style.display = 'block';
+    modalOverlay.style.display = 'block';
+    modal.focus();
+    }
+
+    function closeModal() {
+    modal.style.display = 'none';
+    modalOverlay.style.display = 'none';
+    currentIdea = null;
+    editingPackageId = null;
+    servicePackageForm.reset();
+    servicePackageForm.style.display = 'none';
+    oldModalButtons.style.display = 'block';
+    }
+
+    modalOverlay.addEventListener('click', closeModal);
+    document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.style.display === 'block') {
+    closeModal();
+    }
+    });
+
+    // Save (create or update) package to Firestore
+    servicePackageForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const packageData = {
+    name: servicePackageForm.packageName.value.trim(),
+    title: servicePackageForm.packageName.value.trim(),
+    description: servicePackageForm.packageDescription.value.trim(),
+    price: parseFloat(servicePackageForm.packagePrice.value),
+    features: servicePackageForm.packageFeatures.value.split('\n').map(f => f.trim()).filter(f => f),
+    highlights: servicePackageForm.packageHighlights.value.split('\n').map(s => s.trim()).filter(Boolean),
+    faqs: servicePackageForm.packageFaqs.value.split('\n').map(line => {
+      const [q, a] = line.split('|');
+      return q && a ? { question: q.trim(), answer: a.trim() } : null;
+    }).filter(Boolean),
+    tags: servicePackageForm.packageTags.value.split(',').map(s => s.trim()).filter(Boolean),
+    testimonials: servicePackageForm.packageTestimonials.value.split('\n').map(s => s.trim()).filter(Boolean),
+    downloadableResources: servicePackageForm.packageDownloadableResources.value.split('\n').map(s => s.trim()).filter(Boolean),
+    category: servicePackageForm.packageCategory.value.trim(),
+    deliveryTime: servicePackageForm.packageDeliveryTime.value.trim(),
+    provider: servicePackageForm.packageProvider.value.trim(),
+    providerProfile: {
+      name: servicePackageForm.packageProvider.value.trim(),
+      bio: servicePackageForm.packageProviderBio.value.trim(),
+      image: servicePackageForm.packageProviderImage.value.trim()
+    },
+    contactEmail: servicePackageForm.packageContactEmail.value.trim(),
+    purchaseUrl: servicePackageForm.packagePurchaseUrl.value.trim(),
+    status: servicePackageForm.packageStatus.value,
+    imageUrl: servicePackageForm.packageImageUrl.value.trim(),
+    heroImage: servicePackageForm.packageHeroImage.value.trim(),
+    availableFrom: servicePackageForm.packageStart.value,
+    availableUntil: servicePackageForm.packageEnd.value,
+    createdFromIdea: currentIdea ? (currentIdea.title || '') : '',
+    lastUpdated: serverTimestamp(),
+    createdAt: editingPackageId ? undefined : serverTimestamp()
+    };
+    
+    if (editingPackageId) {
+    await updateDoc(doc(db, 'servicePackages', editingPackageId), packageData);
+    } else {
+    await addDoc(collection(db, 'servicePackages'), packageData);
+    }
+    closeModal();
+    loadServicePackages();
+    });
+
+    // Business ideas grid logic
+    function renderIdeas(category) {
+    ideasGrid.innerHTML = '';
+    let ideasToShow = [];
+    if (category === 'all') {
+    ideasToShow = Object.values(businessIdeas).flat();
+    } else {
+    ideasToShow = businessIdeas[category] || [];
+    }
+    ideasToShow.forEach((idea, idx) => {
+    const card = document.createElement('div');
+    card.className = 'idea-card';
+    card.setAttribute('role', 'listitem');
+    card.tabIndex = 0;
+    const title = document.createElement('div');
+    title.className = 'idea-title';
+    title.textContent = `${idx + 1}. ${idea.title}`;
+    const details = document.createElement('div');
+    details.className = 'idea-details';
+    details.textContent = idea.details;
+    const actions = document.createElement('div');
+    actions.className = 'idea-actions';
+    const createBtn = document.createElement('button');
+    createBtn.className = 'btn-primary';
+    createBtn.textContent = 'Create Service Package';
+    createBtn.addEventListener('click', () => {
+    editingPackageId = null;
+    currentIdea = idea;
+    openModal(idea);
+    });
+    const workshopBtn = document.createElement('button');
+    workshopBtn.className = 'btn-secondary';
+    workshopBtn.textContent = 'Add to Workshop';
+    workshopBtn.addEventListener('click', () => alert(`Added "${idea.title}" to workshops (feature coming soon)`));
+    actions.appendChild(createBtn);
+    actions.appendChild(workshopBtn);
+    card.appendChild(title);
+    card.appendChild(details);
+    card.appendChild(actions);
+    ideasGrid.appendChild(card);
+    });
+    }
+
+    filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+    filterButtons.forEach(b => {
+    b.classList.remove('active');
+    b.setAttribute('aria-selected', 'false');
+    b.tabIndex = -1;
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    btn.tabIndex = 0;
+    currentCategory = btn.dataset.category;
+    renderIdeas(currentCategory);
+    });
+    });
+
+    function logout() {
+    localStorage.clear();
+    window.location.href = 'index.html';
+    }
+
+    // Initial render
+    renderIdeas('all');
+    loadServicePackages();
+  </script>
+</body>
+</html>

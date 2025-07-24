@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Test Add New Collaborator Button</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+    }
+    #btnAddNew {
+      background: #ffd700;
+      color: #021426;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: background 0.3s ease;
+    }
+    #btnAddNew:hover {
+      background: #e6c200;
+    }
+  </style>
+</head>
+<body>
+  <button id="btnAddNew" aria-label="Add new MD collaborator">+ Add New Collaborator</button>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const btnAddNew = document.getElementById('btnAddNew');
+      btnAddNew.addEventListener('click', () => {
+        alert('Button clicked! Navigating to create page...');
+        window.location.href = 'admin-md-collaborator-create.html';
+      });
+    });
+  </script>
+</body>
+</html>

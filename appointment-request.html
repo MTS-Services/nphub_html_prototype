@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Request Appointment - Your EHR System</title>
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #ECECEC;
+      --color-text: #2D2D2D;
+      --color-white: #FFF;
+      --border-radius: 12px;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: 0.3s ease;
+      --max-width: 1200px;
+      --focus-outline: 3px solid var(--color-secondary);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      scroll-behavior: smooth;
+    }
+    a {
+      color: var(--color-primary);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    a:hover, a:focus {
+      color: var(--color-secondary);
+      outline: none;
+    }
+    header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      box-shadow: var(--box-shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    nav {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--color-secondary);
+      user-select: none;
+      cursor: default;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .nav-links a {
+      color: var(--color-white);
+      font-weight: 600;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.375rem;
+      transition: background var(--transition), color var(--transition);
+    }
+    .nav-links a:hover, .nav-links a:focus {
+      background: var(--color-secondary);
+      color: var(--color-primary-dark);
+      outline-offset: 2px;
+      outline: var(--focus-outline);
+    }
+    main {
+      flex: 1;
+      max-width: 900px;
+      margin: 4rem auto 6rem;
+      padding: 0 1.5rem;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      color: var(--color-primary-dark);
+      line-height: 1.1;
+      animation: fadeInDown 0.6s ease forwards;
+      opacity: 0;
+    }
+    form {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      box-shadow: var(--box-shadow);
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .step {
+      display: none;
+      animation: fadeInUp 0.5s ease forwards;
+      opacity: 0;
+    }
+    .step.active {
+      display: block;
+      opacity: 1;
+    }
+    label {
+      display: block;
+      margin: 1rem 0 0.3rem;
+      font-weight: 600;
+      color: var(--color-primary-dark);
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color var(--transition);
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus,
+    input[type="date"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--color-secondary);
+      outline: none;
+      box-shadow: 0 0 5px var(--color-secondary);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .options-group {
+      margin: 0.5rem 0 1rem;
+    }
+    .checkbox-group label,
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--color-text);
+    }
+    .checkbox-group input,
+    .radio-group input {
+      margin-right: 0.5rem;
+      cursor: pointer;
+    }
+    .buttons {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    button {
+      background-color: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      padding: 0.75rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background-color var(--transition), transform 0.2s ease;
+      user-select: none;
+    }
+    button:disabled {
+      background-color: #999;
+      cursor: not-allowed;
+    }
+    button:hover:not(:disabled),
+    button:focus:not(:disabled) {
+      background-color: var(--color-primary-dark);
+      outline-offset: 3px;
+      outline: var(--focus-outline);
+      transform: translateY(-2px);
+    }
+    .error {
+      color: #d9534f;
+      font-size: 0.9rem;
+      margin-top: 0.3rem;
+    }
+    .optional {
+      font-weight: 400;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: #666;
+      margin-left: 0.25rem;
+    }
+    /* Animations */
+    @keyframes fadeInDown {
+      0% { opacity: 0; transform: translateY(-20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="logo" tabindex="0" aria-label="Your EHR System Logo">Your EHR System</div>
+      <div class="nav-links" role="navigation" aria-label="Primary Navigation">
+        <a href="index.html" tabindex="0">Home</a>
+        <a href="appointment-request.html" tabindex="0" aria-current="page">Request Appointment</a>
+        <a href="search.html" tabindex="0">Find Providers</a>
+        <a href="about.html" tabindex="0">About</a>
+        <a href="contact.html" tabindex="0">Contact</a>
+        <a href="login.html" tabindex="0">Sign In</a>
+        <a href="register.html" tabindex="0">Register</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Request an Appointment</h1>
+    <form id="appointmentForm" novalidate aria-live="polite" aria-relevant="additions">
+      <!-- Step 1: Location -->
+      <section class="step active" data-step="1" aria-label="Step 1: Location">
+        <label for="location">Where are you located?</label>
+        <input type="text" id="location" name="location" placeholder="City, ZIP, or Address" required aria-required="true" />
+        <div class="error" id="error-location"></div>
+        <div class="buttons">
+          <div></div>
+          <button type="button" id="nextBtn1" aria-label="Next step: Reason for visit">Next</button>
+        </div>
+      </section>
+
+      <!-- Step 2: Reason for Visit -->
+      <section class="step" data-step="2" aria-label="Step 2: Reason for visit">
+        <p>What brought you here today?</p>
+        <div class="radio-group options-group" role="radiogroup" aria-labelledby="reasonLabel">
+          <label><input type="radio" name="reason" value="Anxious or worried" required /> I'm feeling anxious or worried</label>
+          <label><input type="radio" name="reason" value="Down or depressed" /> I'm feeling down or depressed</label>
+          <label><input type="radio" name="reason" value="Past traumatic experience" /> I'm struggling with a past traumatic experience</label>
+          <label><input type="radio" name="reason" value="General support" /> I want general support</label>
+          <label><input type="radio" name="reason" value="Medication guidance" /> I need guidance finding the right medication</label>
+        </div>
+        <div class="error" id="error-reason"></div>
+        <div class="buttons">
+          <button type="button" id="prevBtn2" aria-label="Previous step: Location">Back</button>
+          <button type="button" id="nextBtn2" aria-label="Next step: Payment type">Next</button>
+        </div>
+      </section>
+
+      <!-- Step 3: Payment Type -->
+      <section class="step" data-step="3" aria-label="Step 3: Payment type">
+        <p>Select your payment type(s):</p>
+        <div class="checkbox-group options-group" id="paymentGroup">
+          <label><input type="checkbox" name="payment" value="EAP" /> Employee Assistance Program (EAP)</label>
+          <label><input type="checkbox" name="payment" value="Insurance" /> Insurance</label>
+          <label><input type="checkbox" name="payment" value="Subscription" /> Subscription</label>
+          <label><input type="checkbox" name="payment" value="Private Pay" /> Private Pay</label>
+        </div>
+        <div class="error" id="error-payment"></div>
+        <div class="buttons">
+          <button type="button" id="prevBtn3" aria-label="Previous step: Reason for visit">Back</button>
+          <button type="button" id="nextBtn3" aria-label="Next step: Availability">Next</button>
+        </div>
+      </section>
+
+      <!-- Step 4: Availability -->
+      <section class="step" data-step="4" aria-label="Step 4: Availability">
+        <p>When are you available for sessions? <span class="optional">(optional)</span></p>
+        <p>We only offer video sessions near 34711 (we start filtering availability)</p>
+        <div class="checkbox-group options-group" id="availabilityGroup">
+          <strong>Weekdays</strong>
+          <label><input type="checkbox" name="availability" value="Weekdays - Early morning (before 9am)" /> Early morning (before 9am)</label>
+          <label><input type="checkbox" name="availability" value="Weekdays - Daytime (9am-5pm)" /> Daytime (9am-5pm)</label>
+          <label><input type="checkbox" name="availability" value="Weekdays - Evening (after 5pm)" /> Evening (after 5pm)</label>
+          <strong>Weekends</strong>
+          <label><input type="checkbox" name="availability" value="Weekends - Daytime (before 5pm)" /> Daytime (before 5pm)</label>
+          <label><input type="checkbox" name="availability" value="Weekends - Evening (after 5pm)" /> Evening (after 5pm)</label>
+        </div>
+        <div class="buttons">
+          <button type="button" id="prevBtn4" aria-label="Previous step: Payment type">Back</button>
+          <button type="button" id="nextBtn4" aria-label="Next step: Gender preference">Next</button>
+        </div>
+      </section>
+
+      <!-- Step 5: Gender Preference -->
+      <section class="step" data-step="5" aria-label="Step 5: Gender preference">
+        <p>Would you prefer a therapist of a certain gender?</p>
+        <div class="radio-group options-group" id="genderPrefGroup">
+          <label><input type="radio" name="genderPref" value="No preference" checked /> No preference</label>
+          <label><input type="radio" name="genderPref" value="Woman" /> Woman</label>
+          <label><input type="radio" name="genderPref" value="Man" /> Man</label>
+          <label><input type="radio" name="genderPref" value="Non-binary" /> Non-binary</label>
+        </div>
+        <div class="buttons">
+          <button type="button" id="prevBtn5" aria-label="Previous step: Availability">Back</button>
+          <button type="button" id="nextBtn5" aria-label="Next step: Additional preferences">Next</button>
+        </div>
+      </section>
+
+      <!-- Step 6: Additional Preferences -->
+      <section class="step" data-step="6" aria-label="Step 6: Additional preferences">
+        <p>Do you have any preferences for a therapist you want to share?</p>
+        <p>This could include things like additional therapy specialties, race/ethnicity, age, sexuality, or other aspects of the therapist's identity.</p>
+        <div class="radio-group options-group" id="additionalPrefGroup">
+          <label><input type="radio" name="additionalPref" value="No" checked /> No</label>
+          <label><input type="radio" name="additionalPref" value="Yes" /> Yes</label>
+        </div>
+        <textarea id="additionalPrefText" name="additionalPrefText" rows="4" placeholder="Please share your preferences here..." style="display:none; margin-top:0.5rem;"></textarea>
+        <div class="buttons">
+          <button type="button" id="prevBtn6" aria-label="Previous step: Gender preference">Back</button>
+          <button type="button" id="nextBtn6" aria-label="Next step: Coverage">Next</button>
+        </div>
+      </section>
+
+      <!-- Step 7: Coverage -->
+      <section class="step" data-step="7" aria-label="Step 7: Coverage">
+        <p>Do you have coverage for your care?</p>
+        <div class="radio-group options-group" id="coverageGroup">
+          <label><input type="radio" name="coverage" value="Health insurance" required /> Health insurance</label>
+          <label><input type="radio" name="coverage" value="EAP" /> Employee Assistance Program (EAP)</label>
+          <label><input type="radio" name="coverage" value="Medicare / Medicare Advantage" /> Medicare / Medicare Advantage</label>
+          <label><input type="radio" name="coverage" value="Self-pay" /> I'll pay for services myself</label>
+        </div>
+        <div class="error" id="error-coverage"></div>
+        <div class="buttons">
+          <button type="button" id="prevBtn7" aria-label="Previous step: Additional preferences">Back</button>
+          <button type="button" id="nextBtn7" aria-label="Next step: Referral source">Next</button>
+        </div>
+      </section>
+
+      <!-- Step 8: Referral Source -->
+      <section class="step" data-step="8" aria-label="Step 8: Referral source">
+        <label for="referralSource">How did you hear about us? <span aria-hidden="true" style="color: #d9534f;">*</span></label>
+        <select id="referralSource" name="referralSource" required aria-required="true">
+          <option value="" disabled selected>Select an option</option>
+          <option value="Google/Search Engine">Google/Search Engine</option>
+          <option value="Social Media">Social Media</option>
+          <option value="Friend/Family">Friend/Family</option>
+          <option value="Doctor/Provider">Doctor/Provider</option>
+          <option value="Employer">Employer</option>
+          <option value="Other">Other</option>
+        </select>
+        <div class="error" id="error-referralSource"></div>
+        <div class="buttons">
+          <button type="button" id="prevBtn8" aria-label="Previous step: Coverage">Back</button>
+          <button type="button" id="nextBtn8" aria-label="Next step: Who's getting therapy">Next</button>
+        </div>
+      </section>
+
+      <!-- Step 9: Who's Getting Therapy -->
+      <section class="step" data-step="9" aria-label="Step 9: Who's getting therapy">
+        <p>This could be you or someone else, like a family member.</p>
+        <label for="firstName">Legal first name <span aria-hidden="true" style="color: #d9534f;">*</span></label>
+        <input type="text" id="firstName" name="firstName" required aria-required="true" />
+        <small>This is used to sign legal documents and verify insurance benefits.</small>
+
+        <label for="lastName">Legal last name <span aria-hidden="true" style="color: #d9534f;">*</span></label>
+        <input type="text" id="lastName" name="lastName" required aria-required="true" />
+
+        <label for="birthday">Birthday <span aria-hidden="true" style="color: #d9534f;">*</span></label>
+        <input type="date" id="birthday" name="birthday" required aria-required="true" />
+
+        <label for="therapyGender">Gender</label>
+        <select id="therapyGender" name="therapyGender">
+          <option value="" selected>Select</option>
+          <option value="Woman">Woman</option>
+          <option value="Man">Man</option>
+          <option value="Non-binary">Non-binary</option>
+          <option value="Other">Other</option>
+          <option value="Prefer not to say">Prefer not to say</option>
+        </select>
+
+        <label for="phoneNumber">Phone number <span aria-hidden="true" style="color: #d9534f;">*</span></label>
+        <input type="tel" id="phoneNumber" name="phoneNumber" required aria-required="true" placeholder="e.g. (555) 555-5555" />
+        <div class="error" id="error-phoneNumber"></div>
+
+        <div class="checkbox-group options-group">
+          <label><input type="checkbox" name="smsOptIn" /> Opt me into SMS text account updates and session reminders as well (standard messaging rates apply).</label>
+          <label><input type="checkbox" name="emailOptIn" /> I’d like to get emails with helpful tips and content for managing my mental health from SonderMind.</label>
+        </div>
+
+        <div class="buttons">
+          <button type="button" id="prevBtn9" aria-label="Previous step: Referral source">Back</button>
+          <button type="button" id="nextBtn9" aria-label="Next step: Contact preferences">Next</button>
+        </div>
+      </section>
+
+      <!-- Step 10: Contact Preferences -->
+      <section class="step" data-step="10" aria-label="Step 10: Contact preferences">
+        <p>How should your provider matches contact you?</p>
+        <div class="checkbox-group options-group" id="contactPrefGroup">
+          <label><input type="checkbox" name="contactPref" value="SMS text message" /> SMS text message (Standard messaging rates apply)</label>
+          <label><input type="checkbox" name="contactPref" value="Phone call" /> Phone call (They'll leave a voicemail if you aren't available)</label>
+        </div>
+        <p>In addition to these methods, therapists will contact you by secure message in the SonderMind portal.</p>
+        <div class="buttons">
+          <button type="button" id="prevBtn10" aria-label="Previous step: Who's getting therapy">Back</button>
+          <button type="submit" id="submitBtn" aria-label="Submit appointment request">Submit</button>
+        </div>
+      </section>
+    </form>
+  </main>
+
+  <footer>
+    <div class="footer-container">
+      <div class="footer-section about">
+        <h3>About</h3>
+        <p>Your trusted platform to connect clients with healthcare providers and agencies for seamless appointment scheduling and care coordination.</p>
+      </div>
+      <div class="footer-section links">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="index.html" tabindex="0">Home</a></li>
+          <li><a href="appointment-request.html" tabindex="0" aria-current="page">Request Appointment</a></li>
+          <li><a href="search.html" tabindex="0">Find Providers</a></li>
+          <li><a href="about.html" tabindex="0">About</a></li>
+          <li><a href="contact.html" tabindex="0">Contact</a></li>
+          <li><a href="login.html" tabindex="0">Sign In</a></li>
+          <li><a href="register.html" tabindex="0">Register</a></li>
+        </ul>
+      </div>
+      <div class="footer-section resources">
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="faq.html" tabindex="0">FAQs</a></li>
+          <li><a href="privacy.html" tabindex="0">Privacy Policy</a></li>
+          <li><a href="terms.html" tabindex="0">Terms of Service</a></li>
+          <li><a href="support.html" tabindex="0">Support</a></li>
+        </ul>
+      </div>
+      <div class="footer-section contact">
+        <h3>Contact</h3>
+        <p>Email: <a href="mailto:support@yourehrsystem.com" tabindex="0">support@yourehrsystem.com</a></p>
+        <p>Phone: <a href="tel:+1234567890" tabindex="0">(123) 456-7890</a></p>
+        <div class="social-icons" aria-label="Social Media Links">
+          <a href="#" aria-label="Facebook" title="Facebook" tabindex="0">📘</a>
+          <a href="#" aria-label="Twitter" title="Twitter" tabindex="0">🐦</a>
+          <a href="#" aria-label="LinkedIn" title="LinkedIn" tabindex="0">🔗</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom" aria-live="polite" aria-atomic="true">
+      &copy; 2025 Your EHR System. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      const form = document.getElementById('appointmentForm');
+      const steps = form.querySelectorAll('.step');
+      let currentStep = 0;
+
+      function showStep(index) {
+        steps.forEach((step, i) => {
+          step.classList.toggle('active', i === index);
+        });
+        currentStep = index;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function validateStep(index) {
+        const step = steps[index];
+        let valid = true;
+
+        // Clear previous errors
+        step.querySelectorAll('.error').forEach(e => e.textContent = '');
+
+        // Validate required inputs in this step
+        const requiredInputs = step.querySelectorAll('[required]');
+        for (const input of requiredInputs) {
+          if ((input.type === 'radio' || input.type === 'checkbox') && input.name) {
+            const checked = step.querySelectorAll(`input[name="${input.name}"]:checked`);
+            if (checked.length === 0) {
+              const errorEl = step.querySelector(`#error-${input.name}`) || step.querySelector('.error');
+              if (errorEl) errorEl.textContent = 'This field is required.';
+              valid = false;
+              break;
+            }
+          } else if (!input.value.trim()) {
+            const errorEl = step.querySelector(`#error-${input.id}`) || step.querySelector('.error');
+            if (errorEl) errorEl.textContent = 'This field is required.';
+            valid = false;
+            break;
+          }
+        }
+
+        // Additional validation for phone number format (basic)
+        if (valid && index === 8) { // Step 9 (0-based)
+          const phoneInput = document.getElementById('phoneNumber');
+          const phoneVal = phoneInput.value.trim();
+          const phoneRegex = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
+          if (!phoneRegex.test(phoneVal)) {
+            const errorEl = document.getElementById('error-phoneNumber');
+            if (errorEl) errorEl.textContent = 'Please enter a valid phone number.';
+            valid = false;
+          }
+        }
+
+        return valid;
+      }
+
+      function nextStep() {
+        if (validateStep(currentStep)) {
+          if (currentStep < steps.length - 1) {
+            showStep(currentStep + 1);
+          }
+        }
+      }
+
+      function prevStep() {
+        if (currentStep > 0) {
+          showStep(currentStep - 1);
+        }
+      }
+
+      // Event listeners for next buttons
+      for (let i = 0; i < steps.length; i++) {
+        const nextBtn = steps[i].querySelector('button[id^="nextBtn"]');
+        if (nextBtn) {
+          nextBtn.addEventListener('click', nextStep);
+        }
+        const prevBtn = steps[i].querySelector('button[id^="prevBtn"]');
+        if (prevBtn) {
+          prevBtn.addEventListener('click', prevStep);
+        }
+      }
+
+      // Show/hide additional preferences textarea
+      const additionalPrefRadios = document.querySelectorAll('input[name="additionalPref"]');
+      const additionalPrefText = document.getElementById('additionalPrefText');
+      additionalPrefRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          if (radio.value === 'Yes' && radio.checked) {
+            additionalPrefText.style.display = 'block';
+            additionalPrefText.setAttribute('required', 'required');
+          } else if (radio.value === 'No' && radio.checked) {
+            additionalPrefText.style.display = 'none';
+            additionalPrefText.removeAttribute('required');
+            additionalPrefText.value = '';
+          }
+        });
+      });
+
+      // Form submit handler
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        if (validateStep(currentStep)) {
+          // Collect form data
+          const formData = new FormData(form);
+          const data = {};
+          for (const [key, value] of formData.entries()) {
+            if (data[key]) {
+              if (Array.isArray(data[key])) {
+                data[key].push(value);
+              } else {
+                data[key] = [data[key], value];
+              }
+            } else {
+              data[key] = value;
+            }
+          }
+          alert('Appointment request submitted! Check console for data.');
+          console.log('Form Data:', data);
+          // TODO: Replace alert with actual API call or next steps
+        }
+      });
+
+      showStep(currentStep);
+    })();
+  </script>
+</body>
+</html>

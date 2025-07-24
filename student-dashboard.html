@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Dashboard - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+    --color-primary: #0A2540;
+    --color-primary-dark: #021426;
+    --color-secondary: #FFD700;
+    --color-success: #27ae60;
+    --color-success-dark: #388e3c;
+    --color-warning: #f39c12;
+    --color-warning-dark: #f57c00;
+    --color-info: #cce5ff;
+    --color-info-dark: #004085;
+    --color-bg: #ECECEC;
+    --color-text: #2D2D2D;
+    --color-muted: #6c757d;
+    --color-muted-light: #888;
+    --color-white: #FFFFFF;
+    --border-radius: 12px;
+    --transition: 0.3s ease;
+    --color-danger: #e74c3c;
+    --color-danger-dark: #c0392b;
+    --box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    --sidebar-width: 250px;
+    }
+
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    }
+
+    body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    }
+
+    .header {
+    background: var(--color-primary);
+    color: var(--color-white);
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    flex-shrink: 0;
+    user-select: none;
+    }
+
+    .header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    flex-grow: 1;
+    }
+
+    .header-right {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    white-space: nowrap;
+    }
+
+    .upgrade-btn {
+    background: var(--color-danger);
+    color: var(--color-white);
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background-color var(--transition);
+    }
+
+    .upgrade-btn:hover,
+    .upgrade-btn:focus {
+    background: var(--color-danger-dark);
+    outline: none;
+    }
+
+    .logout-btn {
+    background: #dc3545;
+    color: var(--color-white);
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color var(--transition);
+    }
+
+    .logout-btn:hover,
+    .logout-btn:focus {
+    background: #b02a37;
+    outline: none;
+    }
+
+    .main {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    }
+
+    .sidebar {
+    width: var(--sidebar-width);
+    background: var(--color-primary-dark);
+    color: var(--color-white);
+    padding: 24px 0;
+    overflow-y: auto;
+    flex-shrink: 0;
+    }
+
+    nav.sidebar a.nav-item {
+    display: block;
+    padding: 12px 24px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all var(--transition);
+    color: var(--color-white);
+    text-decoration: none;
+    user-select: none;
+    }
+
+    nav.sidebar a.nav-item:hover,
+    nav.sidebar a.nav-item:focus,
+    nav.sidebar a.nav-item.active {
+    background: var(--color-primary);
+    border-left-color: var(--color-secondary);
+    outline: none;
+    }
+
+    .content {
+    flex: 1 1 auto;
+    padding: 32px 48px;
+    overflow-y: auto;
+    background: var(--color-white);
+    border-radius: var(--border-radius);
+    margin: 24px;
+    box-shadow: var(--box-shadow);
+    min-width: 0;
+    }
+
+    /* Profile Card */
+    .profile-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    background: var(--color-bg);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .profile-card img {
+    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    flex-shrink: 0;
+    }
+
+    .profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    }
+
+    .profile-info .name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-primary-dark);
+    }
+
+    .profile-info .role {
+    font-size: 0.95rem;
+    color: var(--color-muted-light);
+    }
+
+    .profile-info .grad-date {
+    font-size: 0.9rem;
+    color: var(--color-muted);
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    }
+
+    .quick-actions .btn {
+    flex: 1 1 280px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 18px;
+    border-radius: var(--border-radius);
+    border: none;
+    cursor: pointer;
+    transition: background-color var(--transition);
+    color: var(--color-white);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    }
+
+    .btn-success {
+    background-color: var(--color-success);
+    }
+
+    .btn-success:hover,
+    .btn-success:focus {
+    background-color: var(--color-success-dark);
+    outline: none;
+    }
+
+    .btn-primary {
+    background-color: var(--color-primary);
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus {
+    background-color: var(--color-primary-dark);
+    outline: none;
+    }
+
+    .btn-warning {
+    background-color: var(--color-warning);
+    color: var(--color-white);
+    }
+
+    .btn-warning:hover,
+    .btn-warning:focus {
+    background-color: var(--color-warning-dark);
+    outline: none;
+    }
+
+    /* Profile Tabs */
+    .profile-tabs {
+    background: var(--color-bg);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    max-width: 900px;
+    margin-bottom: 32px;
+    }
+
+    .tabs {
+    display: flex;
+    border-bottom: 2px solid var(--color-primary);
+    margin-bottom: 16px;
+    user-select: none;
+    flex-wrap: wrap;
+    }
+
+    .tab {
+    padding: 12px 24px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-bottom: none;
+    font-weight: 600;
+    color: var(--color-primary);
+    transition: background-color var(--transition);
+    margin-right: 8px;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    background: #f9faff;
+    }
+
+    .tab:hover,
+    .tab:focus {
+    background-color: #eaf4fc;
+    outline: none;
+    }
+
+    .tab.active {
+    border-color: var(--color-primary) var(--color-primary) var(--color-white);
+    background-color: var(--color-white);
+    color: var(--color-text);
+    font-weight: 700;
+    }
+
+    .tab-content {
+    background: var(--color-white);
+    padding: 16px 0 0 0;
+    border: 2px solid var(--color-primary);
+    border-top: none;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    min-height: 150px;
+    color: var(--color-text);
+    }
+
+    /* Dashboard Overview */
+    .dashboard-overview {
+    background: var(--color-bg);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 32px;
+    }
+
+    .dashboard-overview h3 {
+    margin-bottom: 16px;
+    color: var(--color-primary-dark);
+    font-weight: 700;
+    font-size: 1.4rem;
+    }
+
+    .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+    }
+
+    .overview-card {
+    padding: 16px;
+    border-radius: var(--border-radius);
+    text-align: center;
+    color: var(--color-white);
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: box-shadow var(--transition);
+    }
+
+    .overview-card:hover {
+    box-shadow: var(--box-shadow);
+    }
+
+    .overview-active {
+    background-color: var(--color-primary);
+    }
+
+    .overview-hours {
+    background-color: var(--color-secondary);
+    color: var(--color-text);
+    }
+
+    .overview-completed {
+    background-color: var(--color-success-dark);
+    }
+
+    .overview-pending {
+    background-color: var(--color-warning-dark);
+    color: var(--color-white);
+    }
+
+    .overview-card h4 {
+    margin-bottom: 8px;
+    font-weight: 700;
+    }
+
+    .overview-card .number {
+    font-size: 2rem;
+    font-weight: 900;
+    }
+
+    /* Progress Bar */
+    .progress-container {
+    margin-top: 24px;
+    }
+
+    .progress-label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    color: var(--color-primary-dark);
+    }
+
+    .progress {
+    background: #e9ecef;
+    border-radius: 4px;
+    height: 12px;
+    overflow: hidden;
+    }
+
+    .progress-bar {
+    background: var(--color-success);
+    height: 100%;
+    width: 65%;
+    transition: width 0.3s ease;
+    }
+
+    .progress-text {
+    font-size: 0.95rem;
+    color: var(--color-muted);
+    margin-top: 6px;
+    }
+
+    /* Recent Activity */
+    .recent-activity {
+    background: var(--color-bg);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 32px;
+    }
+
+    .recent-activity h3 {
+    margin-bottom: 16px;
+    color: var(--color-primary-dark);
+    font-weight: 700;
+    font-size: 1.4rem;
+    }
+
+    .recent-activity ul {
+    list-style: none;
+    }
+
+    .recent-activity li {
+    padding: 12px 0;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    transition: background-color var(--transition);
+    user-select: none;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    }
+
+    .recent-activity li:hover,
+    .recent-activity li:focus {
+    background-color: #f0f4ff;
+    outline: none;
+    }
+
+    /* Upgrade Teaser */
+    .upgrade-teaser {
+    background: #fffbe7;
+    border: 1px solid #ffe082;
+    border-radius: var(--border-radius);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 24px;
+    }
+
+    .upgrade-teaser strong {
+    font-size: 1.1rem;
+    user-select: none;
+    color: var(--color-primary-dark);
+    }
+
+    .upgrade-teaser p {
+    margin-top: 4px;
+    font-size: 0.95rem;
+    color: #bfa100;
+    user-select: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+    .content {
+    padding: 24px;
+    margin: 16px;
+    }
+    }
+
+    @media (max-width: 900px) {
+    .main {
+    flex-direction: column;
+    }
+    .sidebar {
+    width: 100%;
+    }
+    .header {
+    flex-direction: column;
+    gap: 12px;
+    }
+    .quick-actions {
+    flex-direction: column;
+    }
+    .overview-grid {
+    grid-template-columns: 1fr 1fr;
+    }
+    .upgrade-teaser {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+    }
+    .tabs {
+    justify-content: center;
+    }
+    .tab {
+    margin-right: 4px;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    }
+    }
+
+    @media (max-width: 600px) {
+    .sidebar {
+    width: 220px;
+    }
+    .overview-grid {
+    grid-template-columns: 1fr;
+    }
+    }
+  </style>
+</head>
+<body>
+  <header class="header" role="banner">
+    <h1>Student Dashboard</h1>
+    <div class="header-right">
+    <span>Good afternoon, Taylor Jones</span>
+    <button class="upgrade-btn" onclick="window.location.href='student-upgrade.html'" aria-label="Upgrade to Pro plan">Upgrade to Pro</button>
+    <button class="logout-btn" onclick="window.location.href='index.html'" aria-label="Logout">Logout</button>
+    </div>
+  </header>
+  <div class="main">
+    <nav class="sidebar" aria-label="Student navigation">
+    <a class="nav-item active" href="student-dashboard.html" aria-current="page">📊 Overview</a>
+    <a class="nav-item" href="student-rotations.html">🏥 My Rotations</a>
+    <a class="nav-item" href="student-log-hours.html">⏰ Log Hours</a>
+    <a class="nav-item" href="student-applications.html">📝 Applications</a>
+    <a class="nav-item" href="student-evaluations.html">⭐ Evaluations</a>
+    <a class="nav-item" href="student-payment-history.html">💳 Payment History</a>
+    <a class="nav-item" href="student-profile.html">👤 Profile</a>
+    <a class="nav-item" href="student-support.html">🆘 Support</a>
+    <a class="nav-item" href="student-job-search.html">🔍 Job Search & Apply</a>
+    </nav>
+    <main class="content" role="main">
+    <section class="profile-card" aria-label="Student profile">
+    <img src="https://placehold.co/64x64" alt="Profile photo of Taylor Jones" />
+    <div class="profile-info">
+    <div class="name">Taylor Jones</div>
+    <div class="role">Family Nurse Practitioner</div>
+    <div class="grad-date">Graduation: May 2026</div>
+    </div>
+    </section>
+
+    <section class="quick-actions" aria-label="Quick actions">
+    <button class="btn btn-success" onclick="window.location.href='student-log-hours.html'">
+    <span aria-hidden="true">⏰</span> Log Hours
+    </button>
+    <button class="btn btn-primary" onclick="window.location.href='student-new-application.html'">
+    <span aria-hidden="true">📝</span> New Rotation Application
+    </button>
+    <button class="btn btn-warning" onclick="window.location.href='student-support.html'">
+    <span aria-hidden="true">🆘</span> Contact Support
+    </button>
+    </section>
+
+    <section class="profile-tabs" aria-label="Profile details tabs">
+    <div class="tabs" role="tablist" aria-label="Profile sections">
+    <div class="tab active" role="tab" tabindex="0" aria-selected="true" aria-controls="notes-panel" id="notes-tab">Notes</div>
+    <div class="tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="documents-panel" id="documents-tab">Documents</div>
+    <div class="tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="preceptors-panel" id="preceptors-tab">Preceptors</div>
+    <div class="tab" role="tab" tabindex="-1" aria-selected="false" aria-controls="schoolinfo-panel" id="schoolinfo-tab">School Info</div>
+    </div>
+
+    <section id="notes-panel" class="tab-content" role="tabpanel" aria-labelledby="notes-tab">
+    <h2>Notes</h2>
+    <p>Here you can add or view notes related to your clinical experiences.</p>
+    </section>
+
+    <section id="documents-panel" class="tab-content" role="tabpanel" aria-labelledby="documents-tab" hidden>
+    <h2>Documents</h2>
+    <p>Upload and manage your important documents here.</p>
+    </section>
+
+    <section id="preceptors-panel" class="tab-content" role="tabpanel" aria-labelledby="preceptors-tab" hidden>
+    <h2>Preceptors</h2>
+    <p>View and manage your assigned preceptors.</p>
+    </section>
+
+    <section id="schoolinfo-panel" class="tab-content" role="tabpanel" aria-labelledby="schoolinfo-tab" hidden>
+    <h2>School Info</h2>
+    <p>Details about your school and academic program.</p>
+    </section>
+    </section>
+
+    <section class="dashboard-overview" aria-label="Dashboard overview">
+    <h3>Dashboard Overview</h3>
+    <div class="overview-grid">
+    <div class="overview-card overview-active" role="region" aria-label="Active Rotations">
+    <h4>Active Rotations</h4>
+    <div class="number">2</div>
+    </div>
+    <div class="overview-card overview-hours" role="region" aria-label="Total Hours">
+    <h4>Total Hours</h4>
+    <div class="number">156</div>
+    </div>
+    <div class="overview-card overview-completed" role="region" aria-label="Completed Rotations">
+    <h4>Completed</h4>
+    <div class="number">3</div>
+    </div>
+    <div class="overview-card overview-pending" role="region" aria-label="Pending Rotations">
+    <h4>Pending</h4>
+    <div class="number">1</div>
+    </div>
+    </div>
+    <div class="progress-container">
+    <label for="progress-bar" class="progress-label">Progress Toward Required Hours</label>
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="240" aria-valuenow="156" aria-labelledby="progress-bar-label">
+    <div id="progress-bar" class="progress-bar"></div>
+    </div>
+    <div id="progress-bar-label" class="progress-text">156 of 240 hours completed (65%)</div>
+    </div>
+    </section>
+
+    <section class="recent-activity" aria-label="Recent activity">
+    <h3>Recent Activity</h3>
+    <ul>
+    <li tabindex="0" role="button" onclick="window.location.href='student-evaluations.html'">✅ Completed evaluation for Sunrise Clinic rotation</li>
+    <li tabindex="0" role="button" onclick="window.location.href='student-log-hours.html'">📝 Logged 8 hours for Family Practice rotation</li>
+    <li tabindex="0" role="button" onclick="window.location.href='student-applications.html'">📋 Applied to Metro Hospital for Pediatrics rotation</li>
+    <li tabindex="0" role="button" onclick="window.location.href='student-log-hours.html'">⏰ Reminder: Submit weekly hours by Friday</li>
+    </ul>
+    </section>
+
+    <section class="upgrade-teaser" aria-label="Upgrade to Pro plan">
+    <div>
+    <strong>Unlock Pro Features!</strong>
+    <p>Get unlimited rotations, advanced analytics, and priority support.</p>
+    </div>
+    <button class="btn btn-success" onclick="window.location.href='student-upgrade.html'">Upgrade to Pro</button>
+    </section>
+    </main>
+  </div>
+
+  <script>
+    // Tabs functionality
+    const tabs = document.querySelectorAll('.tab');
+    const panels = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+    // Deactivate all tabs and hide panels
+    tabs.forEach(t => {
+    t.classList.remove('active');
+    t.setAttribute('aria-selected', 'false');
+    t.setAttribute('tabindex', '-1');
+    });
+    panels.forEach(p => p.hidden = true);
+
+    // Activate clicked tab and show panel
+    tab.classList.add('active');
+    tab.setAttribute('aria-selected', 'true');
+    tab.setAttribute('tabindex', '0');
+    const panel = document.getElementById(tab.getAttribute('aria-controls'));
+    panel.hidden = false;
+    panel.focus();
+    });
+
+    tab.addEventListener('keydown', e => {
+    let index = Array.from(tabs).indexOf(e.target);
+    if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    tabs[(index + 1) % tabs.length].focus();
+    } else if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    tabs[(index - 1 + tabs.length) % tabs.length].focus();
+    }
+    });
+    });
+  </script>
+</body>
+</html>

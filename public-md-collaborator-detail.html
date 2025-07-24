@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MD Collaborator Profile - NP Clinical Hub</title>
+  <!-- Firebase CDN scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f6f7fb;
+      color: #222;
+      width: 100vw;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    /* HEADER (from your search results page) */
+    header {
+      position: sticky; top: 0; z-index: 1000;
+      background: #0A2540;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .site-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 32px;
+    }
+    .site-nav__logo {
+      font-weight: 700; font-size: 1.5rem;
+      cursor: pointer; user-select: none;
+    }
+    .site-nav__list {
+      list-style: none; display: flex; gap: 24px;
+      margin: 0; padding: 0;
+    }
+    .site-nav__list a {
+      color: #fff;
+      text-decoration: none; font-weight: 600;
+      transition: color 0.3s;
+    }
+    .site-nav__list a:hover,
+    .site-nav__list a:focus {
+      color: #FFD700;
+      outline: none;
+    }
+    .link--disabled {
+      pointer-events: none; opacity: 0.6; cursor: default;
+    }
+
+    /* FOOTER (from your search results page) */
+    footer {
+      background: #0A2540;
+      color: #fff;
+      text-align: center;
+      padding: 24px 0 12px 0;
+      margin-top: 40px;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+    }
+    .footer-links {
+      margin-bottom: 10px;
+    }
+    .footer-links a {
+      color: #FFD700;
+      text-decoration: none;
+      margin: 0 12px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
+
+    /* PAGE CONTENT */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .back-btn {
+      background: #FFD700;
+      color: #0A2540;
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: inline-block;
+      transition: background 0.2s;
+    }
+    .back-btn:hover {
+      background: #c9a700;
+    }
+    .profile-header {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 40px;
+      margin-bottom: 30px;
+      display: grid;
+      grid-template-columns: 120px 1fr auto;
+      gap: 30px;
+      align-items: center;
+    }
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0A2540, #FFD700);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: #fff;
+      font-weight: 700;
+    }
+    .profile-info h1 {
+      margin: 0 0 8px 0;
+      font-size: 2.2rem;
+      color: #0A2540;
+    }
+    .profile-info .specialty {
+      font-size: 1.2rem;
+      color: #666;
+      margin-bottom: 12px;
+    }
+    .profile-info .credentials {
+      background: #FFD700;
+      color: #0A2540;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+    .contact-btn {
+      background: #0A2540;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.2s;
+      text-align: center;
+    }
+    .contact-btn:hover {
+      background: #021426;
+    }
+    .content-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 30px;
+    }
+    .main-content, .sidebar {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 30px;
+    }
+    .section-title {
+      font-size: 1.4rem;
+      color: #0A2540;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #FFD700;
+      padding-bottom: 8px;
+    }
+    .info-item {
+      margin-bottom: 16px;
+    }
+    .info-label {
+      font-weight: 600;
+      color: #0A2540;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .info-value {
+      color: #333;
+    }
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+    @media (max-width: 768px) {
+      .profile-header {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 20px;
+      }
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+      .site-nav {
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px 16px;
+      }
+      .site-nav__list {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER (consistent with your search results page) -->
+  <header>
+    <nav class="site-nav" aria-label="Primary Navigation">
+      <div class="site-nav__logo" tabindex="0">NP Clinical Hub</div>
+      <ul class="site-nav__list">
+        <li><a href="landing.html">Home</a></li>
+        <li><a href="public-job-search.html">Jobs</a></li>
+        <li><a href="find-rotation.html">Find Rotation</a></li>
+        <li>
+          <a href="#" id="nav-launchpad" role="link"
+             class="link--disabled" aria-disabled="true"
+             title="Please sign in to access Practice Launchpad">
+            Practice Launchpad
+          </a>
+        </li>
+        <li>
+          <a href="#" id="nav-mdnetwork" role="link"
+             class="link--disabled" aria-disabled="true"
+             title="Please sign in to access MD Partnership Network">
+            MD Partnership Network
+          </a>
+        </li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="index.html">Sign In</a></li>
+        <li><a href="register.html">Register</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <a href="javascript:history.back()" class="back-btn">← Back to Search</a>
+    
+    <div id="loading" class="loading">Loading collaborator profile...</div>
+    <div id="content" style="display:none;">
+      <div class="profile-header">
+        <div class="profile-avatar" id="avatar"></div>
+        <div class="profile-info">
+          <h1 id="name"></h1>
+          <div class="specialty" id="specialty"></div>
+          <div class="credentials" id="credentials"></div>
+        </div>
+        <a href="#" class="contact-btn" id="contactBtn">Contact Collaborator</a>
+      </div>
+      <div class="content-grid">
+        <div class="main-content">
+          <h2 class="section-title">Professional Information</h2>
+          <div class="info-item">
+            <span class="info-label">Office/Practice:</span>
+            <span class="info-value" id="office"></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Email:</span>
+            <span class="info-value" id="email"></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Phone:</span>
+            <span class="info-value" id="phone"></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Years of Experience:</span>
+            <span class="info-value" id="experience"></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Bio:</span>
+            <div class="info-value" id="bio"></div>
+          </div>
+        </div>
+        <div class="sidebar">
+          <h3 class="section-title">Quick Info</h3>
+          <div class="info-item">
+            <span class="info-label">Availability:</span>
+            <span class="info-value" id="availability"></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Location:</span>
+            <span class="info-value" id="location"></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Languages:</span>
+            <span class="info-value" id="languages"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER (consistent with your search results page) -->
+  <footer>
+    <div class="footer-links">
+      <a href="landing.html">Home</a>|
+      <a href="public-job-search.html">Jobs</a>|
+      <a href="find-rotation.html">Find Rotation</a>|
+      <a href="about.html">About</a>|
+      <a href="contact.html">Contact</a>|
+      <a href="index.html">Sign In</a>|
+      <a href="register.html">Register</a>
+    </div>
+    &copy; 2025 NP Clinical Hub. All rights reserved.
+  </footer>
+
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyC2MXxO_4Zayv2g8-Az6G9WOoxF2CdrpJ8",
+      authDomain: "np-clinical-hub-prototype.firebaseapp.com",
+      projectId: "np-clinical-hub-prototype",
+      storageBucket: "np-clinical-hub-prototype.firebasestorage.app",
+      messagingSenderId: "843798932639",
+      appId: "1:843798932639:web:fb768c55f404c25c3306aa"
+    };
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    // Get ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const collaboratorId = urlParams.get('id');
+
+    async function loadCollaborator() {
+      if (!collaboratorId) {
+        document.getElementById('loading').textContent = 'No collaborator ID provided.';
+        return;
+      }
+      try {
+        const doc = await db.collection('mdcollaborators').doc(collaboratorId).get();
+        if (!doc.exists) {
+          document.getElementById('loading').textContent = 'Collaborator not found.';
+          return;
+        }
+        const data = doc.data();
+        
+        // Populate fields
+        document.getElementById('avatar').textContent = (data.name || 'Dr').charAt(0).toUpperCase();
+        document.getElementById('name').textContent = data.name || 'Unknown';
+        document.getElementById('specialty').textContent = data.specialty || 'Not specified';
+        document.getElementById('credentials').textContent = data.credentials || 'MD';
+        document.getElementById('office').textContent = data.office || 'Not specified';
+        document.getElementById('email').textContent = data.email || 'Not provided';
+        document.getElementById('phone').textContent = data.phone || 'Not provided';
+        document.getElementById('experience').textContent = data.experience || 'Not specified';
+        document.getElementById('bio').textContent = data.bio || 'No bio available.';
+        document.getElementById('availability').textContent = data.availability || 'Contact for availability';
+        document.getElementById('location').textContent = data.location || 'Not specified';
+        document.getElementById('languages').textContent = data.languages || 'English';
+        
+        // Contact button
+        if (data.email) {
+          document.getElementById('contactBtn').href = `mailto:${data.email}?subject=Collaboration Inquiry`;
+        }
+        
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+      } catch (error) {
+        console.error('Error loading collaborator:', error);
+        document.getElementById('loading').textContent = 'Error loading collaborator profile.';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadCollaborator);
+  </script>
+</body>
+</html>

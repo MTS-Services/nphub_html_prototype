@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Agreements - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #667eea;
+      --color-primary-dark: #4a5ccf;
+      --color-bg: #f5f7fa;
+      --color-sidebar-bg: #34495e;
+      --color-sidebar-text: #ecf0f1;
+      --color-text: #2d3e50;
+      --color-white: #fff;
+      --border-radius: 10px;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: 0.3s ease;
+      --max-width: 1200px;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    nav.sidebar {
+      width: 250px;
+      background: var(--color-sidebar-bg);
+      color: var(--color-sidebar-text);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+
+    nav.sidebar a {
+      color: var(--color-sidebar-text);
+      text-decoration: none;
+      padding: 14px 32px;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color var(--transition);
+      user-select: none;
+      position: relative;
+    }
+
+    nav.sidebar a.active,
+    nav.sidebar a:hover {
+      background: var(--color-primary);
+      color: var(--color-white);
+      cursor: pointer;
+    }
+
+    /* Header */
+    header.header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 20px 32px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+      width: 100%;
+    }
+
+    header.header button.logout-btn {
+      background: #dc3545;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color var(--transition);
+    }
+
+    header.header button.logout-btn:hover {
+      background: #b02a37;
+    }
+
+    /* Main content */
+    main.content {
+      flex: 1;
+      padding: 32px;
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      margin: 24px;
+      box-shadow: var(--box-shadow);
+      overflow-y: auto;
+      max-width: var(--max-width);
+      box-sizing: border-box;
+    }
+
+    main.content h1 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      color: var(--color-primary-dark);
+    }
+
+    /* Search/filter form */
+    .search-form {
+      margin-bottom: 24px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-form input,
+    .search-form select {
+      padding: 10px 14px;
+      font-size: 1rem;
+      border: 2px solid #ccc;
+      border-radius: var(--border-radius);
+      flex: 1 1 200px;
+      transition: border-color var(--transition);
+    }
+
+    .search-form input:focus,
+    .search-form select:focus {
+      border-color: var(--color-primary);
+      outline: none;
+      box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
+    }
+
+    .search-form button {
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      padding: 12px 28px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background-color var(--transition);
+      flex: 0 0 auto;
+    }
+
+    .search-form button:hover {
+      background: var(--color-primary-dark);
+    }
+
+    /* Agreements table */
+    table.agreements-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1rem;
+    }
+
+    table.agreements-table thead {
+      background: var(--color-primary);
+      color: var(--color-white);
+    }
+
+    table.agreements-table th,
+    table.agreements-table td {
+      padding: 12px 16px;
+      border: 1px solid #ddd;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    table.agreements-table tbody tr:nth-child(even) {
+      background: #f9faff;
+    }
+
+    /* Status badges */
+    .status-badge {
+      padding: 6px 12px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      color: var(--color-white);
+      display: inline-block;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .status-active {
+      background-color: #28a745; /* green */
+    }
+
+    .status-pending {
+      background-color: #ffc107; /* amber */
+      color: #212529;
+    }
+
+    .status-expired {
+      background-color: #6c757d; /* gray */
+    }
+
+    .status-terminated {
+      background-color: #dc3545; /* red */
+    }
+
+    /* Action buttons */
+    .action-btn {
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color var(--transition);
+      margin-right: 8px;
+      user-select: none;
+    }
+
+    .action-btn:hover {
+      background: var(--color-primary-dark);
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    }
+
+    .modal {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      padding: 24px 32px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: var(--box-shadow);
+      position: relative;
+      text-align: left;
+    }
+
+    .modal h3 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: var(--color-primary-dark);
+      text-align: center;
+    }
+
+    .modal p {
+      margin: 8px 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      table.agreements-table thead {
+        display: none;
+      }
+      table.agreements-table, 
+      table.agreements-table tbody, 
+      table.agreements-table tr, 
+      table.agreements-table td {
+        display: block;
+        width: 100%;
+      }
+      table.agreements-table tr {
+        margin-bottom: 24px;
+        border-bottom: 2px solid var(--color-primary);
+      }
+      table.agreements-table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+        border: none;
+        border-bottom: 1px solid #ddd;
+      }
+      table.agreements-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 16px;
+        width: 45%;
+        padding-left: 8px;
+        font-weight: 700;
+        text-align: left;
+      }
+      .action-btn {
+        margin: 8px 8px 0 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="sidebar" aria-label="NP Navigation">
+    <a href="job-seeker-dashboard.html">🏠 Dashboard</a>
+    <a href="#">👤 Profile</a>
+    <a href="#">💾 Saved Jobs</a>
+    <a href="#">📝 Applications</a>
+    <a href="#">✉️ Messages</a>
+    <a href="np-payment.html">💳 Payment</a>
+    <a href="np-documents.html">📁 Documents</a>
+    <a href="practice-launchpad.html">🚀 Practice Launchpad</a>
+    <a href="md-partnership-network.html">🤝 MD Partnership Network</a>
+    <a href="np-collaboration-request.html">📄 Collaboration Requests</a>
+    <a href="md-np-agreements.html" class="active" aria-current="page">📄 My Agreements</a>
+  </nav>
+
+  <div style="flex:1; display:flex; flex-direction: column; min-height: 100vh;">
+    <header class="header">
+      My Collaborative Agreements
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </header>
+
+    <main class="content" tabindex="0" aria-label="My Collaborative Agreements">
+      <section aria-label="Search and filter agreements">
+        <form class="search-form" onsubmit="event.preventDefault(); filterAgreements();">
+          <input type="text" id="searchName" placeholder="Search by MD name" aria-label="Search by MD name" />
+          <select id="filterStatus" aria-label="Filter by agreement status">
+            <option value="">All Statuses</option>
+            <option value="Active">Active</option>
+            <option value="Pending">Pending</option>
+            <option value="Expired">Expired</option>
+            <option value="Terminated">Terminated</option>
+          </select>
+          <button type="submit">Filter</button>
+        </form>
+      </section>
+
+      <section aria-label="Agreements list">
+        <table class="agreements-table" role="table" aria-describedby="agreementsDesc">
+          <thead>
+            <tr>
+              <th scope="col">MD Name</th>
+              <th scope="col">Specialty</th>
+              <th scope="col">Status</th>
+              <th scope="col">Start Date</th>
+              <th scope="col">End Date</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="agreementsBody">
+            <!-- Agreements inserted by JS -->
+          </tbody>
+        </table>
+        <p id="agreementsDesc" class="sr-only">List of collaborative agreements with MDs</p>
+      </section>
+    </main>
+  </div>
+
+  <!-- Agreement Details Modal -->
+  <div class="modal-overlay" id="agreementModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
+    <div class="modal" role="document">
+      <h3 id="modalTitle">Agreement Details</h3>
+      <div id="modalContent" style="margin-top: 12px;">
+        <!-- Dynamic content inserted here -->
+      </div>
+      <button class="action-btn" id="closeModalBtn" style="margin-top:20px; display: block; margin-left: auto;">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const agreements = [
+      {
+        id: 1,
+        mdName: 'Dr. John Smith',
+        specialty: 'Family Medicine',
+        status: 'Active',
+        startDate: '2024-01-01',
+        endDate: '2025-01-01',
+        details: 'This agreement covers collaborative practice in Family Medicine for the state of NY.',
+        pdfUrl: 'agreements/john-smith-agreement.pdf'
+      },
+      {
+        id: 2,
+        mdName: 'Dr. Emily Johnson',
+        specialty: 'Internal Medicine',
+        status: 'Pending',
+        startDate: '2024-06-15',
+        endDate: '',
+        details: 'Pending approval for collaborative agreement in Internal Medicine.',
+        pdfUrl: 'agreements/emily-johnson-agreement.pdf'
+      },
+      {
+        id: 3,
+        mdName: 'Dr. Michael Lee',
+        specialty: 'Pediatrics',
+        status: 'Expired',
+        startDate: '2022-05-01',
+        endDate: '2023-05-01',
+        details: 'Previous agreement expired; renewal pending.',
+        pdfUrl: 'agreements/michael-lee-agreement.pdf'
+      },
+      {
+        id: 4,
+        mdName: 'Dr. Sarah Patel',
+        specialty: 'Psychiatry',
+        status: 'Terminated',
+        startDate: '2023-01-01',
+        endDate: '2023-12-31',
+        details: 'Agreement terminated due to relocation of MD.',
+        pdfUrl: 'agreements/sarah-patel-agreement.pdf'
+      }
+    ];
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    }
+
+    function renderAgreements(list) {
+      const tbody = document.getElementById('agreementsBody');
+      tbody.innerHTML = '';
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">No agreements found.</td></tr>';
+        return;
+      }
+      list.forEach(agreement => {
+        const tr = document.createElement('tr');
+
+        const mdNameTd = document.createElement('td');
+        mdNameTd.textContent = agreement.mdName;
+        mdNameTd.setAttribute('data-label', 'MD Name');
+
+        const specialtyTd = document.createElement('td');
+        specialtyTd.textContent = agreement.specialty;
+        specialtyTd.setAttribute('data-label', 'Specialty');
+
+        const statusTd = document.createElement('td');
+        statusTd.setAttribute('data-label', 'Status');
+        const statusSpan = document.createElement('span');
+        statusSpan.className = 'status-badge';
+        switch(agreement.status) {
+          case 'Active':
+            statusSpan.classList.add('status-active');
+            break;
+          case 'Pending':
+            statusSpan.classList.add('status-pending');
+            break;
+          case 'Expired':
+            statusSpan.classList.add('status-expired');
+            break;
+          case 'Terminated':
+            statusSpan.classList.add('status-terminated');
+            break;
+        }
+        statusSpan.textContent = agreement.status;
+        statusTd.appendChild(statusSpan);
+
+        const startDateTd = document.createElement('td');
+        startDateTd.textContent = agreement.startDate || '—';
+        startDateTd.setAttribute('data-label', 'Start Date');
+
+        const endDateTd = document.createElement('td');
+        endDateTd.textContent = agreement.endDate || '—';
+        endDateTd.setAttribute('data-label', 'End Date');
+
+        const actionsTd = document.createElement('td');
+        actionsTd.setAttribute('data-label', 'Actions');
+
+        // View Details button
+        const viewBtn = document.createElement('button');
+        viewBtn.className = 'action-btn';
+        viewBtn.textContent = 'View Details';
+        viewBtn.onclick = () => openAgreementModal(agreement.id);
+
+        actionsTd.appendChild(viewBtn);
+
+        // Conditional Cancel or Renew buttons
+        if (agreement.status === 'Pending') {
+          const cancelBtn = document.createElement('button');
+          cancelBtn.className = 'action-btn';
+          cancelBtn.textContent = 'Cancel Request';
+          cancelBtn.onclick = () => {
+            if (confirm(`Cancel the pending request with ${agreement.mdName}?`)) {
+              const idx = agreements.findIndex(a => a.id === agreement.id);
+              if (idx > -1) {
+                agreements.splice(idx, 1);
+                renderAgreements(agreements);
+              }
+            }
+          };
+          actionsTd.appendChild(cancelBtn);
+        } else if (agreement.status === 'Expired') {
+          const renewBtn = document.createElement('button');
+          renewBtn.className = 'action-btn';
+          renewBtn.textContent = 'Renew';
+          renewBtn.onclick = () => alert(`Renewal request for ${agreement.mdName} coming soon.`);
+          actionsTd.appendChild(renewBtn);
+        }
+
+        tr.appendChild(mdNameTd);
+        tr.appendChild(specialtyTd);
+        tr.appendChild(statusTd);
+        tr.appendChild(startDateTd);
+        tr.appendChild(endDateTd);
+        tr.appendChild(actionsTd);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Modal elements
+    const agreementModal = document.getElementById('agreementModal');
+    const modalContent = document.getElementById('modalContent');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    function openAgreementModal(agreementId) {
+      const agreement = agreements.find(a => a.id === agreementId);
+      if (!agreement) return;
+
+      modalContent.innerHTML = `
+        <p><strong>MD Name:</strong> ${agreement.mdName}</p>
+        <p><strong>Specialty:</strong> ${agreement.specialty}</p>
+        <p><strong>Status:</strong> ${agreement.status}</p>
+        <p><strong>Start Date:</strong> ${agreement.startDate || '—'}</p>
+        <p><strong>End Date:</strong> ${agreement.endDate || '—'}</p>
+        <hr />
+        <p>${agreement.details || 'No additional details available.'}</p>
+        <a href="${agreement.pdfUrl || '#'}" target="_blank" rel="noopener noreferrer" class="action-btn" style="display:inline-block; margin-top: 16px;">
+          Download Agreement PDF
+        </a>
+      `;
+
+      agreementModal.style.display = 'flex';
+      closeModalBtn.focus();
+    }
+
+    closeModalBtn.onclick = () => {
+      agreementModal.style.display = 'none';
+    };
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && agreementModal.style.display === 'flex') {
+        agreementModal.style.display = 'none';
+      }
+    });
+
+    function filterAgreements() {
+      const nameFilter = document.getElementById('searchName').value.toLowerCase();
+      const statusFilter = document.getElementById('filterStatus').value;
+
+      const filtered = agreements.filter(agreement => {
+        const matchesName = agreement.mdName.toLowerCase().includes(nameFilter);
+        const matchesStatus = statusFilter === '' || agreement.status === statusFilter;
+        return matchesName && matchesStatus;
+      });
+
+      renderAgreements(filtered);
+    }
+
+    // Initial render
+    renderAgreements(agreements);
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>

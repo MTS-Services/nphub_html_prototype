@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Support - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-success: #27ae60;
+      --color-success-dark: #388e3c;
+      --color-warning: #f39c12;
+      --color-warning-dark: #f57c00;
+      --color-info: #cce5ff;
+      --color-info-dark: #004085;
+      --color-bg: #ECECEC;
+      --color-text: #2D2D2D;
+      --color-muted: #6c757d;
+      --color-muted-light: #888;
+      --color-white: #FFFFFF;
+      --border-radius: 12px;
+      --transition: 0.3s ease;
+      --color-danger: #e74c3c;
+      --color-danger-dark: #c0392b;
+      --box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      --sidebar-width: 250px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      flex-grow: 1;
+    }
+
+    .header-right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .upgrade-btn {
+      background: var(--color-danger);
+      color: var(--color-white);
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background-color var(--transition);
+    }
+
+    .upgrade-btn:hover,
+    .upgrade-btn:focus {
+      background: var(--color-danger-dark);
+      outline: none;
+    }
+
+    .logout-btn {
+      background: #dc3545;
+      color: var(--color-white);
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color var(--transition);
+    }
+
+    .logout-btn:hover,
+    .logout-btn:focus {
+      background: #b02a37;
+      outline: none;
+    }
+
+    .main {
+      display: flex;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 24px 0;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all var(--transition);
+      color: var(--color-white);
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .nav-item:hover,
+    .nav-item:focus,
+    .nav-item.active {
+      background: var(--color-primary);
+      border-left-color: var(--color-secondary);
+      outline: none;
+    }
+
+    .content {
+      flex: 1;
+      padding: 32px 48px;
+      overflow-y: auto;
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      margin: 24px;
+      box-shadow: var(--box-shadow);
+      min-width: 0;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 3px solid var(--color-primary);
+    }
+
+    .page-header h2 {
+      color: var(--color-primary-dark);
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      color: var(--color-muted);
+      font-size: 1.1rem;
+    }
+
+    .support-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+
+    .support-card {
+      background: var(--color-bg);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 2px solid transparent;
+      transition: all var(--transition);
+    }
+
+    .support-card:hover {
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+    }
+
+    .support-card h3 {
+      color: var(--color-primary-dark);
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .contact-info {
+      background: linear-gradient(135deg, #f0f4ff 0%, #e8f2ff 100%);
+      border: 2px solid var(--color-primary);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+
+    .contact-methods {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .contact-method {
+      background: var(--color-white);
+      padding: 16px;
+      border-radius: var(--border-radius);
+      text-align: center;
+      border: 2px solid #e0e6ed;
+      transition: all var(--transition);
+    }
+
+    .contact-method:hover {
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+    }
+
+    .contact-method .icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      color: var(--color-primary);
+    }
+
+    .contact-method h4 {
+      color: var(--color-primary-dark);
+      margin-bottom: 4px;
+      font-size: 1rem;
+    }
+
+    .contact-method p {
+      color: var(--color-muted);
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    .contact-method a {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .contact-method a:hover {
+      text-decoration: underline;
+    }
+
+    .support-form {
+      background: var(--color-bg);
+      border-radius: var(--border-radius);
+      padding: 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--color-primary-dark);
+      font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #ddd;
+      border-radius: var(--border-radius);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: all var(--transition);
+      background: var(--color-white);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--color-primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .priority-selector {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .priority-option {
+      flex: 1;
+      padding: 8px 12px;
+      border: 2px solid #ddd;
+      border-radius: var(--border-radius);
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .priority-option.low {
+      border-color: var(--color-success);
+      color: var(--color-success-dark);
+    }
+
+    .priority-option.medium {
+      border-color: var(--color-warning);
+      color: var(--color-warning-dark);
+    }
+
+    .priority-option.high {
+      border-color: var(--color-danger);
+      color: var(--color-danger-dark);
+    }
+
+    .priority-option.selected {
+      background: var(--color-primary);
+      color: var(--color-white);
+      border-color: var(--color-primary);
+    }
+
+    .submit-button {
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      padding: 14px 32px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all var(--transition);
+      width: 100%;
+    }
+
+    .submit-button:hover,
+    .submit-button:focus {
+      background: var(--color-primary-dark);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .confirmation {
+      margin-top: 24px;
+      padding: 20px;
+      background: linear-gradient(135deg, #f0fff4 0%, #e8f5e8 100%);
+      border: 2px solid var(--color-success);
+      color: var(--color-success-dark);
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .faq-section {
+      margin-top: 48px;
+    }
+
+    .faq-section h3 {
+      color: var(--color-primary-dark);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .faq-item {
+      background: var(--color-bg);
+      border-radius: var(--border-radius);
+      margin-bottom: 16px;
+      overflow: hidden;
+      border: 2px solid transparent;
+      transition: all var(--transition);
+    }
+
+    .faq-item:hover {
+      border-color: var(--color-primary);
+    }
+
+    .faq-question {
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--color-primary-dark);
+      padding: 20px 24px;
+      background: var(--color-white);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all var(--transition);
+      user-select: none;
+    }
+
+    .faq-question:hover {
+      background: #f8f9fa;
+    }
+
+    .faq-question::after {
+      content: '+';
+      font-size: 1.5rem;
+      color: var(--color-primary);
+      transition: transform var(--transition);
+    }
+
+    .faq-item.active .faq-question::after {
+      transform: rotate(45deg);
+    }
+
+    .faq-answer {
+      display: none;
+      padding: 0 24px 20px 24px;
+      color: var(--color-text);
+      line-height: 1.6;
+      background: var(--color-white);
+    }
+
+    .faq-item.active .faq-answer {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .quick-action {
+      background: var(--color-white);
+      border: 2px solid var(--color-primary);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition);
+      text-decoration: none;
+      color: var(--color-text);
+    }
+
+    .quick-action:hover {
+      background: var(--color-primary);
+      color: var(--color-white);
+      transform: translateY(-2px);
+    }
+
+    .quick-action .icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      color: var(--color-primary);
+      transition: color var(--transition);
+    }
+
+    .quick-action:hover .icon {
+      color: var(--color-white);
+    }
+
+    .quick-action h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .quick-action p {
+      font-size: 0.85rem;
+      color: var(--color-muted);
+      margin: 0;
+    }
+
+    .quick-action:hover p {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .required {
+      color: var(--color-danger);
+    }
+
+    @media (max-width: 1024px) {
+      .content {
+        padding: 24px;
+        margin: 16px;
+      }
+      .support-grid {
+        grid-template-columns: 1fr;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+      }
+      .header {
+        flex-direction: column;
+        gap: 12px;
+      }
+      .contact-methods {
+        grid-template-columns: 1fr;
+      }
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header" role="banner">
+    <h1>Student Support</h1>
+    <div class="header-right">
+      <span>Welcome, Taylor Jones</span>
+      <button class="upgrade-btn" onclick="window.location.href='student-upgrade.html'" aria-label="Upgrade to Pro plan">Upgrade to Pro</button>
+      <button class="logout-btn" onclick="window.location.href='index.html'" aria-label="Logout">Logout</button>
+    </div>
+  </header>
+  
+  <div class="main">
+    <nav class="sidebar" aria-label="Student navigation">
+      <a class="nav-item" href="student-dashboard.html">📊 Overview</a>
+      <a class="nav-item" href="student-rotations.html">🏥 My Rotations</a>
+      <a class="nav-item" href="student-log-hours.html">⏰ Log Hours</a>
+      <a class="nav-item" href="student-applications.html">📝 Applications</a>
+      <a class="nav-item" href="student-evaluations.html">⭐ Evaluations</a>
+      <a class="nav-item" href="student-payment-history.html">💳 Payment History</a>
+      <a class="nav-item" href="student-profile.html">👤 Profile</a>
+      <a class="nav-item active" href="student-support.html" aria-current="page">🆘 Support</a>
+      <a class="nav-item" href="student-job-search.html">🔍 Job Search & Apply</a>
+    </nav>
+    
+    <main class="content" role="main" tabindex="0">
+      <div class="page-header">
+        <h2>🆘 Student Support Center</h2>
+        <p>Get help with your clinical rotations, applications, and account management</p>
+      </div>
+
+      <div class="quick-actions">
+        <a href="#contact" class="quick-action">
+          <div class="icon">📞</div>
+          <h4>Contact Support</h4>
+          <p>Get direct help from our team</p>
+        </a>
+        <a href="#faq" class="quick-action">
+          <div class="icon">❓</div>
+          <h4>FAQ</h4>
+          <p>Find answers to common questions</p>
+        </a>
+        <a href="student-profile.html" class="quick-action">
+          <div class="icon">👤</div>
+          <h4>Update Profile</h4>
+          <p>Keep your information current</p>
+        </a>
+        <a href="student-payment-history.html" class="quick-action">
+          <div class="icon">💳</div>
+          <h4>Billing Help</h4>
+          <p>Payment and subscription support</p>
+        </a>
+      </div>
+
+      <section class="contact-info" id="contact" aria-label="Contact information">
+        <h3>📞 Contact Our Support Team</h3>
+        <p>Our dedicated support team is here to help you succeed in your clinical rotations. Choose the best way to reach us:</p>
+        
+        <div class="contact-methods">
+          <div class="contact-method">
+            <div class="icon">📧</div>
+            <h4>Email Support</h4>
+            <p><a href="mailto:support@npclinicalhub.com">support@npclinicalhub.com</a></p>
+            <p>Response within 24 hours</p>
+          </div>
+          <div class="contact-method">
+            <div class="icon">📞</div>
+            <h4>Phone Support</h4>
+            <p><a href="tel:+15551234567">(555) 123-4567</a></p>
+            <p>Mon-Fri, 9am-6pm EST</p>
+          </div>
+          <div class="contact-method">
+            <div class="icon">💬</div>
+            <h4>Live Chat</h4>
+            <p><a href="#" onclick="openLiveChat()">Start Chat</a></p>
+            <p>Available during business hours</p>
+          </div>
+          <div class="contact-method">
+            <div class="icon">🚨</div>
+            <h4>Emergency</h4>
+            <p><a href="tel:+15559876543">(555) 987-6543</a></p>
+            <p>24/7 urgent issues only</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="support-grid">
+        <section aria-label="Support request form">
+          <div class="support-form">
+            <h3>📝 Submit a Support Request</h3>
+            <form id="supportForm" novalidate>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="studentName">Full Name <span class="required">*</span></label>
+                  <input type="text" id="studentName" name="studentName" required placeholder="Your full name" value="Taylor Jones" />
+                </div>
+                <div class="form-group">
+                  <label for="studentEmail">Email Address <span class="required">*</span></label>
+                  <input type="email" id="studentEmail" name="studentEmail" required placeholder="you@example.com" value="taylor.jones@student.edu" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="issueType">Issue Category <span class="required">*</span></label>
+                  <select id="issueType" name="issueType" required>
+                    <option value="">Select a category</option>
+                    <option value="login">Login & Account Access</option>
+                    <option value="application">Rotation Applications</option>
+                    <option value="billing">Billing & Payments</option>
+                    <option value="technical">Technical Issues</option>
+                    <option value="preceptor">Preceptor Communication</option>
+                    <option value="hours">Hours Logging</option>
+                    <option value="evaluation">Evaluations</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Priority Level</label>
+                  <div class="priority-selector">
+                    <div class="priority-option low" data-priority="low">Low</div>
+                    <div class="priority-option medium selected" data-priority="medium">Medium</div>
+                    <div class="priority-option high" data-priority="high">High</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="issueSubject">Subject <span class="required">*</span></label>
+                <input type="text" id="issueSubject" name="issueSubject" required placeholder="Brief description of your issue" />
+              </div>
+
+              <div class="form-group">
+                <label for="issueDescription">Detailed Description <span class="required">*</span></label>
+                <textarea id="issueDescription" name="issueDescription" required placeholder="Please provide as much detail as possible about your issue, including any error messages or steps you've already tried..."></textarea>
+              </div>
+
+              <button type="submit" class="submit-button">🚀 Submit Support Request</button>
+            </form>
+            
+            <div id="supportConfirmation" class="confirmation" role="alert" style="display:none;">
+              ✅ Thank you for contacting support! We've received your request and will respond within 24 hours. Your ticket number is #ST-2024-001.
+            </div>
+          </div>
+        </section>
+
+        <section class="support-card">
+          <h3>📚 Resources & Guides</h3>
+          <div style="space-y: 12px;">
+            <p><a href="#" onclick="openGuide('getting-started')" style="color: var(--color-primary); text-decoration: none; font-weight: 600;">📖 Getting Started Guide</a></p>
+            <p><a href="#" onclick="openGuide('application-process')" style="color: var(--color-primary); text-decoration: none; font-weight: 600;">📝 Application Process</a></p>
+            <p><a href="#" onclick="openGuide('hours-logging')" style="color: var(--color-primary); text-decoration: none; font-weight: 600;">⏰ Hours Logging Tutorial</a></p>
+            <p><a href="#" onclick="openGuide('evaluation-system')" style="color: var(--color-primary); text-decoration: none; font-weight: 600;">⭐ Evaluation System</a></p>
+            <p><a href="#" onclick="openGuide('billing-faq')" style="color: var(--color-primary); text-decoration: none; font-weight: 600;">💳 Billing FAQ</a></p>
+            <p><a href="#" onclick="openGuide('troubleshooting')" style="color: var(--color-primary); text-decoration: none; font-weight: 600;">🔧 Troubleshooting Guide</a></p>
+          </div>
+        </section>
+      </div>
+
+      <section class="faq-section" id="faq" aria-label="Frequently Asked Questions">
+        <h3>❓ Frequently Asked Questions</h3>
+
+        <div class="faq-item">
+          <div class="faq-question" tabindex="0">How do I reset my password?</div>
+          <div class="faq-answer">
+            You can reset your password by clicking the "Forgot Password" link on the login page. Enter your email address and follow the instructions sent to your inbox. If you don't receive the email within 10 minutes, check your spam folder or contact support.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question" tabindex="0">How do I apply for clinical rotations?</div>
+          <div class="faq-answer">
+            Navigate to the "Applications" page from your dashboard. Browse available rotations, review requirements, and click "Apply" on rotations that match your program needs. Make sure your profile is complete and all required documents are uploaded before applying.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question" tabindex="0">How do I log my clinical hours?</div>
+          <div class="faq-answer">
+            Use the "Log Hours" page to record your daily clinical activities. Enter the date, hours worked, activities performed, and any notes. Your preceptor will need to approve your logged hours before they count toward your program requirements.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question" tabindex="0">What if my preceptor hasn't responded to my messages?</div>
+          <div class="faq-answer">
+            If your preceptor hasn't responded within 48 hours, try calling their office directly. If you still can't reach them, contact our support team and we'll help facilitate communication or find alternative solutions.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question" tabindex="0">How do I upgrade to Pro?</div>
+          <div class="faq-answer">
+            Click the "Upgrade to Pro" button in the header or visit your Profile page. Pro membership gives you unlimited rotation applications, priority support, advanced search filters, and detailed analytics on your progress.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question" tabindex="0">Who do I contact for billing questions?</div>
+          <div class="faq-answer">
+            For billing inquiries, email <a href="mailto:billing@npclinicalhub.com" style="color: var(--color-primary);">billing@npclinicalhub.com</a> or call (555) 987-6543. You can also view your payment history and manage your subscription from the "Payment History" page.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question" tabindex="0">Can I change my rotation after it's been approved?</div>
+          <div class="faq-answer">
+            Changes to approved rotations require coordination between you, your preceptor, and your program coordinator. Contact support immediately if you need to make changes, as this may affect your graduation timeline.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question" tabindex="0">How do I update my profile information?</div>
+          <div class="faq-answer">
+            Go to the "Profile" page from the sidebar menu. You can update your personal information, academic details, upload compliance documents, and manage your emergency contacts. Keep your profile current to ensure smooth rotation placements.
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Support form submission handling
+    const supportForm = document.getElementById('supportForm');
+    const supportConfirmation = document.getElementById('supportConfirmation');
+
+    supportForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      if (!supportForm.checkValidity()) {
+        supportForm.reportValidity();
+        return;
+      }
+
+      // Simulate form submission
+      supportForm.style.display = 'none';
+      supportConfirmation.style.display = 'block';
+      supportConfirmation.focus();
+    });
+
+    // Priority selector
+    document.querySelectorAll('.priority-option').forEach(option => {
+      option.addEventListener('click', () => {
+        document.querySelectorAll('.priority-option').forEach(opt => opt.classList.remove('selected'));
+        option.classList.add('selected');
+      });
+    });
+
+    // FAQ toggle
+    document.querySelectorAll('.faq-question').forEach(question => {
+      question.addEventListener('click', () => {
+        const item = question.parentElement;
+        const isActive = item.classList.contains('active');
+        
+        // Close all other FAQ items
+        document.querySelectorAll('.faq-item').forEach(faqItem => {
+          faqItem.classList.remove('active');
+        });
+        
+        // Toggle current item
+        if (!isActive) {
+          item.classList.add('active');
+        }
+      });
+      
+      question.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          question.click();
+        }
+      });
+    });
+
+    // Helper functions
+    function openLiveChat() {
+      alert('Live chat would open here with a real-time messaging interface.');
+    }
+
+    function openGuide(guideType) {
+      alert(`${guideType} guide would open here with detailed instructions and screenshots.`);
+    }
+  </script>
+</body>
+</html>
