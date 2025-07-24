@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Rotations - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-success: #27ae60;
+      --color-success-dark: #388e3c;
+      --color-warning: #f39c12;
+      --color-warning-dark: #f57c00;
+      --color-info: #cce5ff;
+      --color-info-dark: #004085;
+      --color-bg: #ECECEC;
+      --color-text: #2D2D2D;
+      --color-muted: #6c757d;
+      --color-muted-light: #888;
+      --color-white: #FFFFFF;
+      --border-radius: 12px;
+      --transition: 0.3s ease;
+      --color-danger: #e74c3c;
+      --color-danger-dark: #c0392b;
+      --box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      --sidebar-width: 250px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+    }
+
+    .header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      flex-grow: 1;
+    }
+
+    .header-right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .upgrade-btn {
+      background: var(--color-danger);
+      color: var(--color-white);
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background-color var(--transition);
+    }
+
+    .upgrade-btn:hover,
+    .upgrade-btn:focus {
+      background: var(--color-danger-dark);
+      outline: none;
+    }
+
+    .logout-btn {
+      background: #dc3545;
+      color: var(--color-white);
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color var(--transition);
+    }
+
+    .logout-btn:hover,
+    .logout-btn:focus {
+      background: #b02a37;
+      outline: none;
+    }
+
+    .main {
+      display: flex;
+      min-height: calc(100vh - 64px);
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 24px 0;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all var(--transition);
+      color: var(--color-white);
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .nav-item:hover,
+    .nav-item:focus,
+    .nav-item.active {
+      background: var(--color-primary);
+      border-left-color: var(--color-secondary);
+      outline: none;
+    }
+
+    .content {
+      flex: 1;
+      padding: 32px 48px;
+      overflow-y: auto;
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      margin: 24px;
+      box-shadow: var(--box-shadow);
+      min-width: 0;
+    }
+
+    .card {
+      background: var(--color-bg);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .card h3 {
+      margin-bottom: 16px;
+      color: var(--color-primary-dark);
+      font-weight: 700;
+      font-size: 1.4rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      white-space: nowrap;
+    }
+
+    th {
+      background: var(--color-primary);
+      color: var(--color-white);
+      font-weight: 700;
+      user-select: none;
+    }
+
+    tbody tr:hover {
+      background: #f0f4ff;
+      cursor: pointer;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background-color var(--transition);
+      margin-right: 8px;
+      margin-bottom: 4px;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-white);
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus {
+      background: var(--color-primary-dark);
+      outline: none;
+    }
+
+    .btn-success {
+      background: var(--color-success);
+      color: var(--color-white);
+    }
+
+    .btn-success:hover,
+    .btn-success:focus {
+      background: var(--color-success-dark);
+      outline: none;
+    }
+
+    .btn-warning {
+      background: var(--color-warning);
+      color: var(--color-white);
+    }
+
+    .btn-warning:hover,
+    .btn-warning:focus {
+      background: var(--color-warning-dark);
+      outline: none;
+    }
+
+    .btn-danger {
+      background: var(--color-danger);
+      color: var(--color-white);
+    }
+
+    .btn-danger:hover,
+    .btn-danger:focus {
+      background: var(--color-danger-dark);
+      outline: none;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: var(--color-primary-dark);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-family: inherit;
+      margin-bottom: 12px;
+    }
+
+    .status {
+      padding: 4px 8px;
+      border-radius: var(--border-radius);
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .status.active {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status.pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status.completed {
+      background: var(--color-info);
+      color: var(--color-info-dark);
+    }
+
+    .progress {
+      background: #e9ecef;
+      border-radius: 4px;
+      height: 8px;
+      margin: 8px 0;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      background: var(--color-success);
+      height: 100%;
+      border-radius: 4px;
+      transition: width var(--transition);
+    }
+
+    .chart-placeholder {
+      background: #f8f9fa;
+      border: 2px dashed #dee2e6;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-muted);
+      border-radius: var(--border-radius);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--color-bg);
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--color-primary-dark);
+      padding: 12px 24px;
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+      cursor: pointer;
+      transition: background var(--transition);
+      border-bottom: 3px solid transparent;
+    }
+    .tab-btn.active {
+      background: var(--color-white);
+      border-bottom: 3px solid var(--color-secondary);
+      color: var(--color-primary);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Rotation search cards */
+    .rotation-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+    }
+    .rotation-card {
+      background: var(--color-bg);
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border: 2px solid transparent;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .rotation-card:hover {
+      border-color: var(--color-primary);
+      box-shadow: var(--box-shadow);
+    }
+    .rotation-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .rotation-meta {
+      color: var(--color-muted);
+      font-size: 0.98rem;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .rotation-description {
+      color: var(--color-text);
+      margin-bottom: 8px;
+    }
+    .rotation-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .apply-btn {
+      background: var(--color-success);
+      color: var(--color-white);
+      border: none;
+      padding: 10px 20px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .apply-btn:hover { background: var(--color-success-dark); }
+    .save-btn {
+      background: transparent;
+      color: var(--color-primary);
+      border: 2px solid var(--color-primary);
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .save-btn.saved {
+      background: var(--color-secondary);
+      border-color: var(--color-secondary);
+      color: var(--color-primary-dark);
+    }
+    .save-btn:hover { background: var(--color-primary); color: var(--color-white); }
+    .no-results {
+      text-align: center;
+      color: var(--color-muted);
+      padding: 48px 0;
+    }
+
+    /* Updated filter form styling to match job search */
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .filter-grid input,
+    .filter-grid select {
+      padding: 12px 14px;
+      border-radius: var(--border-radius);
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.3s ease;
+    }
+
+    .filter-grid input::placeholder,
+    .filter-grid select {
+      color: var(--color-muted-light);
+    }
+
+    .filter-grid input:focus,
+    .filter-grid select:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 6px var(--color-primary);
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .filter-buttons .btn {
+      min-width: 100px;
+      font-weight: 700;
+      padding: 12px 20px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background-color var(--transition);
+    }
+
+    .filter-buttons .btn-primary {
+      background-color: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+    }
+
+    .filter-buttons .btn-primary:hover,
+    .filter-buttons .btn-primary:focus {
+      background-color: var(--color-primary-dark);
+      outline: none;
+    }
+
+    .filter-buttons .btn {
+      background-color: #eee;
+      color: var(--color-text);
+      border: 1px solid #ccc;
+    }
+
+    .filter-buttons .btn:hover,
+    .filter-buttons .btn:focus {
+      background-color: #ddd;
+      outline: none;
+    }
+
+    @media (max-width: 1024px) {
+      .content {
+        padding: 24px;
+        margin: 16px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+      }
+      .header {
+        flex-direction: column;
+        gap: 12px;
+      }
+      table {
+        font-size: 0.85rem;
+      }
+      th, td {
+        padding: 8px 12px;
+      }
+      .btn {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .sidebar {
+        width: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>My Rotations</h1>
+    <div class="header-right">
+      <span>Welcome, Taylor Jones</span>
+      <button class="upgrade-btn" onclick="window.location.href='student-upgrade.html'">Upgrade to Pro</button>
+      <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="sidebar">
+      <a class="nav-item" href="student-dashboard.html">📊 Overview</a>
+      <a class="nav-item active" href="student-rotations.html">🏥 My Rotations</a>
+      <a class="nav-item" href="student-log-hours.html">⏰ Log Hours</a>
+      <a class="nav-item" href="student-applications.html">📝 Applications</a>
+      <a class="nav-item" href="student-evaluations.html">⭐ Evaluations</a>
+      <a class="nav-item" href="student-payment-history.html">💳 Payment History</a>
+      <a class="nav-item" href="student-profile.html">👤 Profile</a>
+      <a class="nav-item" href="student-support.html">🆘 Support</a>
+      <a class="nav-item" href="student-job-search.html">🔍 Job Search & Apply</a>
+    </div>
+    <div class="content">
+      <div class="tabs">
+        <button class="tab-btn active" id="tab-my-rotations" onclick="showTab('my-rotations')">My Rotations</button>
+        <button class="tab-btn" id="tab-search-rotations" onclick="showTab('search-rotations')">Search & Apply</button>
+      </div>
+
+      <div class="tab-content active" id="my-rotations">
+        <div class="card">
+          <h3>My Clinical Rotations</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Clinical Site</th>
+                <th>Specialty</th>
+                <th>Preceptor</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Status</th>
+                <th>Progress</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Sunrise Family Clinic</td>
+                <td>Family Practice</td>
+                <td>Dr. Sarah Johnson</td>
+                <td>2025-07-01</td>
+                <td>2025-08-15</td>
+                <td><span class="status active">Active</span></td>
+                <td>
+                  <div class="progress">
+                    <div class="progress-bar" style="width: 75%;"></div>
+                  </div>
+                  75%
+                </td>
+                <td>
+                  <button class="btn btn-primary" onclick="window.location.href='student-rotation-details.html'">View</button>
+                  <button class="btn btn-warning" onclick="window.location.href='student-log-hours.html'">Log Hours</button>
+                </td>
+              </tr>
+              <tr>
+                <td>Metro General Hospital</td>
+                <td>Internal Medicine</td>
+                <td>Dr. Michael Chen</td>
+                <td>2025-08-20</td>
+                <td>2025-10-05</td>
+                <td><span class="status pending">Upcoming</span></td>
+                <td>
+                  <div class="progress">
+                    <div class="progress-bar" style="width: 0%;"></div>
+                  </div>
+                  0%
+                </td>
+                <td>
+                  <button class="btn btn-primary" onclick="window.location.href='student-rotation-details.html'">View</button>
+                  <button class="btn btn-danger" onclick="if(confirm('Are you sure you want to withdraw?')){alert('Withdrawn!');}">Withdraw</button>
+                </td>
+              </tr>
+              <tr>
+                <td>Community Health Center</td>
+                <td>Pediatrics</td>
+                <td>Dr. Lisa Rodriguez</td>
+                <td>2025-05-01</td>
+                <td>2025-06-15</td>
+                <td><span class="status completed">Completed</span></td>
+                <td>
+                  <div class="progress">
+                    <div class="progress-bar" style="width: 100%;"></div>
+                  </div>
+                  100%
+                </td>
+                <td>
+                  <button class="btn btn-primary" onclick="window.location.href='student-rotation-details.html'">View</button>
+                  <button class="btn btn-success" onclick="window.location.href='student-evaluation-form.html'">Evaluation</button>
+                  <button class="btn btn-primary" onclick="alert('Download summary coming soon!')">Download</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-content" id="search-rotations">
+        <div class="card">
+          <h3>🔍 Search & Apply for Rotations</h3>
+          <form id="rotationSearchForm" style="margin-bottom: 24px;">
+            <div class="filter-grid">
+              <input type="text" name="keyword" placeholder="Keyword (e.g. Pediatrics, Cardiology)" />
+              <input type="text" name="location" placeholder="Location (City, State)" />
+              <select name="specialty">
+                <option value="">Any Specialty</option>
+                <option value="family medicine">Family Medicine</option>
+                <option value="internal medicine">Internal Medicine</option>
+                <option value="pediatrics">Pediatrics</option>
+                <option value="womens health">Women's Health</option>
+                <option value="psychiatric mental health">Psychiatric Mental Health</option>
+                <option value="acute care">Acute Care</option>
+                <option value="emergency medicine">Emergency Medicine</option>
+                <option value="cardiology">Cardiology</option>
+                <option value="dermatology">Dermatology</option>
+                <option value="orthopedics">Orthopedics</option>
+              </select>
+              <select name="type">
+                <option value="">Any Type</option>
+                <option value="in-person">In-person</option>
+                <option value="telehealth">Telehealth</option>
+                <option value="hybrid">Hybrid</option>
+              </select>
+              <input type="text" name="preceptor" placeholder="Preceptor Name" />
+              <input type="text" name="institution" placeholder="Institution/Clinic" />
+              <input type="date" name="startDate" placeholder="Start Date" />
+              <input type="date" name="endDate" placeholder="End Date" />
+              <input type="text" name="rotationCode" placeholder="Rotation Code" />
+              <input type="text" name="program" placeholder="Program" />
+              <input type="text" name="coordinator" placeholder="Coordinator" />
+              <input type="text" name="affiliation" placeholder="Existing Affiliation" />
+              <select name="status">
+                <option value="">Any Status</option>
+                <option value="active">Active</option>
+                <option value="pending">Pending</option>
+                <option value="closed">Closed</option>
+              </select>
+              <input type="text" name="preceptorCredential" placeholder="Preceptor Credential" />
+              <input type="number" name="avgPatientsPerDay" placeholder="Avg Patients Per Day" min="0" />
+              <input type="text" name="preceptorSchedule" placeholder="Preceptor Schedule" />
+              <input type="text" name="dressCode" placeholder="Dress Code" />
+              <input type="text" name="patientPopulation" placeholder="Patient Population" />
+            </div>
+            <div class="filter-buttons">
+              <button type="submit" class="btn btn-primary">Search</button>
+              <button type="button" class="btn" onclick="clearRotationFilters()">Clear</button>
+            </div>
+          </form>
+          <ul class="rotation-list" id="rotationList"></ul>
+          <div class="no-results" id="rotationNoResults" style="display:none;">
+            <h4>No rotations found</h4>
+            <p>Try adjusting your search criteria.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab logic
+    function showTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+      document.getElementById(tab).classList.add('active');
+      document.getElementById('tab-' + tab).classList.add('active');
+    }
+
+    // Sample rotation data (with all new fields)
+    const rotations = [
+      {
+        id: 1,
+        title: "Pediatrics - Community Health",
+        site: "Community Health Center",
+        specialty: "Pediatrics",
+        preceptor: "Dr. Lisa Rodriguez",
+        institution: "Community Health Center",
+        program: "NP Residency",
+        coordinator: "Jane Smith",
+        rotationCode: "PED-2025-CHC",
+        status: "active",
+        requiredDocs: ["Immunization Record", "Background Check"],
+        paid: "Unpaid",
+        applicationDeadline: "2025-08-01",
+        hoursRequired: 120,
+        location: "Raleigh, NC",
+        type: "in-person",
+        existingAffiliations: ["Duke University", "UNC Chapel Hill"],
+        preceptorCredential: "DNP, FNP-BC",
+        avgPatientsPerDay: 20,
+        preceptorSchedule: "Mon-Fri 8am-5pm",
+        dressCode: "Business Casual",
+        patientPopulation: "Pediatrics, Adolescents",
+        startDate: "2025-09-01",
+        endDate: "2025-10-15",
+        description: "Hands-on pediatric experience in a busy community clinic. Work with diverse populations and experienced preceptors.",
+      },
+      {
+        id: 2,
+        title: "Family Medicine - Sunrise Clinic",
+        site: "Sunrise Family Clinic",
+        specialty: "Family Medicine",
+        preceptor: "Dr. Sarah Johnson",
+        institution: "Sunrise Family Clinic",
+        program: "Primary Care Program",
+        coordinator: "Mark Davis",
+        rotationCode: "FM-2025-SFC",
+        status: "pending",
+        requiredDocs: ["CPR Certification"],
+        paid: "Paid",
+        applicationDeadline: "2025-07-15",
+        hoursRequired: 100,
+        location: "Durham, NC",
+        type: "hybrid",
+        existingAffiliations: ["UNC Chapel Hill"],
+        preceptorCredential: "MSN, FNP-C",
+        avgPatientsPerDay: 15,
+        preceptorSchedule: "Tue-Thu 9am-4pm",
+        dressCode: "Scrubs",
+        patientPopulation: "Adults, Geriatrics",
+        startDate: "2025-08-01",
+        endDate: "2025-09-15",
+        description: "Hybrid rotation with both in-person and telehealth visits. Focus on primary care and chronic disease management.",
+      },
+      {
+        id: 3,
+        title: "Psychiatric Mental Health - Telehealth",
+        site: "MindWell Telehealth",
+        specialty: "Psychiatric Mental Health",
+        preceptor: "Dr. James Lee",
+        institution: "MindWell Telehealth",
+        program: "Mental Health Program",
+        coordinator: "Susan Clark",
+        rotationCode: "PMH-2025-MWT",
+        status: "closed",
+        requiredDocs: ["Background Check"],
+        paid: "Unpaid",
+        applicationDeadline: "2025-09-01",
+        hoursRequired: 80,
+        location: "Remote",
+        type: "telehealth",
+        existingAffiliations: [],
+        preceptorCredential: "PhD, PMHNP-BC",
+        avgPatientsPerDay: 10,
+        preceptorSchedule: "Flexible",
+        dressCode: "Business Casual",
+        patientPopulation: "Adults, Adolescents",
+        startDate: "2025-10-01",
+        endDate: "2025-11-15",
+        description: "Telehealth rotation providing mental health services to rural and underserved populations.",
+      }
+    ];
+    let savedRotations = new Set();
+
+    function renderRotations(list) {
+      const ul = document.getElementById('rotationList');
+      const noResults = document.getElementById('rotationNoResults');
+      ul.innerHTML = '';
+      if (!list.length) {
+        noResults.style.display = '';
+        return;
+      }
+      noResults.style.display = 'none';
+      list.forEach(rot => {
+        const li = document.createElement('li');
+        li.className = 'rotation-card';
+        li.innerHTML = `
+          <div class="rotation-title">${rot.title}</div>
+          <div class="rotation-meta">
+            <span>🏥 ${rot.site}</span>
+            <span>👩‍⚕️ ${rot.preceptor} (${rot.preceptorCredential || 'N/A'})</span>
+            <span>📍 ${rot.location}</span>
+            <span>🗓️ ${rot.startDate} - ${rot.endDate}</span>
+            <span>🔬 ${rot.specialty}</span>
+            <span>💻 ${rot.type.charAt(0).toUpperCase() + rot.type.slice(1)}</span>
+            <span>🆔 ${rot.rotationCode || ''}</span>
+            <span>🏫 ${rot.institution || ''}</span>
+            <span>📚 ${rot.program || ''}</span>
+            <span>👩‍💼 ${rot.coordinator || ''}</span>
+            <span>⏳ ${rot.hoursRequired ? rot.hoursRequired + ' hrs' : ''}</span>
+            <span>📄 ${rot.requiredDocs ? rot.requiredDocs.join(', ') : ''}</span>
+            <span>💲 ${rot.paid || ''}</span>
+            <span>⏰ ${rot.applicationDeadline || ''}</span>
+            <span>🤝 Affiliations: ${rot.existingAffiliations && rot.existingAffiliations.length ? rot.existingAffiliations.join(', ') : 'None'}</span>
+            <span>👥 Patients/Day: ${rot.avgPatientsPerDay || 'N/A'}</span>
+            <span>📅 Preceptor Schedule: ${rot.preceptorSchedule || 'N/A'}</span>
+            <span>👔 Dress Code: ${rot.dressCode || 'N/A'}</span>
+            <span>🧑‍🤝‍🧑 Patient Population: ${rot.patientPopulation || 'N/A'}</span>
+            <span>Status: ${rot.status || ''}</span>
+          </div>
+          <div class="rotation-description">${rot.description}</div>
+          <div class="rotation-actions">
+            <a
+              class="apply-btn"
+              href="student-new-application.html?site=${encodeURIComponent(rot.site)}&preceptor=${encodeURIComponent(rot.preceptor)}&specialty=${encodeURIComponent(rot.specialty)}&startDate=${encodeURIComponent(rot.startDate)}&endDate=${encodeURIComponent(rot.endDate)}"
+            >Apply</a>
+            <button class="save-btn${savedRotations.has(rot.id) ? ' saved' : ''}" onclick="toggleSaveRotation(event, ${rot.id}, this)">
+              ${savedRotations.has(rot.id) ? '💾 Saved' : '🔖 Save'}
+            </button>
+          </div>
+        `;
+        ul.appendChild(li);
+      });
+    }
+
+    function filterRotations(filters) {
+      return rotations.filter(rot => {
+        if (filters.keyword && !(
+          rot.title.toLowerCase().includes(filters.keyword) ||
+          rot.site.toLowerCase().includes(filters.keyword) ||
+          rot.specialty.toLowerCase().includes(filters.keyword) ||
+          rot.preceptor.toLowerCase().includes(filters.keyword) ||
+          rot.institution.toLowerCase().includes(filters.keyword)
+        )) return false;
+        if (filters.location && !rot.location.toLowerCase().includes(filters.location)) return false;
+        if (filters.specialty && filters.specialty !== '' && filters.specialty !== rot.specialty.toLowerCase()) return false;
+        if (filters.type && filters.type !== rot.type) return false;
+        if (filters.preceptor && !rot.preceptor.toLowerCase().includes(filters.preceptor)) return false;
+        if (filters.institution && !rot.institution.toLowerCase().includes(filters.institution)) return false;
+        if (filters.startDate && rot.startDate < filters.startDate) return false;
+        if (filters.endDate && rot.endDate > filters.endDate) return false;
+        if (filters.rotationCode && !rot.rotationCode.toLowerCase().includes(filters.rotationCode)) return false;
+        if (filters.program && !rot.program.toLowerCase().includes(filters.program)) return false;
+        if (filters.coordinator && !rot.coordinator.toLowerCase().includes(filters.coordinator)) return false;
+        if (filters.status && filters.status !== '' && filters.status !== rot.status.toLowerCase()) return false;
+        if (filters.affiliation && !(rot.existingAffiliations || []).some(a => a.toLowerCase().includes(filters.affiliation))) return false;
+        if (filters.preceptorCredential && !rot.preceptorCredential.toLowerCase().includes(filters.preceptorCredential)) return false;
+        if (filters.avgPatientsPerDay && Number(filters.avgPatientsPerDay) !== rot.avgPatientsPerDay) return false;
+        if (filters.preceptorSchedule && !rot.preceptorSchedule.toLowerCase().includes(filters.preceptorSchedule)) return false;
+        if (filters.dressCode && !rot.dressCode.toLowerCase().includes(filters.dressCode)) return false;
+        if (filters.patientPopulation && !rot.patientPopulation.toLowerCase().includes(filters.patientPopulation)) return false;
+        return true;
+      });
+    }
+
+    document.getElementById('rotationSearchForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const fd = new FormData(this);
+      const filters = {
+        keyword: (fd.get('keyword') || '').toLowerCase(),
+        location: (fd.get('location') || '').toLowerCase(),
+        specialty: (fd.get('specialty') || '').toLowerCase(),
+        type: (fd.get('type') || ''),
+        preceptor: (fd.get('preceptor') || '').toLowerCase(),
+        institution: (fd.get('institution') || '').toLowerCase(),
+        startDate: fd.get('startDate') || '',
+        endDate: fd.get('endDate') || '',
+        rotationCode: (fd.get('rotationCode') || '').toLowerCase(),
+        program: (fd.get('program') || '').toLowerCase(),
+        coordinator: (fd.get('coordinator') || '').toLowerCase(),
+        status: (fd.get('status') || '').toLowerCase(),
+        affiliation: (fd.get('affiliation') || '').toLowerCase(),
+        preceptorCredential: (fd.get('preceptorCredential') || '').toLowerCase(),
+        avgPatientsPerDay: fd.get('avgPatientsPerDay') || '',
+        preceptorSchedule: (fd.get('preceptorSchedule') || '').toLowerCase(),
+        dressCode: (fd.get('dressCode') || '').toLowerCase(),
+        patientPopulation: (fd.get('patientPopulation') || '').toLowerCase(),
+      };
+      renderRotations(filterRotations(filters));
+    });
+
+    function clearRotationFilters() {
+      document.getElementById('rotationSearchForm').reset();
+      renderRotations(rotations);
+    }
+
+    function toggleSaveRotation(e, id, btn) {
+      e.stopPropagation();
+      if (savedRotations.has(id)) {
+        savedRotations.delete(id);
+        btn.textContent = '🔖 Save';
+        btn.classList.remove('saved');
+      } else {
+        savedRotations.add(id);
+        btn.textContent = '💾 Saved';
+        btn.classList.add('saved');
+      }
+    }
+
+    // Initial render
+    renderRotations(rotations);
+  </script>
+</body>
+</html>

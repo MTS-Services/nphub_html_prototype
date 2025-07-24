@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Super Admin – Support | NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #F8FAFC;
+      --color-white: #fff;
+      --color-muted: #6c757d;
+      --border-radius: 14px;
+      --box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      --sidebar-width: 250px;
+      --status-open: #dc3545;
+      --status-inprogress: #FFD700;
+      --status-closed: #28a745;
+    }
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 24px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header .user-info {
+      font-size: 1rem;
+      color: var(--color-secondary);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header .logout-btn {
+      background: #dc3545;
+      border: none;
+      color: var(--color-white);
+      padding: 8px 18px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: 24px;
+      transition: background-color 0.2s;
+    }
+    .header .logout-btn:hover {
+      background: #b02a37;
+    }
+    .main {
+      display: flex;
+      flex: 1 1 auto;
+      min-height: 0;
+      height: calc(100vh - 72px);
+      overflow: hidden;
+    }
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 36px 0;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      height: 100%;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 36px;
+      color: var(--color-white);
+      text-decoration: none;
+      border-left: 4px solid transparent;
+      background: none;
+      transition: background 0.18s, border-color 0.18s, font-weight 0.18s;
+      font-size: 1.08rem;
+      font-weight: 500;
+      cursor: pointer;
+      outline: none;
+    }
+    .nav-item.active {
+      background: var(--color-primary);
+      border-left: 4px solid var(--color-secondary);
+      color: var(--color-secondary);
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(10,37,64,0.07);
+    }
+    .nav-item:hover:not(.active) {
+      background: var(--color-primary);
+      border-left: 4px solid var(--color-secondary);
+      color: var(--color-secondary);
+      font-weight: 600;
+    }
+    .content {
+      flex: 1;
+      padding: 48px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 0;
+      max-width: 100vw;
+      box-sizing: border-box;
+      margin-left: 0;
+      overflow-y: auto;
+    }
+    .support-container {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      max-width: 1400px;
+      width: 100%;
+      padding: 40px 48px 32px 48px;
+      margin: 0 24px;
+      box-sizing: border-box;
+    }
+    .support-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .support-filters {
+      display: flex;
+      gap: 18px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .support-filters input,
+    .support-filters select {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      min-width: 160px;
+    }
+    .support-filters button {
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .support-filters button:hover {
+      background: var(--color-primary-dark);
+    }
+    .ticket-cards {
+      display: flex;
+      gap: 28px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .ticket-card {
+      background: #f6f8fa;
+      border-radius: 10px;
+      padding: 28px 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      box-shadow: 0 2px 8px rgba(10,37,64,0.04);
+      min-width: 180px;
+      flex: 1 1 180px;
+    }
+    .ticket-card .card-label {
+      color: var(--color-muted);
+      font-size: 1.02rem;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .ticket-card .card-value {
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 4px;
+    }
+    .ticket-card .card-icon {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    .card-open { color: var(--status-open); }
+    .card-inprogress { color: var(--status-inprogress); }
+    .card-closed { color: var(--status-closed); }
+    .support-table-block {
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 24px 18px;
+      box-shadow: 0 2px 8px rgba(10,37,64,0.04);
+      min-width: 0;
+      margin-bottom: 32px;
+    }
+    .support-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1rem;
+    }
+    .support-table th, .support-table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #e0e0e0;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .support-table th {
+      background: var(--color-primary);
+      color: var(--color-white);
+      font-weight: 700;
+      user-select: none;
+    }
+    .support-table tbody tr:hover {
+      background: #f0f4ff;
+      cursor: pointer;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    .status-open { background: var(--status-open); }
+    .status-inprogress { background: var(--status-inprogress); color: #222; }
+    .status-closed { background: var(--status-closed); }
+    .priority-high { color: #dc3545; font-weight: 700; }
+    .priority-medium { color: #FFD700; font-weight: 700; }
+    .priority-low { color: #28a745; font-weight: 700; }
+    .view-btn {
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .view-btn:hover {
+      background: var(--color-primary-dark);
+    }
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(10,37,64,0.18);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #fff;
+      border-radius: 12px;
+      padding: 32px 28px;
+      max-width: 500px;
+      width: 95vw;
+      box-shadow: 0 8px 32px rgba(10,37,64,0.18);
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px; right: 18px;
+      font-size: 1.3rem;
+      color: #888;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .modal-close:hover { color: #dc3545; }
+    .modal-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 10px;
+    }
+    .modal-section {
+      margin-bottom: 14px;
+    }
+    .modal-section strong { color: var(--color-primary-dark); }
+    .modal textarea {
+      width: 100%;
+      min-height: 60px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      padding: 8px;
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+    .modal .reply-btn {
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      float: right;
+      margin-top: 6px;
+    }
+    .modal .reply-btn:hover { background: var(--color-primary-dark); }
+    @media (max-width: 1300px) {
+      .support-container { padding: 24px 8px; }
+    }
+    @media (max-width: 900px) {
+      .sidebar { width: 100px; }
+    }
+    @media (max-width: 600px) {
+      .sidebar { display: none; }
+      .content { padding: 8px 0; }
+      .support-container { margin: 0 2px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1><i class="fa-solid fa-shield-halved"></i> Super Admin Dashboard</h1>
+    <div class="user-info">
+      <i class="fa-solid fa-user-shield"></i> superadmin@npclinicalhub.com
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <nav class="sidebar" aria-label="Super Admin navigation">
+      <a class="nav-item" href="super-admin-dashboard.html"><i class="fa-solid fa-gauge"></i> Platform Overview</a>
+      <a class="nav-item" href="super-admin-tenants.html"><i class="fa-solid fa-users"></i> Tenants</a>
+      <a class="nav-item" href="super-admin-users.html"><i class="fa-solid fa-user-group"></i> Users</a>
+      <a class="nav-item" href="super-admin-billing.html"><i class="fa-solid fa-credit-card"></i> Billing</a>
+      <a class="nav-item" href="super-admin-settings.html"><i class="fa-solid fa-gear"></i> Platform Settings</a>
+      <a class="nav-item" href="super-admin-analytics.html"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+      <a class="nav-item" href="super-admin-audit-logs.html"><i class="fa-solid fa-file-alt"></i> Audit Logs</a>
+      <a class="nav-item active" href="super-admin-support.html"><i class="fa-solid fa-headset"></i> Support</a>
+      <a class="nav-item" href="super-admin-system-health.html"><i class="fa-solid fa-heart-pulse"></i> System Health</a>
+    </nav>
+    <div class="content">
+      <div class="support-container">
+        <div class="support-title">
+          <i class="fa-solid fa-headset"></i> Support Tickets
+        </div>
+        <div class="support-filters">
+          <input type="text" id="searchInput" placeholder="Search by subject, user, or tenant" />
+          <select id="statusFilter">
+            <option value="">All Statuses</option>
+            <option value="Open">Open</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Closed">Closed</option>
+          </select>
+          <select id="priorityFilter">
+            <option value="">All Priorities</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+          <select id="tenantFilter">
+            <option value="">All Tenants</option>
+            <option value="State University">State University</option>
+            <option value="Metro Hospital">Metro Hospital</option>
+            <option value="City Health Group">City Health Group</option>
+          </select>
+          <button onclick="applyFilters()">Apply Filters</button>
+        </div>
+        <div class="ticket-cards">
+          <div class="ticket-card">
+            <div class="card-icon card-open"><i class="fa-solid fa-circle-exclamation"></i></div>
+            <div class="card-label">Open</div>
+            <div class="card-value" id="openCount">3</div>
+          </div>
+          <div class="ticket-card">
+            <div class="card-icon card-inprogress"><i class="fa-solid fa-spinner"></i></div>
+            <div class="card-label">In Progress</div>
+            <div class="card-value" id="inProgressCount">2</div>
+          </div>
+          <div class="ticket-card">
+            <div class="card-icon card-closed"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="card-label">Closed</div>
+            <div class="card-value" id="closedCount">1</div>
+          </div>
+          <div class="ticket-card">
+            <div class="card-icon"><i class="fa-solid fa-ticket"></i></div>
+            <div class="card-label">Total</div>
+            <div class="card-value" id="totalCount">6</div>
+          </div>
+        </div>
+        <div class="support-table-block">
+          <table class="support-table" id="supportTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Subject</th>
+                <th>User</th>
+                <th>Tenant</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Created</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="supportTableBody">
+              <!-- Ticket rows will be inserted here by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal" id="ticketModal">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+        <div class="modal-title" id="modalSubject"></div>
+        <div class="modal-section"><strong>User:</strong> <span id="modalUser"></span></div>
+        <div class="modal-section"><strong>Tenant:</strong> <span id="modalTenant"></span></div>
+        <div class="modal-section"><strong>Status:</strong> <span id="modalStatus"></span></div>
+        <div class="modal-section"><strong>Priority:</strong> <span id="modalPriority"></span></div>
+        <div class="modal-section"><strong>Created:</strong> <span id="modalCreated"></span></div>
+        <div class="modal-section"><strong>Description:</strong><br><span id="modalDescription"></span></div>
+        <div class="modal-section"><strong>Conversation:</strong>
+          <div id="modalConversation" style="background:#f6f8fa;padding:10px 8px;border-radius:8px;max-height:120px;overflow-y:auto;font-size:0.98rem;margin-top:4px;"></div>
+        </div>
+        <div class="modal-section">
+          <textarea id="modalReply" placeholder="Type your reply..."></textarea>
+          <button class="reply-btn" onclick="sendReply()">Send Reply</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function logout() {
+      localStorage.removeItem('userToken');
+      window.location.href = 'index.html';
+    }
+
+    // --- Demo Data ---
+    const tickets = [
+      {
+        id: 'TCK-1001',
+        subject: 'Unable to submit rotation application',
+        user: 'Mary Smith (mary@metrohosp.org)',
+        tenant: 'Metro Hospital',
+        status: 'Open',
+        priority: 'High',
+        created: '2025-07-22 09:12',
+        description: 'I am unable to submit a new rotation application. The submit button is disabled.',
+        conversation: [
+          { from: 'User', text: 'I am unable to submit a new rotation application. The submit button is disabled.', time: '2025-07-22 09:12' }
+        ]
+      },
+      {
+        id: 'TCK-1002',
+        subject: 'Billing invoice not received',
+        user: 'John Lee (john@stateu.edu)',
+        tenant: 'State University',
+        status: 'In Progress',
+        priority: 'Medium',
+        created: '2025-07-21 17:10',
+        description: 'I have not received my billing invoice for July.',
+        conversation: [
+          { from: 'User', text: 'I have not received my billing invoice for July.', time: '2025-07-21 17:10' },
+          { from: 'Support', text: 'We are looking into this and will update you soon.', time: '2025-07-21 18:00' }
+        ]
+      },
+      {
+        id: 'TCK-1003',
+        subject: 'Job posting approval delay',
+        user: 'Dr. Jane Doe (jane@stateu.edu)',
+        tenant: 'State University',
+        status: 'Closed',
+        priority: 'Low',
+        created: '2025-07-20 14:30',
+        description: 'My job posting has been pending approval for over 48 hours.',
+        conversation: [
+          { from: 'User', text: 'My job posting has been pending approval for over 48 hours.', time: '2025-07-20 14:30' },
+          { from: 'Support', text: 'Your job posting has now been approved.', time: '2025-07-21 09:00' }
+        ]
+      },
+      {
+        id: 'TCK-1004',
+        subject: 'Cannot access MD collaboration feature',
+        user: 'Mary Smith (mary@metrohosp.org)',
+        tenant: 'Metro Hospital',
+        status: 'Open',
+        priority: 'High',
+        created: '2025-07-19 11:22',
+        description: 'The MD collaboration feature is not visible in my dashboard.',
+        conversation: [
+          { from: 'User', text: 'The MD collaboration feature is not visible in my dashboard.', time: '2025-07-19 11:22' }
+        ]
+      },
+      {
+        id: 'TCK-1005',
+        subject: 'Service package purchase failed',
+        user: 'Admin (admin@cityhealth.org)',
+        tenant: 'City Health Group',
+        status: 'In Progress',
+        priority: 'High',
+        created: '2025-07-18 16:45',
+        description: 'Attempted to purchase a service package but payment failed.',
+        conversation: [
+          { from: 'User', text: 'Attempted to purchase a service package but payment failed.', time: '2025-07-18 16:45' },
+          { from: 'Support', text: 'Can you provide the error message you received?', time: '2025-07-18 17:10' }
+        ]
+      },
+      {
+        id: 'TCK-1006',
+        subject: 'Password reset email not received',
+        user: 'John Lee (john@stateu.edu)',
+        tenant: 'State University',
+        status: 'Open',
+        priority: 'Medium',
+        created: '2025-07-17 10:05',
+        description: 'I requested a password reset but did not receive the email.',
+        conversation: [
+          { from: 'User', text: 'I requested a password reset but did not receive the email.', time: '2025-07-17 10:05' }
+        ]
+      }
+    ];
+
+    // --- Filtering & Table Render ---
+    let filteredTickets = [...tickets];
+
+    function renderTable() {
+      const tbody = document.getElementById('supportTableBody');
+      tbody.innerHTML = '';
+      for (const ticket of filteredTickets) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${ticket.id}</td>
+          <td>${ticket.subject}</td>
+          <td>${ticket.user}</td>
+          <td>${ticket.tenant}</td>
+          <td><span class="status-badge status-${ticket.status.replace(' ', '').toLowerCase()}">${ticket.status}</span></td>
+          <td class="priority-${ticket.priority.toLowerCase()}">${ticket.priority}</td>
+          <td>${ticket.created}</td>
+          <td><button class="view-btn" onclick="openModal('${ticket.id}')">View</button></td>
+        `;
+        tbody.appendChild(tr);
+      }
+      // Update summary cards
+      document.getElementById('openCount').textContent = tickets.filter(t => t.status === 'Open').length;
+      document.getElementById('inProgressCount').textContent = tickets.filter(t => t.status === 'In Progress').length;
+      document.getElementById('closedCount').textContent = tickets.filter(t => t.status === 'Closed').length;
+      document.getElementById('totalCount').textContent = tickets.length;
+    }
+
+    function applyFilters() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const status = document.getElementById('statusFilter').value;
+      const priority = document.getElementById('priorityFilter').value;
+      const tenant = document.getElementById('tenantFilter').value;
+      filteredTickets = tickets.filter(ticket => {
+        let match = true;
+        if (search && !(
+          ticket.subject.toLowerCase().includes(search) ||
+          ticket.user.toLowerCase().includes(search) ||
+          ticket.tenant.toLowerCase().includes(search)
+        )) match = false;
+        if (status && ticket.status !== status) match = false;
+        if (priority && ticket.priority !== priority) match = false;
+        if (tenant && ticket.tenant !== tenant) match = false;
+        return match;
+      });
+      renderTable();
+    }
+
+    // --- Modal Logic ---
+    function openModal(id) {
+      const ticket = tickets.find(t => t.id === id);
+      if (!ticket) return;
+      document.getElementById('modalSubject').textContent = ticket.subject;
+      document.getElementById('modalUser').textContent = ticket.user;
+      document.getElementById('modalTenant').textContent = ticket.tenant;
+      document.getElementById('modalStatus').textContent = ticket.status;
+      document.getElementById('modalPriority').textContent = ticket.priority;
+      document.getElementById('modalCreated').textContent = ticket.created;
+      document.getElementById('modalDescription').textContent = ticket.description;
+      // Conversation
+      const convDiv = document.getElementById('modalConversation');
+      convDiv.innerHTML = '';
+      for (const msg of ticket.conversation) {
+        const msgDiv = document.createElement('div');
+        msgDiv.innerHTML = `<strong>${msg.from}:</strong> ${msg.text} <span style="color:#888;font-size:0.92em;">(${msg.time})</span>`;
+        convDiv.appendChild(msgDiv);
+      }
+      document.getElementById('modalReply').value = '';
+      document.getElementById('ticketModal').style.display = 'flex';
+      document.getElementById('ticketModal').setAttribute('data-ticket-id', id);
+    }
+    function closeModal() {
+      document.getElementById('ticketModal').style.display = 'none';
+    }
+    function sendReply() {
+      const id = document.getElementById('ticketModal').getAttribute('data-ticket-id');
+      const ticket = tickets.find(t => t.id === id);
+      const reply = document.getElementById('modalReply').value.trim();
+      if (reply) {
+        ticket.conversation.push({ from: 'Support', text: reply, time: new Date().toISOString().slice(0,16).replace('T',' ') });
+        openModal(id); // re-render modal
+        renderTable();
+      }
+      document.getElementById('modalReply').value = '';
+    }
+
+    // --- Initial Render ---
+    renderTable();
+  </script>
+</body>
+</html>

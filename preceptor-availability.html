@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Availability Management - Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background: #2d3e50;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .logout-btn {
+      background: transparent;
+      border: 1px solid white;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      type: button;
+    }
+    .logout-btn:focus {
+      outline: 2px solid #3498db;
+      outline-offset: 2px;
+    }
+    .main {
+      display: flex;
+      min-height: calc(100vh - 64px);
+    }
+    .sidebar {
+      width: 250px;
+      background: #34495e;
+      color: white;
+      padding: 24px 0;
+    }
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      color: white;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background-color 0.3s ease, border-left-color 0.3s ease;
+      cursor: pointer;
+    }
+    .nav-item:hover,
+    .nav-item.active {
+      background: #2c3e50;
+      border-left-color: #3498db;
+    }
+    .nav-item:focus {
+      outline: 2px solid #3498db;
+      outline-offset: 2px;
+    }
+    .content {
+      flex: 1;
+      padding: 24px;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      margin-top: 0;
+      color: #2d3e50;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #34495e;
+    }
+    input[type="text"], input[type="number"], textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      font-size: 1rem;
+    }
+    input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
+      border-color: #3498db;
+      outline: none;
+      box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+    }
+    button {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    button:focus {
+      outline: 2px solid #2980b9;
+      outline-offset: 2px;
+    }
+    .calendar-container {
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+      max-width: 100%;
+      background: #fafafa;
+    }
+    .success-message {
+      display: none;
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      padding: 12px 20px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+    @media (max-width: 768px) {
+      .main {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+      }
+    }
+    /* Calendar styles */
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      user-select: none;
+    }
+    .calendar-header {
+      font-weight: 700;
+      text-align: center;
+      padding: 8px 0;
+      background: #3498db;
+      color: white;
+      border-radius: 6px;
+    }
+    .calendar-day {
+      text-align: center;
+      padding: 8px 0;
+      font-weight: 700;
+      color: #555;
+    }
+    .calendar-date {
+      text-align: center;
+      padding: 12px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      border: 1px solid transparent;
+      user-select: none;
+    }
+    .calendar-date:hover {
+      background-color: #d0e6fb;
+      border-color: #3498db;
+    }
+    .calendar-date.selected {
+      background-color: #3498db;
+      color: white;
+      font-weight: 700;
+      border-color: #2980b9;
+    }
+    .calendar-date:focus {
+      outline: 2px solid #2980b9;
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Availability Management</h1>
+    <button class="logout-btn" type="button" onclick="window.location.href='index.html'">Logout</button>
+  </div>
+  <div class="main">
+    <nav class="sidebar" aria-label="Primary">
+      <a href="preceptor-dashboard.html" class="nav-item">🏠 Dashboard</a>
+      <a href="preceptor-students.html" class="nav-item">👩‍🎓 Assigned Students</a>
+      <a href="preceptor-availability.html" class="nav-item active" aria-current="page">📅 Availability</a>
+      <a href="preceptor-evaluations.html" class="nav-item">📝 Evaluations</a>
+      <a href="preceptor-messages.html" class="nav-item">💬 Messages</a>
+      <a href="preceptor-documents.html" class="nav-item">📁 Documents</a>
+      <a href="preceptor-billing.html" class="nav-item">💳 Billing</a>
+      <a href="preceptor-settings.html" class="nav-item">⚙️ Settings</a>
+    </nav>
+    <main class="content">
+      <div class="card" role="region" aria-labelledby="availability-title">
+        <h2 id="availability-title">Set Your Availability</h2>
+        <div class="calendar-container" aria-label="Availability calendar">
+          <div id="calendar" class="calendar"></div>
+        </div>
+        <form id="availability-form" onsubmit="handleSubmit(event)" novalidate>
+          <div class="success-message" id="success-message" role="alert" aria-live="polite">
+            Availability saved successfully!
+          </div>
+          <label for="availability-notes">Quick Availability Notes</label>
+          <input type="text" id="availability-notes" name="availability-notes" placeholder="e.g. Mon, Wed, Fri mornings" />
+          
+          <label for="max-students">Max Students per Week</label>
+          <input type="number" id="max-students" name="max-students" min="1" max="10" value="2" required />
+          
+          <button type="submit">Save Availability</button>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const calendarEl = document.getElementById('calendar');
+    const successMessage = document.getElementById('success-message');
+    const availabilityForm = document.getElementById('availability-form');
+
+    const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    function generateCalendar(year, month) {
+      calendarEl.innerHTML = '';
+
+      // Add day headers
+      daysOfWeek.forEach(day => {
+        const dayEl = document.createElement('div');
+        dayEl.className = 'calendar-day';
+        dayEl.textContent = day;
+        calendarEl.appendChild(dayEl);
+      });
+
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const startDay = firstDay.getDay();
+      const totalDays = lastDay.getDate();
+
+      // Blank days before first day
+      for (let i = 0; i < startDay; i++) {
+        const blankEl = document.createElement('div');
+        calendarEl.appendChild(blankEl);
+      }
+
+      // Dates
+      for (let date = 1; date <= totalDays; date++) {
+        const dateEl = document.createElement('div');
+        dateEl.className = 'calendar-date';
+        dateEl.textContent = date;
+        dateEl.tabIndex = 0;
+        dateEl.setAttribute('role', 'button');
+        dateEl.setAttribute('aria-pressed', 'false');
+
+        dateEl.addEventListener('click', () => toggleDateSelection(dateEl, date));
+        dateEl.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleDateSelection(dateEl, date);
+          }
+        });
+
+        calendarEl.appendChild(dateEl);
+      }
+    }
+
+    let selectedDates = new Set();
+
+    function toggleDateSelection(element, date) {
+      if (selectedDates.has(date)) {
+        selectedDates.delete(date);
+        element.classList.remove('selected');
+        element.setAttribute('aria-pressed', 'false');
+      } else {
+        selectedDates.add(date);
+        element.classList.add('selected');
+        element.setAttribute('aria-pressed', 'true');
+      }
+    }
+
+    function handleSubmit(event) {
+      event.preventDefault();
+
+      const maxStudents = document.getElementById('max-students').value;
+      if (!maxStudents || maxStudents < 1 || maxStudents > 10) {
+        alert('Please enter a valid number of max students (1-10).');
+        return;
+      }
+
+      successMessage.style.display = 'block';
+
+      setTimeout(() => {
+        successMessage.style.display = 'none';
+      }, 4000);
+
+      const notes = document.getElementById('availability-notes').value;
+      console.log('Selected Dates:', Array.from(selectedDates));
+      console.log('Availability Notes:', notes);
+      console.log('Max Students:', maxStudents);
+    }
+
+    const today = new Date();
+    generateCalendar(today.getFullYear(), today.getMonth());
+  </script>
+</body>
+</html>

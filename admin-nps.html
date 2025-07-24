@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NP / Job Seekers List - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #ECECEC;
+      --color-white: #FFFF;
+      --color-text: #2D2D2D;
+      --border-radius: 8px;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: 0.3s ease;
+    }
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .header h1 { font-size: 1.5rem; }
+    .header-right { display: flex; gap: 12px; align-items: center; }
+    .logout-btn {
+      background: transparent;
+      color: var(--color-white);
+      border: 1px solid var(--color-white);
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background var(--transition);
+      user-select: none;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,0.2); }
+    .main {
+      display: flex;
+      flex: 1 1 auto;
+      height: calc(100vh - 64px);
+      width: 100vw;
+      overflow: hidden;
+      background: var(--color-bg);
+    }
+    nav.sidebar {
+      width: 280px;
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 24px 0;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      height: 100%;
+      box-sizing: border-box;
+    }
+    .sidebar-section { margin-bottom: 24px; flex-shrink: 0; }
+    .sidebar-section h3 {
+      padding-left: 24px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      user-select: none;
+    }
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      color: var(--color-white);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background var(--transition), border-color var(--transition);
+      cursor: pointer;
+      user-select: none;
+    }
+    .nav-item:hover, .nav-item.active {
+      background: var(--color-primary);
+      border-left-color: var(--color-secondary);
+    }
+    main.content {
+      flex-grow: 1;
+      padding: 32px 40px;
+      overflow-y: auto;
+      background: var(--color-white);
+      display: flex;
+      flex-direction: column;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      width: calc(100vw - 280px);
+      box-sizing: border-box;
+    }
+    .search-bar {
+      margin-bottom: 24px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .search-bar input, .search-bar select {
+      padding: 10px 14px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: var(--border-radius);
+      flex: 1 1 200px;
+      min-width: 150px;
+    }
+    .action-btn {
+      background-color: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      padding: 8px 14px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color var(--transition);
+    }
+    .action-btn:hover { background-color: var(--color-primary-dark); }
+    .action-btn.edit { background: #3498db; margin-left: 8px; }
+    .action-btn.delete { background: #e74c3c; margin-left: 8px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: var(--box-shadow);
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      color: var(--color-primary);
+    }
+    th { background: var(--color-bg); font-weight: 700; }
+    tr:hover { background-color: #f9f9f9; }
+    .status {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: inline-block;
+      color: white;
+    }
+    .status.new { background-color: #3498db; }
+    .status.review { background-color: #f39c12; }
+    .status.interviewed { background-color: #9b59b6; }
+    .status.hired { background-color: #27ae60; }
+    .status.rejected { background-color: #e74c3c; }
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.3);
+      align-items: center;
+      justify-content: center;
+    }
+    .modal.active { display: flex; }
+    .modal-content {
+      background: #fff;
+      border-radius: 8px;
+      padding: 32px 24px 16px 24px;
+      min-width: 320px;
+      max-width: 480px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+    .modal-content form {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      overflow: auto;
+      max-height: 65vh;
+    }
+    .modal-content h2 { margin-bottom: 16px; }
+    .modal-content label { display: block; margin-top: 12px; }
+    .modal-content input, .modal-content textarea, .modal-content select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .modal-content .row { display: flex; gap: 12px; }
+    .modal-content .row > div { flex: 1; }
+    .modal-actions {
+      margin-top: 18px;
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      background: #fff;
+      position: sticky;
+      bottom: 0;
+      padding-bottom: 8px;
+      z-index: 2;
+    }
+    .modal-actions button {
+      padding: 8px 18px;
+      border-radius: 6px;
+      border: none;
+      font-weight: 600;
+    }
+    .modal-actions .save { background: #27ae60; color: #fff; }
+    .modal-actions .cancel { background: #aaa; color: #fff; }
+    @media (max-width: 900px) {
+      .main { flex-direction: column; height: auto; }
+      nav.sidebar { width: 100%; height: auto; padding: 16px 0; max-height: none; }
+      main.content { width: 100% !important; padding: 24px 16px; border-radius: 0; box-shadow: none; }
+      .search-bar { flex-direction: column; }
+      .search-bar input, .search-bar select { flex: 1 1 100%; min-width: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>NP / Job Seekers List</h1>
+    <div class="header-right">
+      <span>Admin User</span>
+      <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <nav class="sidebar" aria-label="Admin navigation">
+      <div class="sidebar-section">
+        <h3>People</h3>
+        <a href="admin-md-collaborators.html" class="nav-item">👨‍⚕️ MD Collaborators</a>
+        <a href="admin-nps.html" class="nav-item active">🩺 NPs / Job Seekers</a>
+        <a href="admin-students.html" class="nav-item">🎓 Students</a>
+        <a href="admin-program-coordinators.html" class="nav-item">👩‍💼 Program Coordinators</a>
+        <a href="admin-preceptors.html" class="nav-item">👨‍⚕️ Preceptors</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>Services</h3>
+        <a href="admin-rotation-applications.html" class="nav-item">📝 Rotations</a>
+        <a href="admin-job-applications.html" class="nav-item">📄 Job Applications</a>
+        <a href="admin-job-postings.html" class="nav-item">📋 Job Postings</a>
+        <a href="admin-scheduling.html" class="nav-item">📅 Scheduling</a>
+        <a href="admin-billing.html" class="nav-item">💳 Billing</a>
+        <a href="admin-messaging.html" class="nav-item">💬 Messaging</a>
+        <a href="admin-md-collaborations.html" class="nav-item">🤝 MD Collaborations</a>
+        <a href="admin-practice-launchpad.html" class="nav-item">🚀 Practice Launchpad</a>
+        <a href="admin-launchpad-service-packages.html" class="nav-item">📦 Service Packages</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>Organization</h3>
+        <a href="admin-clinics.html" class="nav-item">🏥 Clinics</a>
+        <a href="admin-institutions.html" class="nav-item">🏫 Institutions</a>
+        <a href="admin-programs.html" class="nav-item">📋 Programs</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>System</h3>
+        <a href="admin-dashboard.html" class="nav-item">🏠 Dashboard</a>
+        <a href="admin-reports.html" class="nav-item">📊 Reports</a>
+        <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+      </div>
+    </nav>
+    <main class="content" role="main">
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search by name, specialty, location..." aria-label="Search NP / Job Seekers" />
+        <select id="statusFilter" aria-label="Filter by status">
+          <option value="">All Statuses</option>
+          <option value="new">New</option>
+          <option value="review">Under Review</option>
+          <option value="interviewed">Interviewed</option>
+          <option value="hired">Hired</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <button class="action-btn" id="addNPBtn" style="margin-left:auto;">+ Add NP</button>
+      </div>
+      <table aria-label="NP / Job Seekers list">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Specialty</th>
+            <th>Location</th>
+            <th>Status</th>
+            <th>Application Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="npListBody">
+          <!-- Filled by JS -->
+        </tbody>
+      </table>
+    </main>
+  </div>
+  <!-- Modal for Add/Edit NP -->
+  <div class="modal" id="npModal">
+    <div class="modal-content">
+      <h2 id="modalTitle">Add NP</h2>
+      <form id="npForm">
+        <div class="row">
+          <div>
+            <label>Name <input type="text" id="npName" required /></label>
+          </div>
+          <div>
+            <label>Specialty <input type="text" id="npSpecialty" required /></label>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Credentials <input type="text" id="npCredentials" /></label>
+          </div>
+          <div>
+            <label>Email <input type="email" id="npEmail" required /></label>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Phone <input type="text" id="npPhone" /></label>
+          </div>
+          <div>
+            <label>Location <input type="text" id="npLocation" /></label>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Status
+              <select id="npStatus" required>
+                <option value="new">New</option>
+                <option value="review">Under Review</option>
+                <option value="interviewed">Interviewed</option>
+                <option value="hired">Hired</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </label>
+          </div>
+          <div>
+            <label>Application Date <input type="date" id="npApplicationDate" /></label>
+          </div>
+        </div>
+        <label>Willing to Relocate <input type="checkbox" id="npRelocate" /></label>
+        <label>Years of Experience <input type="number" id="npExperience" min="0" /></label>
+        <label>Job Type <input type="text" id="npJobType" /></label>
+        <label>Practice Settings <input type="text" id="npPracticeSettings" /></label>
+        <label>Availability <input type="text" id="npAvailability" /></label>
+        <label>Salary <input type="text" id="npSalary" /></label>
+        <label>Education (comma separated) <input type="text" id="npEducation" /></label>
+        <label>Work History (comma separated) <input type="text" id="npWorkHistory" /></label>
+        <label>Licenses (comma separated) <input type="text" id="npLicenses" /></label>
+        <label>Documents (name|url, comma separated) <input type="text" id="npDocuments" placeholder="Resume.pdf|https://..." /></label>
+        <label>Application Status <input type="text" id="npAppStatus" /></label>
+        <label>Admin Notes <textarea id="npAdminNotes"></textarea></label>
+        <label>Communication Log (sender|date|message, comma separated) <input type="text" id="npCommLog" placeholder="Admin|2024-06-01|Application received." /></label>
+        <div class="modal-actions">
+          <button type="submit" class="save">Save</button>
+          <button type="button" class="cancel" id="cancelModalBtn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc, updateDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+    // Your Firebase config from firebase-init.js
+    const firebaseConfig = {
+      apiKey: "AIzaSyC2MXxO_4Zayv2g8-Az6G9WOoxF2CdrpJ8",
+      authDomain: "np-clinical-hub-prototype.firebaseapp.com",
+      projectId: "np-clinical-hub-prototype",
+      storageBucket: "np-clinical-hub-prototype.appspot.com",
+      messagingSenderId: "843798932639",
+      appId: "1:843798932639:web:fb768c55f404c25c3306aa"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const npListBody = document.getElementById('npListBody');
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const addNPBtn = document.getElementById('addNPBtn');
+    const npModal = document.getElementById('npModal');
+    const npForm = document.getElementById('npForm');
+    const modalTitle = document.getElementById('modalTitle');
+    const cancelModalBtn = document.getElementById('cancelModalBtn');
+
+    let npJobSeekers = [];
+    let editingId = null;
+
+    async function fetchNPs() {
+      const querySnapshot = await getDocs(collection(db, "nps"));
+      npJobSeekers = [];
+      querySnapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        npJobSeekers.push({
+          id: docSnap.id,
+          name: data.name || '',
+          specialty: data.specialty || '',
+          credentials: data.credentials || '',
+          email: data.email || '',
+          phone: data.phone || '',
+          location: data.location || '',
+          status: (data.status || '').toLowerCase(),
+          applicationDate: data.applicationDate || '',
+          willingToRelocate: data.willingToRelocate || false,
+          experienceYears: data.experienceYears || '',
+          jobPreferences: data.jobPreferences || {},
+          education: data.education || [],
+          workHistory: data.workHistory || [],
+          licenses: data.licenses || [],
+          documents: data.documents || [],
+          applicationStatus: data.applicationStatus || '',
+          adminNotes: data.adminNotes || '',
+          communicationLog: data.communicationLog || []
+        });
+      });
+      renderList();
+    }
+
+    function renderList() {
+      const searchTerm = searchInput.value.toLowerCase();
+      const statusTerm = statusFilter.value;
+
+      npListBody.innerHTML = '';
+
+      const filtered = npJobSeekers.filter(np => {
+        const matchesSearch = np.name.toLowerCase().includes(searchTerm) ||
+          np.specialty.toLowerCase().includes(searchTerm) ||
+          np.location.toLowerCase().includes(searchTerm);
+        const matchesStatus = statusTerm ? np.status === statusTerm : true;
+        return matchesSearch && matchesStatus;
+      });
+
+      if (filtered.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 6;
+        td.style.textAlign = 'center';
+        td.textContent = 'No NP / Job Seekers found.';
+        tr.appendChild(td);
+        npListBody.appendChild(tr);
+        return;
+      }
+
+      filtered.forEach(np => {
+        const tr = document.createElement('tr');
+
+        const nameTd = document.createElement('td');
+        const link = document.createElement('a');
+        link.href = `admin-np-detail.html?id=${np.id}`;
+        link.textContent = np.name;
+        nameTd.appendChild(link);
+
+        const specialtyTd = document.createElement('td');
+        specialtyTd.textContent = np.specialty;
+
+        const locationTd = document.createElement('td');
+        locationTd.textContent = np.location;
+
+        const statusTd = document.createElement('td');
+        const statusSpan = document.createElement('span');
+        statusSpan.className = `status ${np.status}`;
+        statusSpan.textContent = np.status.charAt(0).toUpperCase() + np.status.slice(1);
+        statusTd.appendChild(statusSpan);
+
+        const dateTd = document.createElement('td');
+        dateTd.textContent = np.applicationDate;
+
+        const actionsTd = document.createElement('td');
+        const viewBtn = document.createElement('button');
+        viewBtn.className = 'action-btn';
+        viewBtn.textContent = 'View Details';
+        viewBtn.onclick = () => {
+          window.location.href = `admin-np-detail.html?id=${np.id}`;
+        };
+        const editBtn = document.createElement('button');
+        editBtn.className = 'action-btn edit';
+        editBtn.textContent = 'Edit';
+        editBtn.onclick = () => openModal(np);
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'action-btn delete';
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.onclick = async () => {
+          if (confirm(`Delete NP "${np.name}"? This cannot be undone.`)) {
+            await deleteDoc(doc(db, "nps", np.id));
+            fetchNPs();
+          }
+        };
+        actionsTd.appendChild(viewBtn);
+        actionsTd.appendChild(editBtn);
+        actionsTd.appendChild(deleteBtn);
+
+        tr.appendChild(nameTd);
+        tr.appendChild(specialtyTd);
+        tr.appendChild(locationTd);
+        tr.appendChild(statusTd);
+        tr.appendChild(dateTd);
+        tr.appendChild(actionsTd);
+
+        npListBody.appendChild(tr);
+      });
+    }
+
+    function openModal(np = null) {
+      npModal.classList.add('active');
+      if (np) {
+        modalTitle.textContent = "Edit NP";
+        editingId = np.id;
+        npForm.npName.value = np.name;
+        npForm.npSpecialty.value = np.specialty;
+        npForm.npCredentials.value = np.credentials;
+        npForm.npEmail.value = np.email;
+        npForm.npPhone.value = np.phone;
+        npForm.npLocation.value = np.location;
+        npForm.npStatus.value = np.status;
+        npForm.npApplicationDate.value = np.applicationDate;
+        npForm.npRelocate.checked = np.willingToRelocate;
+        npForm.npExperience.value = np.experienceYears;
+        npForm.npJobType.value = np.jobPreferences.jobType || '';
+        npForm.npPracticeSettings.value = np.jobPreferences.practiceSettings || '';
+        npForm.npAvailability.value = np.jobPreferences.availability || '';
+        npForm.npSalary.value = np.jobPreferences.salary || '';
+        npForm.npEducation.value = (np.education || []).join(', ');
+        npForm.npWorkHistory.value = (np.workHistory || []).join(', ');
+        npForm.npLicenses.value = (np.licenses || []).join(', ');
+        npForm.npDocuments.value = (np.documents || []).map(d => `${d.name}|${d.url}`).join(', ');
+        npForm.npAppStatus.value = np.applicationStatus || '';
+        npForm.npAdminNotes.value = np.adminNotes || '';
+        npForm.npCommLog.value = (np.communicationLog || []).map(c => `${c.sender}|${c.date}|${c.message}`).join(', ');
+      } else {
+        modalTitle.textContent = "Add NP";
+        editingId = null;
+        npForm.reset();
+      }
+    }
+
+    function closeModal() {
+      npModal.classList.remove('active');
+      editingId = null;
+      npForm.reset();
+    }
+
+    npForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const data = {
+        name: npForm.npName.value,
+        specialty: npForm.npSpecialty.value,
+        credentials: npForm.npCredentials.value,
+        email: npForm.npEmail.value,
+        phone: npForm.npPhone.value,
+        location: npForm.npLocation.value,
+        status: npForm.npStatus.value,
+        applicationDate: npForm.npApplicationDate.value,
+        willingToRelocate: npForm.npRelocate.checked,
+        experienceYears: Number(npForm.npExperience.value) || 0,
+        jobPreferences: {
+          jobType: npForm.npJobType.value,
+          practiceSettings: npForm.npPracticeSettings.value,
+          availability: npForm.npAvailability.value,
+          salary: npForm.npSalary.value
+        },
+        education: npForm.npEducation.value.split(',').map(s => s.trim()).filter(Boolean),
+        workHistory: npForm.npWorkHistory.value.split(',').map(s => s.trim()).filter(Boolean),
+        licenses: npForm.npLicenses.value.split(',').map(s => s.trim()).filter(Boolean),
+        documents: npForm.npDocuments.value.split(',').map(s => {
+          const [name, url] = s.split('|').map(x => x.trim());
+          return name && url ? { name, url } : null;
+        }).filter(Boolean),
+        applicationStatus: npForm.npAppStatus.value,
+        adminNotes: npForm.npAdminNotes.value,
+        communicationLog: npForm.npCommLog.value.split(',').map(s => {
+          const [sender, date, message] = s.split('|').map(x => x.trim());
+          return sender && date && message ? { sender, date, message } : null;
+        }).filter(Boolean)
+      };
+      if (editingId) {
+        await updateDoc(doc(db, "nps", editingId), data);
+      } else {
+        await addDoc(collection(db, "nps"), data);
+      }
+      closeModal();
+      fetchNPs();
+    };
+
+    cancelModalBtn.onclick = closeModal;
+    addNPBtn.onclick = () => openModal();
+
+    searchInput.addEventListener('input', renderList);
+    statusFilter.addEventListener('change', renderList);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchNPs();
+    });
+
+    // Close modal on background click
+    npModal.addEventListener('click', (e) => {
+      if (e.target === npModal) closeModal();
+    });
+  </script>
+</body>
+</html>

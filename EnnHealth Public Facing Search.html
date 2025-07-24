@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your EHR System - Welcome</title>
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #ECECEC;
+      --color-text: #2D2D2D;
+      --color-white: #FFF;
+      --border-radius: 12px;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: 0.3s ease;
+      --max-width: 1200px;
+      --focus-outline: 3px solid var(--color-secondary);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      scroll-behavior: smooth;
+    }
+    a {
+      color: var(--color-primary);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    a:hover, a:focus {
+      color: var(--color-secondary);
+      outline: none;
+    }
+    header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      box-shadow: var(--box-shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    nav {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--color-secondary);
+      user-select: none;
+      cursor: default;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .nav-links a {
+      color: var(--color-white);
+      font-weight: 600;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.375rem;
+      transition: background var(--transition), color var(--transition);
+    }
+    .nav-links a:hover, .nav-links a:focus {
+      background: var(--color-secondary);
+      color: var(--color-primary-dark);
+      outline-offset: 2px;
+      outline: var(--focus-outline);
+    }
+    main {
+      flex: 1;
+      max-width: 900px;
+      margin: 4rem auto 6rem;
+      padding: 0 1.5rem;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      color: var(--color-primary-dark);
+      line-height: 1.1;
+      animation: fadeInDown 0.6s ease forwards;
+      opacity: 0;
+    }
+    p.lead {
+      font-size: 1.3rem;
+      color: var(--color-primary);
+      margin-bottom: 3rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      animation: fadeInUp 0.6s ease 0.3s forwards;
+      opacity: 0;
+      line-height: 1.5;
+    }
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+      animation: fadeInUp 0.6s ease 0.6s forwards;
+      opacity: 0;
+    }
+    .btn-primary, .btn-secondary {
+      font-weight: 700;
+      padding: 1rem 2.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      border: none;
+      font-size: 1.125rem;
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition), transform 0.2s ease;
+      user-select: none;
+      display: inline-block;
+      text-align: center;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-white);
+    }
+    .btn-primary:hover, .btn-primary:focus {
+      background: var(--color-primary-dark);
+      color: var(--color-secondary);
+      outline-offset: 3px;
+      outline: var(--focus-outline);
+      transform: translateY(-2px);
+    }
+    .btn-secondary {
+      background: var(--color-secondary);
+      color: var(--color-primary-dark);
+    }
+    .btn-secondary:hover, .btn-secondary:focus {
+      background: var(--color-primary-dark);
+      color: var(--color-secondary);
+      outline-offset: 3px;
+      outline: var(--focus-outline);
+      transform: translateY(-2px);
+    }
+    section.features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 900px;
+      margin: 0 auto 3rem;
+      padding: 0 1.5rem;
+    }
+    .feature-card {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      box-shadow: var(--box-shadow);
+      text-align: left;
+      transition: box-shadow var(--transition), transform var(--transition);
+      cursor: default;
+      animation: fadeInUp 0.6s ease forwards;
+      opacity: 0;
+    }
+    .feature-card:nth-child(1) { animation-delay: 0.2s; }
+    .feature-card:nth-child(2) { animation-delay: 0.4s; }
+    .feature-card:nth-child(3) { animation-delay: 0.6s; }
+    .feature-icon {
+      font-size: 2.5rem;
+      color: var(--color-secondary);
+      margin-bottom: 1rem;
+      user-select: none;
+    }
+    .feature-title {
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--color-primary-dark);
+    }
+    .feature-desc {
+      color: var(--color-text);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+    footer {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 3rem 2rem 2rem;
+      font-size: 0.9rem;
+      user-select: none;
+    }
+    .footer-container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: space-between;
+    }
+    .footer-section {
+      flex: 1 1 220px;
+      min-width: 220px;
+    }
+    .footer-section h3 {
+      margin-bottom: 1rem;
+      color: var(--color-secondary);
+      font-weight: 700;
+    }
+    .footer-section p, .footer-section ul {
+      margin: 0;
+      color: var(--color-white);
+    }
+    .footer-section ul {
+      list-style: none;
+      padding: 0;
+    }
+    .footer-section ul li {
+      margin-bottom: 0.5rem;
+    }
+    .footer-section ul li a {
+      color: var(--color-white);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    .footer-section ul li a:hover,
+    .footer-section ul li a:focus {
+      color: var(--color-secondary);
+      outline: none;
+    }
+    .footer-section a {
+      color: var(--color-white);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    .footer-section a:hover,
+    .footer-section a:focus {
+      color: var(--color-secondary);
+      outline: none;
+    }
+    .social-icons a {
+      font-size: 1.5rem;
+      margin-right: 1rem;
+      color: var(--color-white);
+      transition: color var(--transition);
+      text-decoration: none;
+    }
+    .social-icons a:hover,
+    .social-icons a:focus {
+      color: var(--color-secondary);
+      outline: none;
+    }
+    .footer-bottom {
+      text-align: center;
+      margin-top: 2rem;
+      color: #ccc;
+    }
+    @media (max-width: 700px) {
+      .footer-container {
+        flex-direction: column;
+        gap: 3rem;
+      }
+      .footer-section {
+        min-width: auto;
+      }
+    }
+    @media (max-width: 640px) {
+      h1 {
+        font-size: 2.25rem;
+      }
+      main {
+        margin: 2rem 1rem 3rem;
+      }
+      section.features {
+        grid-template-columns: 1fr;
+      }
+    }
+    /* Animations */
+    @keyframes fadeInDown {
+      0% { opacity: 0; transform: translateY(-20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="logo" tabindex="0" aria-label="Your EHR System Logo">Your EHR System</div>
+      <div class="nav-links" role="navigation" aria-label="Primary Navigation">
+        <a href="index.html" tabindex="0">Home</a>
+        <a href="appointment-request.html" tabindex="0">Request Appointment</a>
+        <a href="search.html" tabindex="0">Find Providers</a>
+        <a href="about.html" tabindex="0">About</a>
+        <a href="contact.html" tabindex="0">Contact</a>
+        <a href="login.html" tabindex="0">Sign In</a>
+        <a href="register.html" tabindex="0">Register</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Find the Right Provider and Book Your Appointment</h1>
+    <p class="lead">Easily search for providers, view availability, and request appointments with trusted healthcare professionals.</p>
+    <div class="btn-group" role="group" aria-label="Primary actions">
+      <button class="btn-primary" onclick="location.href='appointment-request.html'" aria-label="Request an appointment">Request Appointment</button>
+      <button class="btn-secondary" onclick="location.href='search.html'" aria-label="Find providers">Find Providers</button>
+    </div>
+
+    <section class="features" aria-label="Key Features">
+      <article class="feature-card" tabindex="0" aria-labelledby="feature1-title" role="region">
+        <div class="feature-icon" aria-hidden="true">🗓️</div>
+        <h2 class="feature-title" id="feature1-title">Easy Scheduling</h2>
+        <p class="feature-desc">Find available appointment slots and book with just a few clicks.</p>
+      </article>
+      <article class="feature-card" tabindex="0" aria-labelledby="feature2-title" role="region">
+        <div class="feature-icon" aria-hidden="true">🔒</div>
+        <h2 class="feature-title" id="feature2-title">Secure &amp; Private</h2>
+        <p class="feature-desc">Your information is protected with industry-leading security standards.</p>
+      </article>
+      <article class="feature-card" tabindex="0" aria-labelledby="feature3-title" role="region">
+        <div class="feature-icon" aria-hidden="true">🤝</div>
+        <h2 class="feature-title" id="feature3-title">Trusted Providers</h2>
+        <p class="feature-desc">Connect with verified and experienced healthcare professionals.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-container">
+      <div class="footer-section about">
+        <h3>About</h3>
+        <p>Your trusted platform to connect clients with healthcare providers and agencies for seamless appointment scheduling and care coordination.</p>
+      </div>
+      <div class="footer-section links">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="index.html" tabindex="0">Home</a></li>
+          <li><a href="appointment-request.html" tabindex="0">Request Appointment</a></li>
+          <li><a href="search.html" tabindex="0">Find Providers</a></li>
+          <li><a href="about.html" tabindex="0">About</a></li>
+          <li><a href="contact.html" tabindex="0">Contact</a></li>
+          <li><a href="login.html" tabindex="0">Sign In</a></li>
+          <li><a href="register.html" tabindex="0">Register</a></li>
+        </ul>
+      </div>
+      <div class="footer-section resources">
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="faq.html" tabindex="0">FAQs</a></li>
+          <li><a href="privacy.html" tabindex="0">Privacy Policy</a></li>
+          <li><a href="terms.html" tabindex="0">Terms of Service</a></li>
+          <li><a href="support.html" tabindex="0">Support</a></li>
+        </ul>
+      </div>
+      <div class="footer-section contact">
+        <h3>Contact</h3>
+        <p>Email: <a href="mailto:support@yourehrsystem.com" tabindex="0">support@yourehrsystem.com</a></p>
+        <p>Phone: <a href="tel:+1234567890" tabindex="0">(123) 456-7890</a></p>
+        <div class="social-icons" aria-label="Social Media Links">
+          <a href="#" aria-label="Facebook" title="Facebook" tabindex="0">📘</a>
+          <a href="#" aria-label="Twitter" title="Twitter" tabindex="0">🐦</a>
+          <a href="#" aria-label="LinkedIn" title="LinkedIn" tabindex="0">🔗</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom" aria-live="polite" aria-atomic="true">
+      &copy; 2025 Your EHR System. All rights reserved.
+    </div>
+  </footer>
+</body>
+</html>

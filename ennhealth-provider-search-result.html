@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Find Providers - EnnHealth</title>
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #ECECEC;
+      --color-text: #2D2D2D;
+      --color-white: #FFF;
+      --border-radius: 12px;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: 0.3s ease;
+      --max-width: 1200px;
+      --focus-outline: 3px solid var(--color-secondary);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      scroll-behavior: smooth;
+    }
+    a {
+      color: var(--color-primary);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    a:hover, a:focus {
+      color: var(--color-secondary);
+      outline: none;
+    }
+    header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      box-shadow: var(--box-shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    nav {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--color-secondary);
+      user-select: none;
+      cursor: default;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .nav-links a {
+      color: var(--color-white);
+      font-weight: 600;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.375rem;
+      transition: background var(--transition), color var(--transition);
+    }
+    .nav-links a:hover, .nav-links a:focus {
+      background: var(--color-secondary);
+      color: var(--color-primary-dark);
+      outline-offset: 2px;
+      outline: var(--focus-outline);
+    }
+    main {
+      flex: 1;
+      max-width: 900px;
+      margin: 4rem auto 6rem;
+      padding: 0 1.5rem;
+    }
+    h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      color: var(--color-primary-dark);
+      line-height: 1.1;
+      animation: fadeInDown 0.6s ease forwards;
+      opacity: 0;
+      text-align: center;
+    }
+    .search-summary {
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+      color: var(--color-primary);
+      text-align: center;
+    }
+    .provider-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    @media (min-width: 600px) {
+      .provider-list {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .provider-card {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: box-shadow var(--transition), transform var(--transition);
+    }
+    .provider-card:hover,
+    .provider-card:focus-within {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      transform: translateY(-3px);
+      outline: none;
+    }
+    .provider-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .provider-photo {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background-color: var(--color-primary);
+      color: var(--color-white);
+      font-weight: 700;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .provider-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-primary-dark);
+      margin: 0;
+    }
+    .provider-specialty {
+      font-size: 1rem;
+      color: var(--color-text);
+      margin: 0.2rem 0 0;
+    }
+    .provider-location {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 0.5rem;
+    }
+    .provider-rating {
+      margin-top: 0.5rem;
+      color: #f5a623;
+      font-weight: 600;
+    }
+    .provider-availability {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+    .btn-view-availability {
+      margin-top: 1.5rem;
+      background-color: var(--color-secondary);
+      color: var(--color-primary-dark);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-weight: 700;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background-color var(--transition), transform 0.2s ease;
+      user-select: none;
+      align-self: flex-start;
+      text-align: center;
+    }
+    .btn-view-availability:hover,
+    .btn-view-availability:focus {
+      background-color: var(--color-primary-dark);
+      color: var(--color-secondary);
+      outline-offset: 3px;
+      outline: var(--focus-outline);
+      transform: translateY(-2px);
+    }
+    .availability-slots {
+      margin-top: 1rem;
+      background: #f9f9f9;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+    }
+    .slots-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+    .slot-btn {
+      background-color: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+    .slot-btn:hover,
+    .slot-btn:focus {
+      background-color: var(--color-secondary);
+      color: var(--color-primary-dark);
+      outline: none;
+    }
+    .slot-btn.selected {
+      background-color: var(--color-secondary);
+      color: var(--color-primary-dark);
+      outline: 2px solid var(--color-primary-dark);
+    }
+    .btn-book-request {
+      margin-top: 1rem;
+      background-color: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-weight: 700;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background-color var(--transition), transform 0.2s ease;
+      user-select: none;
+      align-self: flex-start;
+      text-align: center;
+      display: none;
+    }
+    .btn-book-request:hover,
+    .btn-book-request:focus {
+      background-color: var(--color-secondary);
+      color: var(--color-primary-dark);
+      outline-offset: 3px;
+      outline: var(--focus-outline);
+      transform: translateY(-2px);
+    }
+    footer {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 3rem 2rem 2rem;
+      font-size: 0.9rem;
+      user-select: none;
+    }
+    .footer-container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: space-between;
+    }
+    .footer-section {
+      flex: 1 1 220px;
+      min-width: 220px;
+    }
+    .footer-section h3 {
+      margin-bottom: 1rem;
+      color: var(--color-secondary);
+      font-weight: 700;
+    }
+    .footer-section p, .footer-section ul {
+      margin: 0;
+      color: var(--color-white);
+    }
+    .footer-section ul {
+      list-style: none;
+      padding: 0;
+    }
+    .footer-section ul li {
+      margin-bottom: 0.5rem;
+    }
+    .footer-section ul li a {
+      color: var(--color-white);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    .footer-section ul li a:hover,
+    .footer-section ul li a:focus {
+      color: var(--color-secondary);
+      outline: none;
+    }
+    .footer-section a {
+      color: var(--color-white);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    .footer-section a:hover,
+    .footer-section a:focus {
+      color: var(--color-secondary);
+      outline: none;
+    }
+    .social-icons a {
+      font-size: 1.5rem;
+      margin-right: 1rem;
+      color: var(--color-white);
+      transition: color var(--transition);
+      text-decoration: none;
+    }
+    .social-icons a:hover,
+    .social-icons a:focus {
+      color: var(--color-secondary);
+      outline: none;
+    }
+    .footer-bottom {
+      text-align: center;
+      margin-top: 2rem;
+      color: #ccc;
+    }
+    @media (max-width: 700px) {
+      .footer-container {
+        flex-direction: column;
+        gap: 3rem;
+      }
+      .footer-section {
+        min-width: auto;
+      }
+    }
+    @media (max-width: 640px) {
+      h1 {
+        font-size: 2.25rem;
+      }
+      main {
+        margin: 2rem 1rem 3rem;
+      }
+    }
+    /* Animations */
+    @keyframes fadeInDown {
+      0% { opacity: 0; transform: translateY(-20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="logo" tabindex="0" aria-label="EnnHealth Logo">EnnHealth</div>
+      <div class="nav-links" role="navigation" aria-label="Primary Navigation">
+        <a href="index.html" tabindex="0">Home</a>
+        <a href="appointment-request.html" tabindex="0">Request Appointment</a>
+        <a href="ennhealth-provider-search-result.html" tabindex="0" aria-current="page">Find Providers</a>
+        <a href="about.html" tabindex="0">About</a>
+        <a href="contact.html" tabindex="0">Contact</a>
+        <a href="login.html" tabindex="0">Sign In</a>
+        <a href="register.html" tabindex="0">Register</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Available Providers</h1>
+    <p class="search-summary" aria-live="polite" aria-atomic="true">Showing 3 providers near <strong>New York, NY</strong> matching your criteria.</p>
+
+    <ul class="provider-list" role="list" aria-label="List of available providers">
+      <li class="provider-card" tabindex="0">
+        <div class="provider-header">
+          <div class="provider-photo" aria-hidden="true">JS</div>
+          <div>
+            <h2 class="provider-name">Jessica Smith, LCSW</h2>
+            <p class="provider-specialty">Licensed Clinical Social Worker</p>
+            <p class="provider-location">New York, NY</p>
+          </div>
+        </div>
+        <p class="provider-rating" aria-label="Rating: 4.8 out of 5 stars">⭐ 4.8</p>
+        <button class="btn-view-availability" aria-expanded="false" aria-controls="availability-js" aria-label="View availability for Jessica Smith">View Availability</button>
+        <div class="availability-slots" id="availability-js" hidden>
+          <p><strong>Available Slots:</strong></p>
+          <div class="slots-container">
+            <button class="slot-btn" type="button">July 28, 2025 - 10:00 AM</button>
+            <button class="slot-btn" type="button">July 28, 2025 - 2:00 PM</button>
+            <button class="slot-btn" type="button">July 29, 2025 - 11:00 AM</button>
+          </div>
+          <button class="btn-book-request" type="button" aria-label="Book or Request appointment with Jessica Smith">Book or Request</button>
+        </div>
+      </li>
+
+      <li class="provider-card" tabindex="0">
+        <div class="provider-header">
+          <div class="provider-photo" aria-hidden="true">MW</div>
+          <div>
+            <h2 class="provider-name">Michael Williams, PsyD</h2>
+            <p class="provider-specialty">Psychologist</p>
+            <p class="provider-location">Brooklyn, NY</p>
+          </div>
+        </div>
+        <p class="provider-rating" aria-label="Rating: 4.6 out of 5 stars">⭐ 4.6</p>
+        <button class="btn-view-availability" aria-expanded="false" aria-controls="availability-mw" aria-label="View availability for Michael Williams">View Availability</button>
+        <div class="availability-slots" id="availability-mw" hidden>
+          <p><strong>Available Slots:</strong></p>
+          <div class="slots-container">
+            <button class="slot-btn" type="button">July 30, 2025 - 9:00 AM</button>
+            <button class="slot-btn" type="button">July 30, 2025 - 1:00 PM</button>
+            <button class="slot-btn" type="button">July 31, 2025 - 3:00 PM</button>
+          </div>
+          <button class="btn-book-request" type="button" aria-label="Book or Request appointment with Michael Williams">Book or Request</button>
+        </div>
+      </li>
+
+      <li class="provider-card" tabindex="0">
+        <div class="provider-header">
+          <div class="provider-photo" aria-hidden="true">AR</div>
+          <div>
+            <h2 class="provider-name">Angela Rodriguez, LPC</h2>
+            <p class="provider-specialty">Licensed Professional Counselor</p>
+            <p class="provider-location">Queens, NY</p>
+          </div>
+        </div>
+        <p class="provider-rating" aria-label="Rating: 4.9 out of 5 stars">⭐ 4.9</p>
+        <button class="btn-view-availability" aria-expanded="false" aria-controls="availability-ar" aria-label="View availability for Angela Rodriguez">View Availability</button>
+        <div class="availability-slots" id="availability-ar" hidden>
+          <p><strong>Available Slots:</strong></p>
+          <div class="slots-container">
+            <button class="slot-btn" type="button">August 1, 2025 - 10:30 AM</button>
+            <button class="slot-btn" type="button">August 1, 2025 - 4:00 PM</button>
+            <button class="slot-btn" type="button">August 2, 2025 - 9:00 AM</button>
+          </div>
+          <button class="btn-book-request" type="button" aria-label="Book or Request appointment with Angela Rodriguez">Book or Request</button>
+        </div>
+      </li>
+    </ul>
+  </main>
+
+  <footer>
+    <div class="footer-container">
+      <div class="footer-section about">
+        <h3>About</h3>
+        <p>EnnHealth connects clients with healthcare providers and agencies for seamless appointment scheduling and care coordination.</p>
+      </div>
+      <div class="footer-section links">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="index.html" tabindex="0">Home</a></li>
+          <li><a href="appointment-request.html" tabindex="0">Request Appointment</a></li>
+          <li><a href="ennhealth-provider-search-result.html" tabindex="0" aria-current="page">Find Providers</a></li>
+          <li><a href="about.html" tabindex="0">About</a></li>
+          <li><a href="contact.html" tabindex="0">Contact</a></li>
+          <li><a href="login.html" tabindex="0">Sign In</a></li>
+          <li><a href="register.html" tabindex="0">Register</a></li>
+        </ul>
+      </div>
+      <div class="footer-section resources">
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="faq.html" tabindex="0">FAQs</a></li>
+          <li><a href="privacy.html" tabindex="0">Privacy Policy</a></li>
+          <li><a href="terms.html" tabindex="0">Terms of Service</a></li>
+          <li><a href="support.html" tabindex="0">Support</a></li>
+        </ul>
+      </div>
+      <div class="footer-section contact">
+        <h3>Contact</h3>
+        <p>Email: <a href="mailto:support@ennhealth.com" tabindex="0">support@ennhealth.com</a></p>
+        <p>Phone: <a href="tel:+1234567890" tabindex="0">(123) 456-7890</a></p>
+        <div class="social-icons" aria-label="Social Media Links">
+          <a href="#" aria-label="Facebook" title="Facebook" tabindex="0">📘</a>
+          <a href="#" aria-label="Twitter" title="Twitter" tabindex="0">🐦</a>
+          <a href="#" aria-label="LinkedIn" title="LinkedIn" tabindex="0">🔗</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom" aria-live="polite" aria-atomic="true">
+      &copy; 2025 EnnHealth. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.btn-view-availability').forEach(button => {
+      button.addEventListener('click', () => {
+        const providerCard = button.closest('.provider-card');
+        const availability = providerCard.querySelector('.availability-slots');
+        const isHidden = availability.hasAttribute('hidden');
+
+        // Hide all other availabilities and reset buttons
+        document.querySelectorAll('.availability-slots').forEach(div => {
+          div.setAttribute('hidden', '');
+          // Hide book buttons and clear selected slots
+          div.querySelectorAll('.slot-btn').forEach(btn => btn.classList.remove('selected'));
+          const bookBtn = div.querySelector('.btn-book-request');
+          if (bookBtn) bookBtn.style.display = 'none';
+        });
+        document.querySelectorAll('.btn-view-availability').forEach(btn => {
+          btn.setAttribute('aria-expanded', 'false');
+          btn.textContent = 'View Availability';
+        });
+
+        if (isHidden) {
+          availability.removeAttribute('hidden');
+          button.setAttribute('aria-expanded', 'true');
+          button.textContent = 'Hide Availability';
+        } else {
+          availability.setAttribute('hidden', '');
+          button.setAttribute('aria-expanded', 'false');
+          button.textContent = 'View Availability';
+        }
+      });
+    });
+
+    // Handle slot button clicks
+    document.querySelectorAll('.slots-container').forEach(container => {
+      container.addEventListener('click', e => {
+        if (!e.target.classList.contains('slot-btn')) return;
+
+        const clickedSlot = e.target;
+        const availabilityDiv = clickedSlot.closest('.availability-slots');
+        const bookBtn = availabilityDiv.querySelector('.btn-book-request');
+
+        // Remove 'selected' from all slots in this container
+        container.querySelectorAll('.slot-btn').forEach(btn => btn.classList.remove('selected'));
+
+        // Mark clicked slot as selected
+        clickedSlot.classList.add('selected');
+
+        // Show the Book or Request button
+        if (bookBtn) {
+          bookBtn.style.display = 'inline-block';
+        }
+      });
+    });
+
+    // Optional: handle Book or Request button click
+    document.querySelectorAll('.btn-book-request').forEach(button => {
+      button.addEventListener('click', () => {
+        const availabilityDiv = button.closest('.availability-slots');
+        const selectedSlot = availabilityDiv.querySelector('.slot-btn.selected');
+        const providerCard = button.closest('.provider-card');
+        const providerName = providerCard.querySelector('.provider-name').textContent;
+
+        if (!selectedSlot) {
+          alert('Please select a slot first.');
+          return;
+        }
+
+        alert(`You selected to book/request an appointment with ${providerName} at ${selectedSlot.textContent}.`);
+        // Here you can redirect to booking page or open a modal, etc.
+      });
+    });
+  </script>
+</body>
+</html>

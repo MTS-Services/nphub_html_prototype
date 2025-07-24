@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Details - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f5f7fa;
+      color: #2d3e50;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .header {
+      background: #2d3e50;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logout-btn {
+      background: transparent;
+      border: 1px solid white;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+    .logout-btn:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+    .main {
+      display: flex;
+      min-height: calc(100vh - 64px);
+      background: #f5f7fa;
+    }
+    .sidebar {
+      width: 250px;
+      background: #34495e;
+      color: white;
+      padding: 24px 0;
+      box-shadow: inset -2px 0 5px rgba(0,0,0,0.1);
+    }
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      font-size: 1rem;
+      border-left: 3px solid transparent;
+      transition: background-color 0.3s, border-color 0.3s;
+      color: white;
+      text-decoration: none;
+    }
+    .nav-item:hover {
+      background-color: #2c3e50;
+      border-left-color: #3498db;
+    }
+    .nav-item.active {
+      background-color: #2c3e50;
+      border-left-color: #3498db;
+      font-weight: 700;
+    }
+    .content {
+      flex: 1;
+      padding: 32px 40px;
+      background: white;
+      border-radius: 0 12px 12px 0;
+      box-shadow: 0 0 15px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+    }
+    .back-btn {
+      align-self: flex-start;
+      background: #95a5a6;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 24px;
+      transition: background-color 0.3s ease;
+    }
+    .back-btn:hover {
+      background-color: #7f8c8d;
+    }
+    .profile-card {
+      display: flex;
+      gap: 32px;
+      margin-bottom: 32px;
+      align-items: center;
+    }
+    .profile-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: #cfd8dc url('https://i.pravatar.cc/120?img=12') center/cover no-repeat;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+    .profile-info {
+      flex: 1;
+    }
+    .profile-info h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #2d3e50;
+    }
+    .profile-info p {
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 6px;
+    }
+    .profile-info p strong {
+      color: #2d3e50;
+    }
+    .status {
+      display: inline-block;
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-top: 12px;
+    }
+    .status.active {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    /* Pill Tabs */
+    .content-tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 32px;
+      background: #f1f3f6;
+      padding: 6px;
+      border-radius: 999px;
+      align-self: flex-start;
+      flex-wrap: wrap;
+    }
+    .content-tab {
+      border: none;
+      outline: none;
+      background: transparent;
+      color: #555;
+      font-size: 1.05rem;
+      font-weight: 500;
+      padding: 8px 28px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: 
+        background 0.18s cubic-bezier(.4,0,.2,1),
+        color 0.18s cubic-bezier(.4,0,.2,1),
+        box-shadow 0.18s cubic-bezier(.4,0,.2,1),
+        font-weight 0.18s cubic-bezier(.4,0,.2,1);
+      box-shadow: none;
+      position: relative;
+      margin-bottom: 0;
+    }
+    .content-tab.active {
+      background: #fff;
+      color: #007bff;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      z-index: 1;
+    }
+    .content-tab:not(.active):hover {
+      background: #e9ecef;
+      color: #007bff;
+    }
+
+    /* Tab content */
+    .tab-content {
+      margin-top: 0;
+      min-height: 200px;
+    }
+    .tab-content[hidden] {
+      display: none;
+    }
+
+    /* Progress bars */
+    .progress-bar-container {
+      background: #e0e0e0;
+      border-radius: 12px;
+      overflow: hidden;
+      height: 18px;
+      margin-top: 8px;
+      box-shadow: inset 0 1px 3px rgba(255,255,255,0.6);
+    }
+    .progress-bar {
+      height: 100%;
+      background: #3498db;
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+
+    /* Stats */
+    .stats-grid {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      flex: 1 1 150px;
+      background: #f9fbfd;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: inset 0 0 8px rgba(52,152,219,0.1);
+    }
+    .stat-number {
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #3498db;
+      margin-bottom: 6px;
+    }
+    .stat-label {
+      font-size: 1rem;
+      color: #555;
+    }
+
+    /* Preceptors cards */
+    .preceptors-list {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .preceptor-card {
+      background: #f9fbfd;
+      border-radius: 12px;
+      padding: 20px;
+      min-width: 220px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      text-align: center;
+    }
+    .preceptor-card img {
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      margin-bottom: 10px;
+    }
+    .preceptor-card .preceptor-name {
+      font-weight: 600;
+      color: #2d3e50;
+      margin-bottom: 2px;
+    }
+    .preceptor-card .preceptor-specialty {
+      color: #3498db;
+      font-size: 0.98rem;
+      margin-bottom: 4px;
+    }
+    .preceptor-card a {
+      color: #007bff;
+      font-size: 0.97rem;
+      word-break: break-all;
+    }
+
+    /* Notes */
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1.5px solid #ddd;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: vertical;
+      transition: border-color 0.3s ease;
+    }
+    textarea:focus {
+      border-color: #3498db;
+      outline: none;
+    }
+    .btn {
+      padding: 14px 32px;
+      border-radius: 24px;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+      margin-top: 16px;
+    }
+    .btn-primary {
+      background-color: #3498db;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #217dbb;
+    }
+    .btn-success {
+      background-color: #27ae60;
+      color: white;
+    }
+    .btn-success:hover {
+      background-color: #1e8449;
+    }
+
+    /* Documents table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 1rem;
+    }
+    th, td {
+      padding: 14px 12px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+      color: #2d3e50;
+    }
+    th {
+      background: #f8f9fa;
+      font-weight: 700;
+    }
+    .doc-btn {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 24px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+    .doc-btn:hover {
+      background-color: #217dbb;
+    }
+
+    @media (max-width: 900px) {
+      .main {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 16px 0;
+      }
+      .nav-item {
+        padding: 12px 16px;
+        font-size: 0.95rem;
+      }
+      .content {
+        border-radius: 0;
+        padding: 24px 16px;
+      }
+      .profile-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .profile-info h2 {
+        margin-top: 16px;
+      }
+      .content-tabs {
+        justify-content: space-around;
+        gap: 8px;
+      }
+      .preceptors-list {
+        flex-direction: column;
+        gap: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header" role="banner">
+    <h1>Student Details</h1>
+    <div class="header-right">
+      <span>Clinic Admin</span>
+      <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <nav class="sidebar" aria-label="Clinic navigation">
+      <a class="nav-item" href="clinic-dashboard.html">🏠 Dashboard</a>
+      <a class="nav-item" href="clinic-applications.html">📝 Applications</a>
+      <a class="nav-item active" href="clinic-students.html">👩‍🎓 Students</a>
+      <a class="nav-item" href="clinic-preceptors.html">👨‍⚕️ Preceptors</a>
+      <a class="nav-item" href="clinic-messages.html">💬 Messages</a>
+      <a class="nav-item" href="clinic-schedule.html">📅 Schedule</a>
+      <a class="nav-item" href="clinic-billing.html">💳 Billing</a>
+      <a class="nav-item" href="clinic-reports.html">📈 Reports</a>
+      <a class="nav-item" href="clinic-settings.html">⚙️ Settings</a>
+      <a class="nav-item" href="clinic-job-postings.html">📋 Job Postings</a>
+    </nav>
+
+    <main class="content" role="main" aria-label="Student details content">
+      <button class="back-btn" onclick="history.back()" aria-label="Go back to students list">← Back</button>
+
+      <section class="profile-card" aria-label="Student profile summary">
+        <div class="profile-photo" role="img" aria-label="Profile photo of Mike Wilson"></div>
+        <div class="profile-info">
+          <h2>Mike Wilson</h2>
+          <p><strong>Email:</strong> <a href="mailto:m.wilson@student.edu">m.wilson@student.edu</a></p>
+          <p><strong>Phone:</strong> <a href="tel:+15553456789">(555) 345-6789</a></p>
+          <p><strong>Specialty:</strong> Cardiology</p>
+          <p><strong>Rotation Dates:</strong> Aug - Oct 2025</p>
+          <p><strong>Status:</strong> <span class="status active">Active</span></p>
+        </div>
+      </section>
+
+      <!-- Pill Tabs Below Profile -->
+      <nav class="content-tabs" role="tablist" aria-label="Student detail sections">
+        <button class="content-tab active" role="tab" aria-selected="true" aria-controls="progress" id="tab-progress" tabindex="0">Progress & Hours</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="notes" id="tab-notes" tabindex="-1">Notes</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="contact" id="tab-contact" tabindex="-1">Emergency Contact</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="documents" id="tab-documents" tabindex="-1">Documents</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="preceptors" id="tab-preceptors" tabindex="-1">Preceptors</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="school" id="tab-school" tabindex="-1">School Info</button>
+      </nav>
+
+      <section id="progress" class="tab-content" role="tabpanel" aria-labelledby="tab-progress">
+        <div class="stats-grid" aria-label="Student progress statistics">
+          <div class="stat-card" role="region" aria-label="Hours logged">
+            <div class="stat-number" aria-live="polite">92</div>
+            <div class="stat-label">Hours Logged</div>
+            <div class="progress-bar-container" aria-hidden="true">
+              <div class="progress-bar" style="width: 51%;"></div>
+            </div>
+          </div>
+          <div class="stat-card" role="region" aria-label="Hours required">
+            <div class="stat-number" aria-live="polite">180</div>
+            <div class="stat-label">Hours Required</div>
+          </div>
+          <div class="stat-card" role="region" aria-label="Evaluations completed">
+            <div class="stat-number" aria-live="polite">2</div>
+            <div class="stat-label">Evaluations Completed</div>
+          </div>
+        </div>
+        <button class="btn btn-success" aria-label="Add evaluation" onclick="alert('Evaluation form coming soon!')">Add Evaluation</button>
+      </section>
+
+      <section id="notes" class="tab-content" role="tabpanel" aria-labelledby="tab-notes" hidden>
+        <textarea id="notes-textarea" rows="6" placeholder="Add notes about this student..."></textarea>
+        <button class="btn btn-primary" id="save-notes-btn" aria-label="Save notes">Save Notes</button>
+        <div id="save-message" role="alert" style="margin-top:16px; color: #27ae60; font-weight: 600; display: none;">Notes saved successfully!</div>
+      </section>
+
+      <section id="contact" class="tab-content" role="tabpanel" aria-labelledby="tab-contact" hidden>
+        <p><strong>Name:</strong> Sarah Wilson</p>
+        <p><strong>Relationship:</strong> Mother</p>
+        <p><strong>Phone:</strong> <a href="tel:+15551234567">(555) 123-4567</a></p>
+      </section>
+
+      <section id="documents" class="tab-content" role="tabpanel" aria-labelledby="tab-documents" hidden>
+        <table>
+          <thead>
+            <tr>
+              <th>Document</th>
+              <th>Status</th>
+              <th>Uploaded</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Resume/CV</td>
+              <td><span class="status active">✓ Uploaded</span></td>
+              <td>2025-07-01</td>
+              <td><button class="doc-btn" aria-label="View Resume/CV document" onclick="viewDocument('resume.pdf')">View</button></td>
+            </tr>
+            <tr>
+              <td>Immunization Records</td>
+              <td><span class="status active">✓ Uploaded</span></td>
+              <td>2025-07-01</td>
+              <td><button class="doc-btn" aria-label="View Immunization Records document" onclick="viewDocument('immunization.pdf')">View</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="preceptors" class="tab-content" role="tabpanel" aria-labelledby="tab-preceptors" hidden>
+        <h3>Assigned Preceptors</h3>
+        <div class="preceptors-list">
+          <div class="preceptor-card">
+            <img src="https://i.pravatar.cc/60?img=21" alt="Dr. Jane Smith">
+            <div class="preceptor-name">Dr. Jane Smith</div>
+            <div class="preceptor-specialty">Family Medicine</div>
+            <div><a href="mailto:jane.smith@clinic.com">jane.smith@clinic.com</a></div>
+            <div><a href="tel:+15551231234">(555) 123-1234</a></div>
+          </div>
+          <div class="preceptor-card">
+            <img src="https://i.pravatar.cc/60?img=22" alt="Dr. John Lee">
+            <div class="preceptor-name">Dr. John Lee</div>
+            <div class="preceptor-specialty">Cardiology</div>
+            <div><a href="mailto:john.lee@clinic.com">john.lee@clinic.com</a></div>
+            <div><a href="tel:+15559876543">(555) 987-6543</a></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="school" class="tab-content" role="tabpanel" aria-labelledby="tab-school" hidden>
+        <h3>Education Institution</h3>
+        <p><strong>School:</strong> University of Health Sciences</p>
+        <p><strong>Program:</strong> Doctor of Nursing Practice (DNP)</p>
+        <p><strong>Expected Graduation:</strong> May 2026</p>
+        <p><strong>School Contact:</strong> <a href="mailto:advising@uhs.edu">advising@uhs.edu</a> | (555) 987-6543</p>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Tab switching logic with keyboard support for content tabs
+    const contentTabs = document.querySelectorAll('.content-tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    contentTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        activateContentTab(tab);
+      });
+      tab.addEventListener('keydown', e => {
+        let index = Array.from(contentTabs).indexOf(e.target);
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          const nextIndex = (index + 1) % contentTabs.length;
+          activateContentTab(contentTabs[nextIndex]);
+          contentTabs[nextIndex].focus();
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          const prevIndex = (index - 1 + contentTabs.length) % contentTabs.length;
+          activateContentTab(contentTabs[prevIndex]);
+          contentTabs[prevIndex].focus();
+        }
+      });
+    });
+
+    function activateContentTab(selectedTab) {
+      contentTabs.forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+        t.setAttribute('tabindex', '-1');
+      });
+      tabContents.forEach(tc => tc.hidden = true);
+
+      selectedTab.classList.add('active');
+      selectedTab.setAttribute('aria-selected', 'true');
+      selectedTab.setAttribute('tabindex', '0');
+      document.getElementById(selectedTab.getAttribute('aria-controls')).hidden = false;
+    }
+
+    // Document viewer placeholder
+    function viewDocument(filename) {
+      alert('Open document: ' + filename);
+    }
+
+    // Notes saving simulation
+    const saveNotesBtn = document.getElementById('save-notes-btn');
+    const notesTextarea = document.getElementById('notes-textarea');
+    const saveMessage = document.getElementById('save-message');
+
+    saveNotesBtn && saveNotesBtn.addEventListener('click', () => {
+      saveMessage.style.display = 'block';
+      setTimeout(() => {
+        saveMessage.style.display = 'none';
+      }, 3000);
+    });
+  </script>
+</body>
+</html>

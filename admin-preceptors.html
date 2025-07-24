@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Preceptors - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      color: #2d3e50;
+    }
+    .header {
+      background: #2d3e50;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .logout-btn {
+      background: transparent;
+      border: 1px solid white;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .main {
+      display: flex;
+      min-height: calc(100vh - 64px);
+    }
+    .sidebar {
+      width: 250px;
+      background: #34495e;
+      color: white;
+      padding: 24px 0;
+    }
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      color: white;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .nav-item:hover,
+    .nav-item.active {
+      background: #2c3e50;
+      border-left-color: #3498db;
+    }
+    .content {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      margin-top: 0;
+      color: #2d3e50;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+    th {
+      background: #f8f9fa;
+      font-weight: 600;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 12px;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    .btn-success {
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 8px;
+    }
+    .btn-danger {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    /* Modal styles */
+    #preceptor-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    #preceptor-modal .modal-content {
+      background: #fff;
+      padding: 24px;
+      border-radius: 8px;
+      width: 400px;
+      max-width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    #preceptor-modal h3 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: #2d3e50;
+    }
+    #preceptor-modal label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    #preceptor-modal input, #preceptor-modal select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      font-size: 1rem;
+    }
+    #preceptor-modal select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background: white url('data:image/svg+xml;utf8,<svg fill="gray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 10px center;
+      background-size: 16px 16px;
+      cursor: pointer;
+    }
+    #preceptor-modal .modal-actions {
+      text-align: right;
+    }
+    @media (max-width: 768px) {
+      .main {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Admin Preceptors</h1>
+    <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+  </div>
+  <div class="main">
+    <nav class="sidebar">
+      <a href="admin-dashboard.html" class="nav-item">🏠 Dashboard</a>
+      <a href="admin-users.html" class="nav-item">👥 User Management</a>
+      <a href="admin-applications.html" class="nav-item">📝 Applications</a>
+      <a href="admin-clinics.html" class="nav-item">🏥 Clinics</a>
+      <a href="admin-job-postings.html" class="nav-item">📋 Job Postings</a>
+      <a href="admin-preceptors.html" class="nav-item active">👨‍⚕️ Preceptors</a>
+      <a href="admin-scheduling.html" class="nav-item">📅 Scheduling</a>
+      <a href="admin-messaging.html" class="nav-item">💬 Messaging</a>
+      <a href="admin-billing.html" class="nav-item">💳 Billing</a>
+      <a href="admin-reports.html" class="nav-item">📊 Reports</a>
+      <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+    </nav>
+    <main class="content">
+      <div class="card">
+        <h2>Manage Preceptors</h2>
+        <button class="btn-primary" onclick="openPreceptorModal()">+ Add New Preceptor</button>
+        <table id="preceptors-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Clinic</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Preceptors will be dynamically inserted here -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add/Edit Preceptor Modal -->
+  <div id="preceptor-modal">
+    <div class="modal-content">
+      <h3 id="preceptor-modal-title">Add Preceptor</h3>
+      <form id="preceptor-form">
+        <input type="hidden" id="preceptor-id" />
+        <label for="preceptor-name">Name</label>
+        <input type="text" id="preceptor-name" required />
+        <label for="preceptor-clinic">Clinic</label>
+        <select id="preceptor-clinic" required>
+          <!-- Clinic options will be populated here -->
+        </select>
+        <label for="preceptor-email">Email</label>
+        <input type="email" id="preceptor-email" required />
+        <label for="preceptor-phone">Phone</label>
+        <input type="tel" id="preceptor-phone" required />
+        <div class="modal-actions">
+          <button type="button" class="btn-danger" onclick="closePreceptorModal()">Cancel</button>
+          <button type="submit" class="btn-success">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Sample clinics data (should be synced with your clinics list)
+    const clinics = [
+      { id: 1, name: 'Sunrise Health Clinic' },
+      { id: 2, name: 'Downtown Medical Center' },
+      { id: 3, name: 'Lakeside Clinic' }
+    ];
+
+    let preceptors = [
+      { id: 1, name: 'Dr. John Smith', clinicId: 1, email: 'john.smith@sunriseclinic.com', phone: '555-123-4567' },
+      { id: 2, name: 'Dr. Emily Johnson', clinicId: 2, email: 'emily.johnson@downtownmed.com', phone: '555-987-6543' }
+    ];
+
+    const preceptorsTableBody = document.querySelector('#preceptors-table tbody');
+    const preceptorModal = document.getElementById('preceptor-modal');
+    const preceptorForm = document.getElementById('preceptor-form');
+    const preceptorModalTitle = document.getElementById('preceptor-modal-title');
+    const preceptorClinicSelect = document.getElementById('preceptor-clinic');
+
+    function loadClinicOptions() {
+      preceptorClinicSelect.innerHTML = '';
+      clinics.forEach(clinic => {
+        const option = document.createElement('option');
+        option.value = clinic.id;
+        option.textContent = clinic.name;
+        preceptorClinicSelect.appendChild(option);
+      });
+    }
+
+    function renderPreceptors() {
+      preceptorsTableBody.innerHTML = '';
+      if (preceptors.length === 0) {
+        preceptorsTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#888;">No preceptors found.</td></tr>';
+        return;
+      }
+      preceptors.forEach(preceptor => {
+        const clinic = clinics.find(c => c.id === preceptor.clinicId);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${preceptor.name}</td>
+          <td>${clinic ? clinic.name : 'Unknown'}</td>
+          <td>${preceptor.email}</td>
+          <td>${preceptor.phone}</td>
+          <td>
+            <button class="btn-success" onclick="editPreceptor(${preceptor.id})">Edit</button>
+            <button class="btn-danger" onclick="deletePreceptor(${preceptor.id})">Delete</button>
+          </td>
+        `;
+        preceptorsTableBody.appendChild(tr);
+      });
+    }
+
+    function openPreceptorModal() {
+      preceptorModalTitle.textContent = 'Add Preceptor';
+      preceptorForm.reset();
+      document.getElementById('preceptor-id').value = '';
+      loadClinicOptions();
+      preceptorModal.style.display = 'flex';
+    }
+
+    function closePreceptorModal() {
+      preceptorModal.style.display = 'none';
+    }
+
+    function editPreceptor(id) {
+      const preceptor = preceptors.find(p => p.id === id);
+      if (!preceptor) return alert('Preceptor not found');
+      preceptorModalTitle.textContent = 'Edit Preceptor';
+      document.getElementById('preceptor-id').value = preceptor.id;
+      document.getElementById('preceptor-name').value = preceptor.name;
+      loadClinicOptions();
+      preceptorClinicSelect.value = preceptor.clinicId;
+      document.getElementById('preceptor-email').value = preceptor.email;
+      document.getElementById('preceptor-phone').value = preceptor.phone;
+      preceptorModal.style.display = 'flex';
+    }
+
+    function deletePreceptor(id) {
+      if (confirm('Are you sure you want to delete this preceptor?')) {
+        preceptors = preceptors.filter(p => p.id !== id);
+        renderPreceptors();
+      }
+    }
+
+    preceptorForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const id = document.getElementById('preceptor-id').value;
+      const name = document.getElementById('preceptor-name').value.trim();
+      const clinicId = parseInt(preceptorClinicSelect.value);
+      const email = document.getElementById('preceptor-email').value.trim();
+      const phone = document.getElementById('preceptor-phone').value.trim();
+
+      if (!name || !clinicId || !email || !phone) {
+        alert('Please fill all required fields.');
+        return;
+      }
+
+      if (id) {
+        // Edit existing
+        const preceptor = preceptors.find(p => p.id == id);
+        if (preceptor) {
+          preceptor.name = name;
+          preceptor.clinicId = clinicId;
+          preceptor.email = email;
+          preceptor.phone = phone;
+        }
+      } else {
+        // Add new
+        const newId = preceptors.length ? Math.max(...preceptors.map(p => p.id)) + 1 : 1;
+        preceptors.push({ id: newId, name, clinicId, email, phone });
+      }
+      renderPreceptors();
+      closePreceptorModal();
+    });
+
+    // Initial render
+    renderPreceptors();
+  </script>
+</body>
+</html>
