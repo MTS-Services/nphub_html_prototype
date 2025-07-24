@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Preceptor Dashboard - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* ... (keep previous styles) ... */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background: #2d3e50;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .logout-btn {
+      background: transparent;
+      border: 1px solid white;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .main {
+      display: flex;
+      min-height: calc(100vh - 64px);
+    }
+    .sidebar {
+      width: 250px;
+      background: #34495e;
+      color: white;
+      padding: 24px 0;
+    }
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      color: white;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .nav-item:hover,
+    .nav-item.active {
+      background: #2c3e50;
+      border-left-color: #3498db;
+    }
+    .content {
+      flex: 1;
+      padding: 24px;
+    }
+    .clinic-selector {
+      margin-bottom: 24px;
+    }
+    select {
+      padding: 8px 12px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 250px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: #3498db;
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 8px 0;
+    }
+    .stat-label {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+    th {
+      background: #f8f9fa;
+      font-weight: 600;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    @media (max-width: 768px) {
+      .main {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Preceptor Dashboard</h1>
+    <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+  </div>
+  <div class="main">
+    <nav class="sidebar">
+      <a href="preceptor-dashboard.html" class="nav-item active">🏠 Dashboard</a>
+      <a href="preceptor-students.html" class="nav-item">👩‍🎓 Assigned Students</a>
+      <a href="preceptor-availability.html" class="nav-item">📅 Availability</a>
+      <a href="preceptor-evaluations.html" class="nav-item">📝 Evaluations</a>
+      <a href="preceptor-messages.html" class="nav-item">💬 Messages</a>
+      <a href="preceptor-documents.html" class="nav-item">📁 Documents</a>
+      <a href="preceptor-billing.html" class="nav-item">💳 Billing</a>
+      <a href="preceptor-settings.html" class="nav-item">⚙️ Settings</a>
+    </nav>
+    <main class="content">
+      <div class="clinic-selector">
+        <label for="clinicSelect"><strong>Select Clinic:</strong></label>
+        <select id="clinicSelect" onchange="updateDashboard()">
+          <option value="clinic1">Sunrise Health Clinic</option>
+          <option value="clinic2">Metro Medical Center</option>
+          <option value="clinic3">Downtown Urgent Care</option>
+        </select>
+      </div>
+
+      <div class="stats-grid" id="statsGrid">
+        <!-- Stats will update based on selected clinic -->
+      </div>
+
+      <div class="card">
+        <h2>Upcoming Rotations</h2>
+        <table id="rotationsTable">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Rotation</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rows will update based on selected clinic -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const clinicData = {
+      clinic1: {
+        name: "Sunrise Health Clinic",
+        stats: {
+          assignedStudents: 5,
+          upcomingRotations: 2,
+          pendingEvaluations: 1,
+          unreadMessages: 3
+        },
+        rotations: [
+          { student: "Jane Smith", rotation: "Family Medicine", start: "2025-07-10", end: "2025-08-10" },
+          { student: "John Doe", rotation: "Pediatrics", start: "2025-07-15", end: "2025-08-15" }
+        ]
+      },
+      clinic2: {
+        name: "Metro Medical Center",
+        stats: {
+          assignedStudents: 3,
+          upcomingRotations: 1,
+          pendingEvaluations: 0,
+          unreadMessages: 1
+        },
+        rotations: [
+          { student: "Mary Johnson", rotation: "Women's Health", start: "2025-07-20", end: "2025-08-20" }
+        ]
+      },
+      clinic3: {
+        name: "Downtown Urgent Care",
+        stats: {
+          assignedStudents: 2,
+          upcomingRotations: 0,
+          pendingEvaluations: 0,
+          unreadMessages: 0
+        },
+        rotations: []
+      }
+    };
+
+    function updateDashboard() {
+      const select = document.getElementById('clinicSelect');
+      const clinicKey = select.value;
+      const data = clinicData[clinicKey];
+
+      // Update stats
+      const statsGrid = document.getElementById('statsGrid');
+      statsGrid.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-number">${data.stats.assignedStudents}</div>
+          <div class="stat-label">Assigned Students</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">${data.stats.upcomingRotations}</div>
+          <div class="stat-label">Upcoming Rotations</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">${data.stats.pendingEvaluations}</div>
+          <div class="stat-label">Pending Evaluations</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">${data.stats.unreadMessages}</div>
+          <div class="stat-label">Unread Messages</div>
+        </div>
+      `;
+
+      // Update rotations table
+      const tbody = document.querySelector('#rotationsTable tbody');
+      tbody.innerHTML = '';
+      if (data.rotations.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#888;">No upcoming rotations for this clinic.</td></tr>';
+      } else {
+        data.rotations.forEach(rot => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${rot.student}</td>
+            <td>${rot.rotation}</td>
+            <td>${rot.start}</td>
+            <td>${rot.end}</td>
+            <td><button class="btn-primary" onclick="alert('View details for ${rot.student}')">View</button></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+
+    // Initialize dashboard on page load
+    window.onload = updateDashboard;
+  </script>
+</body>
+</html>

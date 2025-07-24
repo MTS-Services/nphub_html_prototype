@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="description" content="NP Clinical Hub connects Nurse Practitioners with clinical rotations, job opportunities, and professional resources nationwide." />
+  <meta property="og:title" content="NP Clinical Hub — Clinical Jobs & Rotations" />
+  <meta property="og:description" content="Your trusted platform for clinical rotations, jobs, and professional growth." />
+  <meta property="og:image" content="https://images.unsplash.com/photo-1588776814546-1a7a7a7a7a7a?auto=format&fit=crop&w=600&q=80" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NP Clinical Hub — Connect with Clinical Jobs & Rotations</title>
+  <style>
+    /* Root variables */
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #ECECEC;
+      --color-text: #2D2D2D;
+      --color-white: #FFFF;
+      --border-radius: 12px;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: 0.3s ease;
+      --max-width: 1200px;
+    }
+
+    /* Global reset & base */
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .visually-hidden {
+      position: absolute !important;
+      width: 1px; height: 1px;
+      margin: -1px; padding: 0; overflow: hidden;
+      clip: rect(0 0 0 0); border: 0;
+    }
+
+    /* Toasts */
+    #toast-container {
+      position: fixed;
+      top: 1rem; right: 1rem;
+      display: flex; flex-direction: column; gap: 0.5rem;
+      z-index: 2000;
+    }
+    .toast {
+      background: var(--color-text);
+      color: var(--color-white);
+      padding: 0.75rem 1rem;
+      border-radius: var(--border-radius);
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity var(--transition), transform var(--transition);
+    }
+    .toast.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Site nav */
+    header { position: sticky; top: 0; z-index: 1000; }
+    .site-nav {
+      background: var(--color-primary);
+      color: var(--color-white);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 32px; box-shadow: var(--box-shadow);
+    }
+    .site-nav__logo {
+      font-weight: 700; font-size: 1.5rem;
+      cursor: pointer; user-select: none;
+    }
+    .site-nav__list {
+      list-style: none; display: flex; gap: 24px;
+      margin: 0; padding: 0;
+    }
+    .site-nav__list a {
+      color: var(--color-white);
+      text-decoration: none; font-weight: 600;
+      transition: color var(--transition);
+    }
+    .site-nav__list a:hover,
+    .site-nav__list a:focus {
+      color: var(--color-secondary);
+      outline: none;
+    }
+    .link--disabled {
+      pointer-events: none; opacity: 0.6; cursor: default;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      padding: 14px 28px;
+      font-size: 1rem; font-weight: 700;
+      border-radius: var(--border-radius);
+      text-decoration: none;
+      transition: background var(--transition), color var(--transition);
+    }
+    .btn--primary {
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+    }
+    .btn--primary:hover,
+    .btn--primary:focus {
+      background: var(--color-primary-dark);
+      outline: none;
+    }
+    .btn--secondary {
+      background: transparent;
+      color: var(--color-primary);
+      border: 2px solid var(--color-primary);
+    }
+    .btn--secondary:hover,
+    .btn--secondary:focus {
+      background: var(--color-primary);
+      color: var(--color-white);
+      outline: none;
+    }
+    .btn--disabled {
+      opacity: 0.6; pointer-events: none;
+    }
+    .ml-10 { margin-left: 1rem; }
+
+    /* Hero */
+    .hero {
+      display: flex; flex-wrap: wrap;
+      align-items: center; justify-content: space-between;
+      gap: 40px; margin: 40px auto;
+      max-width: var(--max-width); padding: 0 20px;
+    }
+    .hero__text { flex: 1 1 400px; }
+    .hero__text h1 {
+      font-size: 3rem; margin-bottom: 20px;
+      color: var(--color-primary-dark);
+    }
+    .hero__text p {
+      font-size: 1.3rem; margin-bottom: 30px;
+      line-height: 1.5;
+    }
+    .hero__buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+    .hero__image {
+      flex: 1 1 400px; max-width: 400px;
+    }
+    .hero__image img {
+      width: 100%; border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+    }
+
+    /* Features */
+    .features {
+      margin-bottom: 40px;
+    }
+    .features__grid {
+      display: flex; flex-wrap: wrap;
+      gap: 30px; justify-content: center;
+      max-width: var(--max-width); margin: 0 auto;
+      padding: 0 20px;
+    }
+    .feature {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 30px 24px;
+      flex: 1 1 280px; max-width: 320px;
+      text-align: center;
+      transition: transform var(--transition);
+    }
+    .feature:hover,
+    .feature:focus {
+      transform: translateY(-6px);
+      outline: none;
+    }
+    .feature__icon {
+      font-size: 3rem; margin-bottom: 20px;
+      color: var(--color-secondary);
+    }
+    .feature__title {
+      font-size: 1.3rem; margin-bottom: 12px;
+      color: var(--color-primary-dark);
+    }
+    .feature__desc {
+      font-size: 1rem; line-height: 1.4;
+    }
+
+    /* Free Resources Section */
+    .public-resources {
+      max-width: var(--max-width);
+      margin: 0 auto 60px;
+      padding: 0 20px;
+    }
+    .public-resources h2 {
+      color: var(--color-primary-dark);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .public-resources > div {
+      display: flex; flex-wrap: wrap; gap: 24px; justify-content: center;
+    }
+    .public-resources article {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 24px;
+      max-width: 320px;
+      flex: 1 1 280px;
+    }
+    .public-resources h3 {
+      color: var(--color-primary);
+      margin-bottom: 12px;
+    }
+    .public-resources p {
+      margin-bottom: 12px;
+    }
+
+    /* Why Us Section */
+    .why-us {
+      max-width: var(--max-width);
+      margin: 0 auto 60px;
+      padding: 0 20px;
+      color: var(--color-text);
+    }
+    .why-us h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: var(--color-primary-dark);
+      text-align: center;
+    }
+    .why-us ul {
+      list-style: disc inside;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* Search */
+    .search {
+      text-align: center; margin: 0 auto 60px;
+      max-width: 800px; padding: 0 20px;
+    }
+    .search h2 {
+      color: var(--color-primary-dark);
+      margin-bottom: 24px;
+    }
+    .search__form {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      justify-content: center; align-items: center;
+    }
+    .search__form select,
+    .search__form input {
+      padding: 14px 16px; font-size: 1rem;
+      border: 2px solid #bbb;
+      border-radius: var(--border-radius);
+      min-width: 200px;
+      transition: border-color var(--transition);
+    }
+    .search__form select:focus,
+    .search__form input:focus {
+      border-color: var(--color-primary);
+      outline: none;
+      box-shadow: 0 0 8px rgba(10, 37, 64, 0.3);
+    }
+    .search__form button {
+      padding: 14px 28px; font-size: 1rem;
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none; border-radius: var(--border-radius);
+      cursor: pointer; font-weight: 700;
+      transition: background var(--transition);
+    }
+    .search__form button:hover,
+    .search__form button:focus {
+      background: var(--color-primary-dark);
+      outline: none;
+    }
+
+    /* Testimonials */
+    .testimonials {
+      text-align: center; max-width: 900px;
+      margin: 0 auto 60px; padding: 0 20px;
+    }
+    .testimonials__list {
+      display: flex; flex-wrap: wrap;
+      gap: 30px; justify-content: center;
+    }
+    .testimonial {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 24px 30px;
+      max-width: 320px;
+      position: relative;
+      font-style: italic; color: var(--color-text);
+    }
+    .testimonial::before {
+      content: """; font-size: 4rem;
+      color: var(--color-primary);
+      position: absolute; top: 10px; left: 20px;
+    }
+    .testimonial__author {
+      margin-top: 20px;
+      font-weight: 700; color: var(--color-primary-dark);
+      font-style: normal;
+    }
+
+    /* Footer */
+    .site-footer {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 30px 32px;
+      margin-top: auto;
+      display: flex; flex-wrap: wrap;
+      justify-content: space-between; gap: 20px;
+    }
+    .site-footer__menu {
+      display: flex; flex-wrap: wrap; gap: 20px;
+    }
+    .site-footer__menu a {
+      color: var(--color-white);
+      text-decoration: none; font-weight: 600;
+      transition: color var(--transition);
+    }
+    .site-footer__menu a:hover,
+    .site-footer__menu a:focus {
+      color: var(--color-secondary);
+      outline: none;
+    }
+    .site-footer__copyright {
+      flex: 1 1 100%; text-align: center;
+      font-size: 0.85rem; color: #ddd;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hero { flex-direction: column; text-align: center; }
+      .hero__image { max-width: 100%; }
+    }
+    @media (max-width: 480px) {
+      .search__form { flex-direction: column; }
+      .search__form select,
+      .search__form input,
+      .search__form button {
+        width: 100%; max-width: 300px;
+      }
+      .hero__text h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <header>
+    <nav class="site-nav" aria-label="Primary Navigation">
+      <div class="site-nav__logo" tabindex="0">NP Clinical Hub</div>
+      <ul class="site-nav__list">
+        <li><a href="landing.html">Home</a></li>
+        <li><a href="public-job-search.html">Jobs</a></li>
+        <li><a href="find-rotation.html">Find Rotation</a></li>
+        <li>
+          <a href="#" id="nav-launchpad" role="link"
+             class="link--disabled" aria-disabled="true"
+             title="Please sign in to access Practice Launchpad">
+            Practice Launchpad
+          </a>
+        </li>
+        <li>
+          <a href="#" id="nav-mdnetwork" role="link"
+             class="link--disabled" aria-disabled="true"
+             title="Please sign in to access MD Partnership Network">
+            MD Partnership Network
+          </a>
+        </li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="index.html">Sign In</a></li>
+        <li><a href="register.html">Register</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero__text">
+        <h1 id="hero-title">Connecting Nurse Practitioners with Clinical Jobs, Rotations, and Practice Launch Resources</h1>
+        <p>Your trusted platform for clinical opportunities, professional growth, and launching your NP practice.</p>
+        <div class="hero__buttons">
+          <a href="index.html" class="btn btn--primary">Sign In</a>
+          <a href="register.html" class="btn btn--secondary">Register</a>
+          <a href="#" id="btn-launchpad"
+             class="btn btn--primary btn--disabled ml-10"
+             role="link" aria-disabled="true"
+             title="Please sign in to access Practice Launchpad">
+            Practice Launchpad
+          </a>
+          <a href="#" id="btn-mdnetwork"
+             class="btn btn--secondary btn--disabled ml-10"
+             role="link" aria-disabled="true"
+             title="Please sign in to access MD Partnership Network">
+            MD Partnership Network
+          </a>
+        </div>
+      </div>
+      <figure class="hero__image">
+        <img
+          src="https://images.unsplash.com/photo-1588776814546-1a7a7a7a7a7a?auto=format&fit=crop&w=600&q=80"
+          alt="Nurse Practitioner at work"
+          loading="lazy"
+        />
+      </figure>
+    </section>
+
+    <section class="features" aria-labelledby="features-title">
+      <h2 id="features-title" class="visually-hidden">Platform Features</h2>
+      <div class="features__grid">
+        <div class="feature" tabindex="0">
+          <div class="feature__icon">🔍</div>
+          <h3 class="feature__title">Comprehensive Job Search</h3>
+          <p class="feature__desc">Find clinical jobs and rotations tailored to your specialty and location.</p>
+        </div>
+        <div class="feature" tabindex="0">
+          <div class="feature__icon">📋</div>
+          <h3 class="feature__title">Streamlined Applications</h3>
+          <p class="feature__desc">Apply to multiple clinical sites with a single, easy-to-use application.</p>
+        </div>
+        <div class="feature" tabindex="0">
+          <div class="feature__icon">📈</div>
+          <h3 class="feature__title">Track Your Progress</h3>
+          <p class="feature__desc">Monitor your applications, rotations, and evaluations in one place.</p>
+        </div>
+        <div class="feature" tabindex="0">
+          <div class="feature__icon">💬</div>
+          <h3 class="feature__title">Connect & Communicate</h3>
+          <p class="feature__desc">Message clinical coordinators, preceptors, and institutions directly.</p>
+        </div>
+        <div class="feature" tabindex="0">
+          <div class="feature__icon">🚀</div>
+          <h3 class="feature__title">Practice Launchpad</h3>
+          <p class="feature__desc">Expert resources, business planning tools, and interactive workshops to help you launch and grow your NP practice.</p>
+        </div>
+        <div class="feature" tabindex="0">
+          <div class="feature__icon">🤝</div>
+          <h3 class="feature__title">MD Partnership Network</h3>
+          <p class="feature__desc">Connect with MD collaborators to fulfill state requirements and expand your professional network.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="public-resources" aria-labelledby="resources-title">
+      <h2 id="resources-title">Free Resources for Nurse Practitioners</h2>
+      <div>
+        <article>
+          <h3>Practice Launchpad Intro Guide</h3>
+          <p>Learn the basics of launching your NP practice with our free step-by-step guide.</p>
+          <a href="practice-launchpad-intro.html" class="btn btn--primary">View Guide</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="why-us" aria-labelledby="why-us-title">
+      <h2 id="why-us-title">Why Choose NP Clinical Hub?</h2>
+      <ul>
+        <li>Access thousands of clinical rotations and job opportunities nationwide.</li>
+        <li>Streamline your applications and track your progress in one place.</li>
+        <li>Launch your own NP practice with expert business tools and workshops via Practice Launchpad.</li>
+        <li>Connect with MD collaborators to meet state requirements and grow your practice.</li>
+        <li>Engage directly with clinical coordinators and preceptors through our messaging platform.</li>
+      </ul>
+    </section>
+
+    <section class="search" aria-labelledby="search-title">
+      <h2 id="search-title">Search Clinical Jobs, Rotations, Collaborators & Services</h2>
+      <form class="search__form" action="public-search-results.html" method="get" role="search">
+        <select id="searchType" name="type" required>
+          <option value="">What are you looking for?</option>
+          <option value="all">All</option>
+          <option value="jobs">Jobs</option>
+          <option value="rotations">Rotations</option>
+          <option value="collaborators">MD Collaborators</option>
+          <option value="servicePackages">Service Packages</option>
+        </select>
+
+        <input id="searchQuery" name="q" type="text" placeholder="Enter keywords..." required />
+
+        <input id="searchLocation" name="location" type="text" placeholder="City, state, or zip (optional)" />
+
+        <button type="submit">Search</button>
+      </form>
+    </section>
+
+    <section class="testimonials" aria-labelledby="testimonials-title">
+      <h2 id="testimonials-title">What Our Users Say</h2>
+      <div class="testimonials__list">
+        <article class="testimonial" tabindex="0">
+          <p>"NP Clinical Hub made finding my clinical rotation so easy and stress-free. Highly recommend!"</p>
+          <footer class="testimonial__author">— Taylor Jones, NP Student</footer>
+        </article>
+        <article class="testimonial" tabindex="0">
+          <p>"The application process is seamless, and I love tracking everything in one place."</p>
+          <footer class="testimonial__author">— Sarah Wilson, Clinical Coordinator</footer>
+        </article>
+        <article class="testimonial" tabindex="0">
+          <p>"As a practicing NP, this platform helped me find the perfect job quickly."</p>
+          <footer class="testimonial__author">— Jane Doe, Job Seeker</footer>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <nav class="site-footer__menu" aria-label="Footer Navigation">
+      <a href="landing.html">Home</a>
+      <a href="public-job-search.html">Jobs</a>
+      <a href="find-rotation.html">Find Rotation</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="index.html">Sign In</a>
+      <a href="register.html">Register</a>
+    </nav>
+    <div class="site-footer__copyright">
+      &copy; 2025 NP Clinical Hub. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const isLoggedIn = Boolean(localStorage.getItem('userToken'));
+      const launchpadIds = ['nav-launchpad', 'btn-launchpad'];
+      const mdNetIds = ['nav-mdnetwork', 'btn-mdnetwork'];
+
+      function showToast(msg) {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = msg;
+        container.appendChild(toast);
+        requestAnimationFrame(() => toast.classList.add('visible'));
+        setTimeout(() => {
+          toast.classList.remove('visible');
+          setTimeout(() => container.removeChild(toast), 500);
+        }, 3000);
+      }
+
+      if (isLoggedIn) {
+        [...launchpadIds, ...mdNetIds].forEach(id => {
+          const el = document.getElementById(id);
+          el.classList.remove('link--disabled', 'btn--disabled');
+          el.removeAttribute('aria-disabled');
+          el.removeAttribute('title');
+          if (id.includes('launchpad')) el.href = 'practice-launchpad.html';
+          else el.href = 'md-partnership-network.html';
+        });
+      } else {
+        [...launchpadIds, ...mdNetIds].forEach(id => {
+          document.getElementById(id).addEventListener('click', e => {
+            e.preventDefault();
+            showToast('Please sign in to access this feature.');
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>

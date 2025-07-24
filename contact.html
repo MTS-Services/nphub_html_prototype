@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact Us - NP Clinical Hub</title>
+  <style>
+    body { background: #f6f7fb; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .contact-hero { background: #0A2540; color: #fff; padding: 60px 0 40px 0; text-align: center; }
+    .contact-hero h1 { font-size: 2.5rem; margin-bottom: 12px; }
+    .contact-hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto; }
+    .contact-content { max-width: 700px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 40px 32px; }
+    .contact-form label { display: block; margin-bottom: 8px; font-weight: 600; color: #0A2540; }
+    .contact-form input, .contact-form textarea {
+      width: 100%; padding: 10px 12px; border-radius: 8px; border: 1.5px solid #d0d4db;
+      margin-bottom: 18px; font-size: 1rem; background: #f9fafb; transition: border-color 0.2s;
+    }
+    .contact-form input:focus, .contact-form textarea:focus { border-color: #0A2540; outline: none; }
+    .contact-form button {
+      background: #0A2540; color: #fff; border: none; border-radius: 8px; padding: 12px 32px;
+      font-weight: 700; font-size: 1rem; cursor: pointer; transition: background 0.2s;
+    }
+    .contact-form button:hover { background: #021426; }
+    .contact-info { margin-top: 32px; color: #333; }
+    .contact-info h2 { color: #0A2540; margin-bottom: 8px; }
+    @media (max-width: 700px) {
+      .contact-content { padding: 20px 8px; }
+    }
+    /* Header/Footer styles from landing.html (if any) */
+    .site-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 32px;
+      background: #0A2540;
+      color: #fff;
+    }
+    .site-nav__logo {
+      font-weight: 700; font-size: 1.5rem;
+      cursor: pointer; user-select: none;
+    }
+    .site-nav__list {
+      list-style: none; display: flex; gap: 24px;
+      margin: 0; padding: 0;
+    }
+    .site-nav__list a {
+      color: #fff;
+      text-decoration: none; font-weight: 600;
+      transition: color 0.3s;
+    }
+    .site-nav__list a:hover,
+    .site-nav__list a:focus {
+      color: #FFD700;
+      outline: none;
+    }
+    .link--disabled {
+      pointer-events: none; opacity: 0.6; cursor: default;
+    }
+    footer {
+      background: #0A2540;
+      color: #fff;
+      text-align: center;
+      padding: 24px 0 12px 0;
+      margin-top: 40px;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+    }
+    .footer-links {
+      margin-bottom: 10px;
+    }
+    .footer-links a {
+      color: #FFD700;
+      text-decoration: none;
+      margin: 0 12px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header: copied exactly from landing.html -->
+  <header>
+    <nav class="site-nav" aria-label="Primary Navigation">
+      <div class="site-nav__logo" tabindex="0">NP Clinical Hub</div>
+      <ul class="site-nav__list">
+        <li><a href="landing.html">Home</a></li>
+        <li><a href="public-job-search.html">Jobs</a></li>
+        <li><a href="find-rotation.html">Find Rotation</a></li>
+        <li>
+          <a href="#" class="link--disabled" aria-disabled="true" title="Please sign in to access Practice Launchpad">Practice Launchpad</a>
+        </li>
+        <li>
+          <a href="#" class="link--disabled" aria-disabled="true" title="Please sign in to access MD Partnership Network">MD Partnership Network</a>
+        </li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html" aria-current="page" style="color:#FFD700;">Contact</a></li>
+        <li><a href="index.html">Sign In</a></li>
+        <li><a href="register.html">Register</a></li>
+      </ul>
+    </nav>
+  </header>
+  <section class="contact-hero">
+    <h1>Contact Us</h1>
+    <p>
+      Have a question, suggestion, or want to partner with NP Clinical Hub? We’d love to hear from you!
+    </p>
+  </section>
+  <main class="contact-content">
+    <form class="contact-form" id="contactForm" autocomplete="off">
+      <label for="name">Your Name</label>
+      <input type="text" id="name" name="name" required maxlength="80" />
+
+      <label for="email">Your Email</label>
+      <input type="email" id="email" name="email" required maxlength="120" />
+
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="5" required maxlength="1000"></textarea>
+
+      <button type="submit">Send Message</button>
+      <div id="formStatus" style="margin-top:12px;font-weight:600;"></div>
+    </form>
+    <div class="contact-info">
+      <h2>Other Ways to Reach Us</h2>
+      <p>Email: <a href="mailto:info@npclinicalhub.com" style="color:#0A2540;">info@npclinicalhub.com</a></p>
+      <p>Address: 123 Main Street, Suite 400, Your City, ST 12345</p>
+    </div>
+  </main>
+  <footer>
+    <div class="footer-links">
+      <a href="landing.html">Home</a>|
+      <a href="public-job-search.html">Jobs</a>|
+      <a href="find-rotation.html">Find Rotation</a>|
+      <a href="about.html">About</a>|
+      <a href="contact.html" style="color:#FFD700;">Contact</a>|
+      <a href="index.html">Sign In</a>|
+      <a href="register.html">Register</a>
+    </div>
+    &copy; 2025 NP Clinical Hub. All rights reserved.
+  </footer>
+  <script>
+    // Simple form handler (no backend, just demo)
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      document.getElementById('formStatus').textContent = "Thank you! Your message has been received.";
+      this.reset();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Practice Launchpad - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #667eea;
+      --color-primary-dark: #4a5ccf;
+      --color-bg: #f5f7fa;
+      --color-sidebar-bg: #34495e;
+      --color-sidebar-text: #ecf0f1;
+      --color-text: #2d3e50;
+      --color-white: #fff;
+      --border-radius: 10px;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: 0.3s ease;
+      --max-width: 900px;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    nav.sidebar {
+      width: 250px;
+      background: var(--color-sidebar-bg);
+      color: var(--color-sidebar-text);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+
+    nav.sidebar a {
+      color: var(--color-sidebar-text);
+      text-decoration: none;
+      padding: 14px 32px;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color var(--transition);
+      user-select: none;
+      position: relative;
+    }
+
+    nav.sidebar a.active,
+    nav.sidebar a:hover {
+      background: var(--color-primary);
+      color: var(--color-white);
+      cursor: pointer;
+    }
+
+    /* Header */
+    header.header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 20px 32px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+      width: 100%;
+    }
+
+    header.header button.logout-btn {
+      background: #dc3545;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color var(--transition);
+    }
+
+    header.header button.logout-btn:hover {
+      background: #b02a37;
+    }
+
+    /* Main content */
+    main.content {
+      flex: 1;
+      padding: 32px;
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      margin: 24px;
+      box-shadow: var(--box-shadow);
+      overflow-y: auto;
+      max-width: var(--max-width);
+      box-sizing: border-box;
+    }
+
+    main.content h1 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      color: var(--color-primary-dark);
+    }
+
+    section {
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      color: var(--color-primary);
+      margin-bottom: 16px;
+    }
+
+    p {
+      line-height: 1.5;
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      padding: 14px 28px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background-color var(--transition);
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-dark);
+    }
+
+    .ebook-download {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .ebook-image {
+      width: 150px;
+      height: 200px;
+      background: #ddd;
+      border-radius: 8px;
+      box-shadow: var(--box-shadow);
+      flex-shrink: 0;
+      background-image: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=400&q=80');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .consultancy-form label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .consultancy-form input,
+    .consultancy-form textarea {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 16px;
+      border: 2px solid #ccc;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      box-sizing: border-box;
+      transition: border-color var(--transition);
+    }
+
+    .consultancy-form input:focus,
+    .consultancy-form textarea:focus {
+      border-color: var(--color-primary);
+      outline: none;
+      box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
+    }
+
+    .consultancy-form button {
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      padding: 14px 28px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background-color var(--transition);
+    }
+
+    .consultancy-form button:hover {
+      background: var(--color-primary-dark);
+    }
+
+    .workshops-list,
+    .success-stories-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .workshops-list li,
+    .success-stories-list li {
+      margin-bottom: 12px;
+      font-size: 1.05rem;
+    }
+
+    .workshops-list a,
+    .success-stories-list a {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .workshops-list a:hover,
+    .success-stories-list a:hover {
+      text-decoration: underline;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .tab-button {
+      background: #e0e4ff;
+      border: none;
+      padding: 10px 24px;
+      font-weight: 700;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-size: 1rem;
+    }
+
+    .tab-button[aria-selected="true"],
+    .tab-button:hover {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .tab-content {
+      /* content area styling */
+    }
+
+    .business-ideas-list {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      border-radius: var(--border-radius);
+      padding: 16px;
+      background: #f9faff;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--color-text);
+    }
+
+    .business-ideas-list ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    /* Payment Modal */
+    #paymentModal {
+      display: none;
+      position: fixed;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--color-white);
+      padding: 24px 32px;
+      box-shadow: var(--box-shadow);
+      border-radius: var(--border-radius);
+      z-index: 10000;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    #paymentModal h3 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: var(--color-primary-dark);
+    }
+
+    #paymentModal button.close-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--color-primary-dark);
+      position: absolute;
+      top: 12px;
+      right: 12px;
+    }
+
+    /* Overlay */
+    #modalOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 9999;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav.sidebar {
+        width: 200px;
+        padding: 16px 0;
+      }
+
+      main.content {
+        margin: 16px;
+        padding: 24px;
+      }
+
+      .ebook-download {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .ebook-image {
+        width: 100%;
+        height: 200px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        flex-direction: column;
+      }
+
+      nav.sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 12px 0;
+      }
+
+      nav.sidebar a {
+        flex: 1 0 auto;
+        padding: 12px 16px;
+        font-size: 0.9rem;
+        text-align: center;
+      }
+
+      main.content {
+        margin: 12px;
+        padding: 16px;
+        border-radius: 0;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="sidebar" aria-label="Job Seeker Navigation">
+    <a href="job-seeker-dashboard.html">🏠 Dashboard</a>
+    <a href="np-profile.html">👤 Profile</a>
+    <a href="#">💾 Saved Jobs</a>
+    <a href="#">📝 Applications</a>
+    <a href="#">✉️ Messages</a>
+    <a href="np-payment.html" >💳 Payment</a>
+    <a href="np-documents.html">📁 Documents</a>
+    <a href="practice-launchpad.html" class="active" aria-current="page">🚀 Practice Launchpad</a>
+    <a href="md-partnership-network.html">🤝 MD Partnership Network</a>
+    <a href="np-collaboration-request.html">📄 Collaboration Requests</a>
+    <a href="md-np-agreements.html">📄 My Agreements</a>
+  </nav>
+
+  <div style="flex:1; display:flex; flex-direction: column; min-height: 100vh;">
+    <header class="header">
+      Practice Launchpad
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </header>
+
+    <main class="content" tabindex="0">
+      <section aria-label="Introduction">
+        <h1>Launch Your NP Practice with Confidence</h1>
+        <p>Our Practice Launchpad offers Nurse Practitioners the tools, resources, and expert guidance needed to start and grow a successful practice. Whether you’re just getting started or looking to expand, we’re here to help.</p>
+      </section>
+
+      <!-- Tabbed Business Resources Section -->
+      <section aria-label="Business Resources">
+        <h2>Business Resources</h2>
+
+        <!-- Tabs -->
+        <div class="tabs" role="tablist">
+          <button class="tab-button active" aria-selected="true" aria-controls="tab-ebook" id="tab-btn-ebook" role="tab" tabindex="0">Business Planning E-Book</button>
+          <button class="tab-button" aria-selected="false" aria-controls="tab-ideas" id="tab-btn-ideas" role="tab" tabindex="-1">50 Business Ideas</button>
+        </div>
+
+        <!-- Tab Panels -->
+        <div class="tab-content" id="tab-ebook" role="tabpanel" aria-labelledby="tab-btn-ebook">
+          <div class="ebook-download">
+            <div class="ebook-image" role="img" aria-label="Business Planning E-Book cover"></div>
+            <div>
+              <p>Purchase our comprehensive e-book packed with step-by-step guidance on business planning, marketing, finance, and compliance tailored for Nurse Practitioners.</p>
+              <button class="btn-primary" id="buyEbookBtn">Buy Now - $29.99</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-ideas" role="tabpanel" aria-labelledby="tab-btn-ideas" hidden>
+          <div class="business-ideas-list">
+            <ol>
+              <li>Primary Care Clinic</li>
+              <li>Telehealth Services</li>
+              <li>Urgent Care Center</li>
+              <li>Mobile Health Clinic</li>
+              <li>Chronic Disease Management</li>
+              <li>Health Coaching</li>
+              <li>Wellness and Preventive Care</li>
+              <li>Occupational Health Services</li>
+              <li>School Health Services</li>
+              <li>Geriatric Care Management</li>
+              <li>Women’s Health Clinic</li>
+              <li>Pediatric Care Services</li>
+              <li>Mental Health Counseling</li>
+              <li>Substance Abuse Counseling</li>
+              <li>Nutrition and Diet Counseling</li>
+              <li>Sports Medicine Clinic</li>
+              <li>Sleep Disorder Clinic</li>
+              <li>Home Health Care Services</li>
+              <li>Community Health Programs</li>
+              <li>Corporate Wellness Programs</li>
+              <li>Health Education Workshops</li>
+              <li>Medical Spa Services</li>
+              <li>IV Therapy Clinic</li>
+              <li>Smoking Cessation Programs</li>
+              <li>Diabetes Management Clinic</li>
+              <li>Physical Therapy Services</li>
+              <li>Chiropractic Collaboration</li>
+              <li>Acupuncture Services</li>
+              <li>Allergy Testing and Treatment</li>
+              <li>Travel Health Clinic</li>
+              <li>Immunization Services</li>
+              <li>Family Planning Clinic</li>
+              <li>STD Testing and Counseling</li>
+              <li>Weight Management Clinic</li>
+              <li>Health Screening Services</li>
+              <li>Medical Research Participation</li>
+              <li>Patient Advocacy Services</li>
+              <li>Health App Development</li>
+              <li>Medical Writing and Consulting</li>
+              <li>Legal Nurse Consulting</li>
+              <li>Medical Billing and Coding Services</li>
+              <li>Healthcare Staffing Agency</li>
+              <li>Medical Device Sales and Training</li>
+              <li>Pharmaceutical Consulting</li>
+              <li>Health Insurance Consulting</li>
+              <li>Chronic Pain Management</li>
+              <li>Rehabilitation Services</li>
+              <li>Community Outreach Programs</li>
+              <li>Health Technology Training</li>
+              <li>Patient Transportation Services</li>
+              <li>Medical Equipment Rental</li>
+              <li>Virtual Health Coaching</li>
+              <li>Integrative Medicine Clinic</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section aria-label="Consultancy Services">
+        <h2>Business Planning Consultancy</h2>
+        <p>Need personalized help? Book a session with our expert consultants who specialize in NP practice startups. Get tailored advice on business strategy, licensing, marketing, and more.</p>
+        <form class="consultancy-form" onsubmit="event.preventDefault(); alert('Thank you for your request! We will contact you soon.'); this.reset();">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" required aria-required="true" />
+
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" required aria-required="true" />
+
+          <label for="message">Tell us about your business goals</label>
+          <textarea id="message" name="message" rows="4" required aria-required="true"></textarea>
+
+          <button type="submit">Request Consultation</button>
+        </form>
+      </section>
+
+      <section aria-label="Workshops and Webinars">
+        <h2>Upcoming Workshops & Webinars</h2>
+        <ul class="workshops-list">
+          <li><a href="#" target="_blank" rel="noopener">Starting Your NP Practice: The Essentials - July 15, 2025</a></li>
+          <li><a href="#" target="_blank" rel="noopener">Marketing Strategies for NP Entrepreneurs - August 10, 2025</a></li>
+          <li><a href="#" target="_blank" rel="noopener">Financial Planning & Compliance - September 5, 2025</a></li>
+        </ul>
+      </section>
+
+      <section aria-label="Success Stories">
+        <h2>Success Stories</h2>
+        <ul class="success-stories-list">
+          <li><a href="#" target="_blank" rel="noopener">How Jane Smith Built a Thriving Family Practice</a></li>
+          <li><a href="#" target="_blank" rel="noopener">From NP to Business Owner: Mark’s Journey</a></li>
+          <li><a href="#" target="_blank" rel="noopener">Launching a Telehealth Practice: Sarah’s Story</a></li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <!-- Payment Modal and Overlay -->
+  <div id="modalOverlay"></div>
+  <div id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle" aria-describedby="paymentModalDesc">
+    <button class="close-btn" aria-label="Close payment modal" onclick="closePaymentModal()">&times;</button>
+    <h3 id="paymentModalTitle">Purchase Business Planning E-Book</h3>
+    <p id="paymentModalDesc">Complete your purchase below to get instant access to the e-book.</p>
+    <!-- Placeholder for payment form -->
+    <div id="paymentFormContainer">
+      <!-- Insert your payment provider's checkout form or buttons here -->
+      <p><em>Payment form goes here (e.g., Stripe, PayPal integration)</em></p>
+      <button class="btn-primary" onclick="simulatePaymentSuccess()">Simulate Payment Success</button>
+    </div>
+  </div>
+
+  <script>
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    }
+
+    // Tab functionality
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const target = button.getAttribute('aria-controls');
+
+        // Update buttons
+        tabButtons.forEach(btn => {
+          const selected = btn === button;
+          btn.setAttribute('aria-selected', selected ? 'true' : 'false');
+          btn.tabIndex = selected ? 0 : -1;
+          btn.classList.toggle('active', selected);
+        });
+
+        // Show/hide tab contents
+        tabContents.forEach(content => {
+          content.hidden = content.id !== target;
+        });
+      });
+    });
+
+    // Payment modal logic
+    const buyEbookBtn = document.getElementById('buyEbookBtn');
+    const paymentModal = document.getElementById('paymentModal');
+    const modalOverlay = document.getElementById('modalOverlay');
+
+    buyEbookBtn.addEventListener('click', () => {
+      paymentModal.style.display = 'block';
+      modalOverlay.style.display = 'block';
+    });
+
+    function closePaymentModal() {
+      paymentModal.style.display = 'none';
+      modalOverlay.style.display = 'none';
+    }
+
+    // Simulate payment success (replace with real payment success callback)
+    function simulatePaymentSuccess() {
+      const container = document.getElementById('paymentFormContainer');
+      container.innerHTML = `
+        <h4>Thank you for your purchase!</h4>
+        <p><a href="path-to-ebook.pdf" download>Click here to download your e-book</a></p>
+      `;
+    }
+
+    // Close modal on overlay click
+    modalOverlay.addEventListener('click', closePaymentModal);
+  </script>
+</body>
+</html>

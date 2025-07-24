@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MD Partnership Network - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #667eea;
+      --color-primary-dark: #4a5ccf;
+      --color-bg: #f5f7fa;
+      --color-sidebar-bg: #34495e;
+      --color-sidebar-text: #ecf0f1;
+      --color-text: #2d3e50;
+      --color-white: #fff;
+      --border-radius: 10px;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: 0.3s ease;
+      --max-width: 1200px;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    nav.sidebar {
+      width: 250px;
+      background: var(--color-sidebar-bg);
+      color: var(--color-sidebar-text);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+
+    nav.sidebar a {
+      color: var(--color-sidebar-text);
+      text-decoration: none;
+      padding: 14px 32px;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color var(--transition);
+      user-select: none;
+      position: relative;
+    }
+
+    nav.sidebar a.active,
+    nav.sidebar a:hover {
+      background: var(--color-primary);
+      color: var(--color-white);
+      cursor: pointer;
+    }
+
+    nav.sidebar a .notification-badge {
+      background: #dc3545;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 50%;
+      padding: 2px 7px;
+      position: absolute;
+      right: 20px;
+      top: 14px;
+    }
+
+    /* Header */
+    header.header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 20px 32px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+      width: 100%;
+    }
+
+    header.header button.logout-btn {
+      background: #dc3545;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color var(--transition);
+    }
+
+    header.header button.logout-btn:hover {
+      background: #b02a37;
+    }
+
+    /* Main content */
+    main.content {
+      flex: 1;
+      padding: 32px;
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      margin: 24px;
+      box-shadow: var(--box-shadow);
+      overflow-y: auto;
+      max-width: var(--max-width);
+      box-sizing: border-box;
+    }
+
+    main.content h1 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      color: var(--color-primary-dark);
+    }
+
+    section {
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      color: var(--color-primary);
+      margin-bottom: 16px;
+    }
+
+    p {
+      line-height: 1.5;
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+    }
+
+    /* MD list grid layout */
+    .md-list {
+      list-style: none;
+      padding-left: 0;
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      border-radius: var(--border-radius);
+      margin: 0;
+    }
+
+    .md-list li {
+      padding: 12px 20px;
+      border-bottom: 1px solid #eee;
+      display: grid;
+      grid-template-columns: 2fr 2fr 3fr 1fr 1fr;
+      align-items: center;
+      gap: 12px;
+      background: #f5f7fa;
+    }
+
+    .md-list li:nth-child(even) {
+      background: #f0f4ff;
+    }
+
+    .md-list li:last-child {
+      border-bottom: none;
+    }
+
+    .md-name {
+      font-weight: 600;
+      color: var(--color-primary-dark);
+    }
+
+    .md-specialty {
+      font-style: italic;
+      color: #555;
+    }
+
+    .md-states {
+      color: #444;
+      font-size: 0.95rem;
+    }
+
+    .md-status {
+      font-weight: 600;
+      justify-self: center;
+      font-size: 0.95rem;
+    }
+
+    .status-none {
+      color: #444;
+    }
+
+    .status-pending {
+      color: #856404; /* amber */
+    }
+
+    .status-accepted {
+      color: #155724; /* green */
+    }
+
+    .status-rejected {
+      color: #721c24; /* red */
+    }
+
+    .connect-btn,
+    .request-btn {
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color var(--transition);
+      justify-self: end;
+      user-select: none;
+    }
+
+    .connect-btn:disabled,
+    .request-btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+
+    .connect-btn:hover:not(:disabled),
+    .request-btn:hover:not(:disabled) {
+      background: var(--color-primary-dark);
+    }
+
+    .request-btn {
+      margin-left: 8px;
+      background: #28a745;
+    }
+
+    .request-btn:hover:not(:disabled) {
+      background: #218838;
+    }
+
+    /* Form */
+    .search-form {
+      margin-bottom: 24px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search-form input,
+    .search-form select {
+      padding: 10px 14px;
+      font-size: 1rem;
+      border: 2px solid #ccc;
+      border-radius: var(--border-radius);
+      flex: 1 1 200px;
+      transition: border-color var(--transition);
+    }
+
+    .search-form input:focus,
+    .search-form select:focus {
+      border-color: var(--color-primary);
+      outline: none;
+      box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
+    }
+
+    .search-form button {
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      padding: 12px 28px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background-color var(--transition);
+      flex: 0 0 auto;
+    }
+
+    .search-form button:hover {
+      background: var(--color-primary-dark);
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    }
+
+    .modal {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      padding: 24px 32px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: var(--box-shadow);
+      position: relative;
+      text-align: center;
+    }
+
+    .modal h3 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: var(--color-primary-dark);
+    }
+
+    .modal button {
+      margin: 8px 12px 0 12px;
+      padding: 10px 24px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: var(--border-radius);
+      border: none;
+      cursor: pointer;
+      transition: background-color var(--transition);
+    }
+
+    .modal .confirm-btn {
+      background: var(--color-primary);
+      color: var(--color-white);
+    }
+
+    .modal .confirm-btn:hover {
+      background: var(--color-primary-dark);
+    }
+
+    .modal .cancel-btn {
+      background: #ccc;
+      color: #333;
+    }
+
+    .modal .cancel-btn:hover {
+      background: #999;
+      color: #fff;
+    }
+
+    /* Responsive */
+    @media (max-width: 1100px) {
+      main.content {
+        max-width: 1000px;
+      }
+      .md-list li {
+        grid-template-columns: 2fr 2fr 2fr 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      main.content {
+        max-width: 100%;
+      }
+      .md-list li {
+        grid-template-columns: 1fr 1fr 2fr 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .md-list li {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 6px;
+      }
+      .md-specialty, .md-states, .md-status {
+        grid-column: span 2;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        flex-direction: column;
+      }
+
+      nav.sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 12px 0;
+      }
+
+      nav.sidebar a {
+        flex: 1 0 auto;
+        padding: 12px 16px;
+        font-size: 0.9rem;
+        text-align: center;
+      }
+
+      main.content {
+        margin: 12px;
+        padding: 16px;
+        border-radius: 0;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="sidebar" aria-label="Job Seeker Navigation">
+    <a href="job-seeker-dashboard.html">🏠 Dashboard</a>
+    <a href="#">👤 Profile</a>
+    <a href="#">💾 Saved Jobs</a>
+    <a href="#">📝 Applications</a>
+    <a href="#">✉️ Messages</a> 
+    <a href="np-payment.html">💳 Payment</a>
+    <a href="np-documents.html">📁 Documents</a>
+    <a href="practice-launchpad.html">🚀 Practice Launchpad</a>
+    <a href="md-partnership-network.html" class="active" aria-current="page">🤝 MD Partnership Network</a>
+    <a href="np-collaboration-request.html">📄 Collaboration Requests</a>
+    <a href="md-np-agreements.html">📄 My Agreements</a>
+
+  </nav>
+
+  <div style="flex:1; display:flex; flex-direction: column; min-height: 100vh;">
+    <header class="header">
+      MD Partnership Network
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </header>
+
+    <main class="content" tabindex="0">
+      <section aria-label="Introduction">
+        <h1>Find Your MD Collaborator</h1>
+        <p>Connect with licensed MDs interested in collaborating with Nurse Practitioners. Our platform helps you find the right partnership to meet state requirements and launch your practice.</p>
+      </section>
+
+      <section aria-label="Search MD Collaborators">
+        <form class="search-form" onsubmit="event.preventDefault(); filterMDs();">
+          <input type="text" id="mdName" placeholder="Search by name" aria-label="Search MD by name" />
+          <select id="mdSpecialty" aria-label="Filter by specialty">
+            <option value="">All Specialties</option>
+            <option value="Family Medicine">Family Medicine</option>
+            <option value="Internal Medicine">Internal Medicine</option>
+            <option value="Pediatrics">Pediatrics</option>
+            <option value="Psychiatry">Psychiatry</option>
+            <option value="Emergency Medicine">Emergency Medicine</option>
+          </select>
+          <input type="text" id="mdState" placeholder="State (e.g. NY)" aria-label="Filter by state" maxlength="2" style="width:80px;" />
+          <button type="submit">Search</button>
+        </form>
+      </section>
+
+      <section aria-label="MD Collaborators List">
+        <ul class="md-list" id="mdList">
+          <!-- MD collaborators inserted by JS -->
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <!-- Connect Confirmation Modal -->
+  <div class="modal-overlay" id="connectModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
+    <div class="modal">
+      <h3 id="modalTitle">Confirm Connection Request</h3>
+      <p id="modalDesc">Send a connection request to <strong id="mdNameInModal"></strong>?</p>
+      <button class="confirm-btn" id="confirmConnectBtn">Yes, Send Request</button>
+      <button class="cancel-btn" id="cancelConnectBtn">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    const mdCollaborators = [
+      { id: 1, name: 'Dr. John Smith', specialty: 'Family Medicine', states: ['NY', 'NJ', 'CT'] },
+      { id: 2, name: 'Dr. Emily Johnson', specialty: 'Internal Medicine', states: ['CA', 'NV'] },
+      { id: 3, name: 'Dr. Michael Lee', specialty: 'Pediatrics', states: ['IL', 'WI'] },
+      { id: 4, name: 'Dr. Sarah Patel', specialty: 'Psychiatry', states: ['TX', 'OK'] },
+      { id: 5, name: 'Dr. David Kim', specialty: 'Emergency Medicine', states: ['FL', 'GA', 'AL'] }
+    ];
+
+    let selectedMDId = null;
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    }
+
+    function renderMDs(list) {
+      const container = document.getElementById('mdList');
+      container.innerHTML = '';
+      if (list.length === 0) {
+        container.innerHTML = '<li>No MD collaborators found.</li>';
+        return;
+      }
+      list.forEach(md => {
+        const li = document.createElement('li');
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'md-name';
+        nameSpan.textContent = md.name;
+
+        const specialtySpan = document.createElement('span');
+        specialtySpan.className = 'md-specialty';
+        specialtySpan.textContent = md.specialty;
+
+        const statesSpan = document.createElement('span');
+        statesSpan.className = 'md-states';
+        statesSpan.textContent = 'Licensed in: ' + md.states.join(', ');
+
+        const statusSpan = document.createElement('span');
+        statusSpan.className = 'md-status';
+
+        // Get request status from localStorage or default
+        const requestStatus = localStorage.getItem(`connectRequest_${md.id}`) || 'none';
+
+        switch(requestStatus) {
+          case 'sent':
+            statusSpan.textContent = 'Pending';
+            statusSpan.classList.add('status-pending');
+            break;
+          case 'accepted':
+            statusSpan.textContent = 'Accepted';
+            statusSpan.classList.add('status-accepted');
+            break;
+          case 'rejected':
+            statusSpan.textContent = 'Rejected';
+            statusSpan.classList.add('status-rejected');
+            break;
+          default:
+            statusSpan.textContent = 'No Request';
+            statusSpan.classList.add('status-none');
+        }
+
+        const connectBtn = document.createElement('button');
+        connectBtn.className = 'connect-btn';
+        connectBtn.textContent = requestStatus === 'sent' ? 'Request Sent' : 'Connect';
+        connectBtn.disabled = requestStatus === 'sent';
+        connectBtn.onclick = () => openConnectModal(md.id, md.name);
+
+        const requestBtn = document.createElement('button');
+        requestBtn.className = 'request-btn';
+        requestBtn.textContent = 'Request Collaborative Agreement';
+        requestBtn.disabled = requestStatus === 'sent';
+        requestBtn.onclick = () => {
+          window.location.href = `np-collaboration-request.html?md=${encodeURIComponent(md.id)}`;
+        };
+
+        li.appendChild(nameSpan);
+        li.appendChild(specialtySpan);
+        li.appendChild(statesSpan);
+        li.appendChild(statusSpan);
+        li.appendChild(connectBtn);
+        li.appendChild(requestBtn);
+
+        container.appendChild(li);
+      });
+    }
+
+    function filterMDs() {
+      const nameFilter = document.getElementById('mdName').value.toLowerCase();
+      const specialtyFilter = document.getElementById('mdSpecialty').value;
+      const stateFilter = document.getElementById('mdState').value.toUpperCase();
+
+      const filtered = mdCollaborators.filter(md => {
+        const matchesName = md.name.toLowerCase().includes(nameFilter);
+        const matchesSpecialty = specialtyFilter === '' || md.specialty === specialtyFilter;
+        const matchesState = stateFilter === '' || md.states.includes(stateFilter);
+        return matchesName && matchesSpecialty && matchesState;
+      });
+
+      renderMDs(filtered);
+    }
+
+    // Modal elements
+    const modal = document.getElementById('connectModal');
+    const mdNameInModal = document.getElementById('mdNameInModal');
+    const confirmBtn = document.getElementById('confirmConnectBtn');
+    const cancelBtn = document.getElementById('cancelConnectBtn');
+
+    function openConnectModal(mdId, mdName) {
+      selectedMDId = mdId;
+      mdNameInModal.textContent = mdName;
+      modal.style.display = 'flex';
+      confirmBtn.focus();
+    }
+
+    function closeConnectModal() {
+      modal.style.display = 'none';
+      selectedMDId = null;
+    }
+
+    confirmBtn.onclick = () => {
+      if (selectedMDId !== null) {
+        // Simulate sending request by saving to localStorage
+        localStorage.setItem(`connectRequest_${selectedMDId}`, 'sent');
+        alert('Connection request sent successfully!');
+        closeConnectModal();
+        filterMDs(); // re-render to update button state and status
+      }
+    };
+
+    cancelBtn.onclick = () => {
+      closeConnectModal();
+    };
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.style.display === 'flex') {
+        closeConnectModal();
+      }
+    });
+
+    // Initial render
+    renderMDs(mdCollaborators);
+  </script>
+</body>
+</html>

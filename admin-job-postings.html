@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Job Postings - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background: #2d3e50;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      flex-grow: 1;
+    }
+    .logout-btn {
+      background: transparent;
+      border: 1px solid white;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    .logout-btn:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    .main {
+      display: flex;
+      min-height: calc(100vh - 64px);
+      flex-wrap: wrap;
+    }
+    .sidebar {
+      width: 250px;
+      background: #34495e;
+      color: white;
+      padding: 24px 0;
+      flex-shrink: 0;
+      user-select: none;
+    }
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      color: white;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      cursor: pointer;
+      user-select: none;
+    }
+    .nav-item:hover,
+    .nav-item.active {
+      background: #2c3e50;
+      border-left-color: #3498db;
+    }
+    .content {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      min-width: 0;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    h2 {
+      margin-top: 0;
+      color: #2d3e50;
+      user-select: none;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+    th {
+      background: #f8f9fa;
+      font-weight: 600;
+    }
+    .status {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-block;
+      user-select: none;
+    }
+    .status.pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    .status.approved {
+      background: #d4edda;
+      color: #155724;
+    }
+    .status.rejected {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    .btn-success {
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 8px;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    .btn-success:hover {
+      background: #219150;
+    }
+    .btn-danger {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    .btn-danger:hover {
+      background: #c0392b;
+    }
+    /* Modal styles */
+    #job-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 1rem;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    #job-modal .modal-content {
+      background: #fff;
+      padding: 24px;
+      border-radius: 8px;
+      width: 600px;
+      max-width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+    #job-modal h3 {
+      margin-top: 0;
+      color: #2d3e50;
+      user-select: none;
+    }
+    form#job-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      user-select: none;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="url"],
+    select,
+    textarea,
+    input[type="date"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: vertical;
+    }
+    textarea {
+      min-height: 80px;
+    }
+    .form-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .form-row > div {
+      flex: 1 1 250px;
+      min-width: 250px;
+    }
+    #job-form .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    @media (max-width: 700px) {
+      .form-row {
+        flex-direction: column;
+      }
+      .form-row > div {
+        min-width: 100%;
+      }
+      #job-modal .modal-content {
+        width: 95%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Admin Job Postings</h1>
+    <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+  </div>
+  <div class="main">
+    <nav class="sidebar" aria-label="Admin navigation">
+      <a href="admin-dashboard.html" class="nav-item">🏠 Dashboard</a>
+      <a href="admin-users.html" class="nav-item">👥 User Management</a>
+      <a href="admin-applications.html" class="nav-item">📝 Applications</a>
+      <a href="admin-clinics.html" class="nav-item">🏥 Clinics</a>
+      <a href="admin-job-postings.html" class="nav-item active" aria-current="page">📋 Job Postings</a>
+      <a href="admin-preceptors.html" class="nav-item">👨‍⚕️ Preceptors</a>
+      <a href="admin-scheduling.html" class="nav-item">📅 Scheduling</a>
+      <a href="admin-messaging.html" class="nav-item">💬 Messaging</a>
+      <a href="admin-billing.html" class="nav-item">💳 Billing</a>
+      <a href="admin-reports.html" class="nav-item">📊 Reports</a>
+      <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+    </nav>
+    <main class="content" role="main">
+      <div class="card">
+        <h2>Manage Job Postings</h2>
+        <button class="btn-primary" onclick="openAddJobModal()">+ Add New Job Posting</button>
+        <table id="job-postings-table" aria-label="Job postings list">
+          <thead>
+            <tr>
+              <th>Clinic</th>
+              <th>Job Title</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Posted Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Job postings will be dynamically inserted here -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add/Edit Job Posting Modal -->
+  <div id="job-modal" role="dialog" aria-modal="true" aria-labelledby="job-modal-title">
+    <div class="modal-content">
+      <h3 id="job-modal-title">Add Job Posting</h3>
+      <form id="job-form" novalidate>
+        <input type="hidden" id="job-id" />
+        <div class="form-row">
+          <div>
+            <label for="job-clinic">Clinic / Site *</label>
+            <select id="job-clinic" required aria-required="true"></select>
+          </div>
+          <div>
+            <label for="job-title">Job Title *</label>
+            <input type="text" id="job-title" required aria-required="true" />
+          </div>
+        </div>
+        <div>
+          <label for="job-description">Job Description *</label>
+          <textarea id="job-description" required aria-required="true"></textarea>
+        </div>
+        <div>
+          <label for="job-requirements">Requirements</label>
+          <textarea id="job-requirements" placeholder="Certifications, experience, etc."></textarea>
+        </div>
+        <div class="form-row">
+          <div>
+            <label for="job-type">Job Type *</label>
+            <select id="job-type" required aria-required="true">
+              <option value="" disabled selected>Select job type</option>
+              <option>Full-time</option>
+              <option>Part-time</option>
+              <option>Per Diem</option>
+              <option>Contract</option>
+              <option>Internship</option>
+            </select>
+          </div>
+          <div>
+            <label for="job-shift">Shift</label>
+            <select id="job-shift">
+              <option value="" selected>Any</option>
+              <option>Day</option>
+              <option>Evening</option>
+              <option>Night</option>
+              <option>Weekend</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label for="job-start-date">Start Date *</label>
+            <input type="date" id="job-start-date" required aria-required="true" />
+          </div>
+          <div>
+            <label for="job-end-date">End Date</label>
+            <input type="date" id="job-end-date" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label for="job-application-url">Application URL / Email *</label>
+            <input type="url" id="job-application-url" required aria-required="true" placeholder="https:// or email@example.com" />
+          </div>
+          <div>
+            <label for="job-contact-name">Contact Name</label>
+            <input type="text" id="job-contact-name" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label for="job-contact-email">Contact Email</label>
+            <input type="email" id="job-contact-email" />
+          </div>
+          <div>
+            <label for="job-salary">Salary / Compensation</label>
+            <input type="text" id="job-salary" placeholder="e.g. $80,000 - $100,000 / year" />
+          </div>
+        </div>
+        <div>
+          <label for="job-status">Status *</label>
+          <select id="job-status" required aria-required="true">
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-danger" onclick="closeJobModal()">Cancel</button>
+          <button type="submit" class="btn-success">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Sample clinics data (replace with real data)
+    const clinics = [
+      { id: 1, name: 'Sunrise Health Clinic' },
+      { id: 2, name: 'Downtown Medical Center' },
+      { id: 3, name: 'Lakeside Clinic' }
+    ];
+
+    // Sample job postings data
+    let jobPostings = [
+      { id: 1, clinicId: 1, title: 'Family Nurse Practitioner', description: 'Provide primary care...', requirements: 'RN license, 2 years experience', jobType: 'Full-time', shift: 'Day', startDate: '2025-06-01', endDate: '', applicationUrl: 'mailto:hr@sunriseclinic.com', contactName: 'Jane Doe', contactEmail: 'jane.doe@sunriseclinic.com', salary: '$90,000 - $110,000', status: 'pending', postedDate: '2025-06-01' },
+      { id: 2, clinicId: 2, title: 'Pediatric Nurse Practitioner', description: 'Work with children...', requirements: 'Pediatric certification', jobType: 'Part-time', shift: 'Evening', startDate: '2025-05-20', endDate: '', applicationUrl: 'https://downtownmedcenter.com/jobs', contactName: 'John Smith', contactEmail: 'john.smith@downtownmedcenter.com', salary: '$70,000 - $90,000', status: 'approved', postedDate: '2025-05-20' },
+      { id: 3, clinicId: 3, title: 'Psychiatric Nurse Practitioner', description: 'Mental health services...', requirements: 'Psychiatric certification', jobType: 'Contract', shift: 'Any', startDate: '2025-05-25', endDate: '2025-12-31', applicationUrl: 'mailto:contact@lakesideclinic.com', contactName: 'Mary Johnson', contactEmail: 'mary.johnson@lakesideclinic.com', salary: '$85,000 - $105,000', status: 'rejected', postedDate: '2025-05-25' }
+    ];
+
+    const jobTableBody = document.querySelector('#job-postings-table tbody');
+    const jobModal = document.getElementById('job-modal');
+    const jobForm = document.getElementById('job-form');
+    const jobModalTitle = document.getElementById('job-modal-title');
+    const jobClinicSelect = document.getElementById('job-clinic');
+
+    // Populate clinic options in modal
+    function loadClinicOptions() {
+      jobClinicSelect.innerHTML = '<option value="" disabled selected>Select clinic</option>';
+      clinics.forEach(clinic => {
+        const option = document.createElement('option');
+        option.value = clinic.id;
+        option.textContent = clinic.name;
+        jobClinicSelect.appendChild(option);
+      });
+    }
+
+    // Render job postings table
+    function renderJobPostings() {
+      jobTableBody.innerHTML = '';
+      jobPostings.forEach(job => {
+        const clinic = clinics.find(c => c.id === job.clinicId);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${clinic ? clinic.name : 'Unknown'}</td>
+          <td>${job.title}</td>
+          <td>${job.description.length > 50 ? job.description.substring(0, 50) + '...' : job.description}</td>
+          <td><span class="status ${job.status}">${job.status.charAt(0).toUpperCase() + job.status.slice(1)}</span></td>
+          <td>${job.postedDate}</td>
+          <td>
+            <button class="btn-success" onclick="editJob(${job.id})" aria-label="Edit job posting ${job.title}">Edit</button>
+            <button class="btn-danger" onclick="deleteJob(${job.id})" aria-label="Delete job posting ${job.title}">Delete</button>
+          </td>
+        `;
+        jobTableBody.appendChild(tr);
+      });
+    }
+
+    // Open modal for adding new job
+    function openAddJobModal() {
+      jobModalTitle.textContent = 'Add Job Posting';
+      jobForm.reset();
+      document.getElementById('job-id').value = '';
+      loadClinicOptions();
+      jobModal.style.display = 'flex';
+    }
+
+    // Open modal for editing job
+    function editJob(id) {
+      const job = jobPostings.find(j => j.id === id);
+      if (!job) return alert('Job not found');
+      jobModalTitle.textContent = 'Edit Job Posting';
+      document.getElementById('job-id').value = job.id;
+      loadClinicOptions();
+      jobClinicSelect.value = job.clinicId;
+      document.getElementById('job-title').value = job.title;
+      document.getElementById('job-description').value = job.description;
+      document.getElementById('job-requirements').value = job.requirements || '';
+      document.getElementById('job-type').value = job.jobType || '';
+      document.getElementById('job-shift').value = job.shift || '';
+      document.getElementById('job-start-date').value = job.startDate || '';
+      document.getElementById('job-end-date').value = job.endDate || '';
+      document.getElementById('job-application-url').value = job.applicationUrl || '';
+      document.getElementById('job-contact-name').value = job.contactName || '';
+      document.getElementById('job-contact-email').value = job.contactEmail || '';
+      document.getElementById('job-salary').value = job.salary || '';
+      document.getElementById('job-status').value = job.status;
+      jobModal.style.display = 'flex';
+    }
+
+    // Close modal
+    function closeJobModal() {
+      jobModal.style.display = 'none';
+    }
+
+    // Delete job posting
+    function deleteJob(id) {
+      if (confirm('Are you sure you want to delete this job posting?')) {
+        jobPostings = jobPostings.filter(j => j.id !== id);
+        renderJobPostings();
+      }
+    }
+
+    // Handle form submit
+    jobForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const id = document.getElementById('job-id').value;
+      const clinicId = parseInt(jobClinicSelect.value);
+      const title = document.getElementById('job-title').value.trim();
+      const description = document.getElementById('job-description').value.trim();
+      const requirements = document.getElementById('job-requirements').value.trim();
+      const jobType = document.getElementById('job-type').value;
+      const shift = document.getElementById('job-shift').value;
+      const startDate = document.getElementById('job-start-date').value;
+      const endDate = document.getElementById('job-end-date').value;
+      const applicationUrl = document.getElementById('job-application-url').value.trim();
+      const contactName = document.getElementById('job-contact-name').value.trim();
+      const contactEmail = document.getElementById('job-contact-email').value.trim();
+      const salary = document.getElementById('job-salary').value.trim();
+      const status = document.getElementById('job-status').value;
+      const postedDate = new Date().toISOString().split('T')[0];
+
+      if (!clinicId || !title || !description || !jobType || !startDate || !applicationUrl || !status) {
+        alert('Please fill all required fields.');
+        return;
+      }
+
+      // Validate application URL or email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const urlRegex = /^(https?:\/\/)/i;
+      if (!emailRegex.test(applicationUrl) && !urlRegex.test(applicationUrl)) {
+        alert('Please enter a valid application URL or email address.');
+        return;
+      }
+
+      if (id) {
+        // Edit existing
+        const job = jobPostings.find(j => j.id == id);
+        if (job) {
+          job.clinicId = clinicId;
+          job.title = title;
+          job.description = description;
+          job.requirements = requirements;
+          job.jobType = jobType;
+          job.shift = shift;
+          job.startDate = startDate;
+          job.endDate = endDate;
+          job.applicationUrl = applicationUrl;
+          job.contactName = contactName;
+          job.contactEmail = contactEmail;
+          job.salary = salary;
+          job.status = status;
+          // Keep original postedDate
+        }
+      } else {
+        // Add new
+        const newId = jobPostings.length ? Math.max(...jobPostings.map(j => j.id)) + 1 : 1;
+        jobPostings.push({
+          id: newId,
+          clinicId,
+          title,
+          description,
+          requirements,
+          jobType,
+          shift,
+          startDate,
+          endDate,
+          applicationUrl,
+          contactName,
+          contactEmail,
+          salary,
+          status,
+          postedDate
+        });
+      }
+      renderJobPostings();
+      closeJobModal();
+    });
+
+    // Close modal on outside click
+    window.addEventListener('click', e => {
+      if (e.target === jobModal) {
+        closeJobModal();
+      }
+    });
+
+    // Initial render
+    renderJobPostings();
+  </script>
+</body>
+</html>

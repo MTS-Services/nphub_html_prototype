@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Application Details - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; }
+    .header { background: #2d3e50; color: #fff; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 1.5rem; }
+    .header-right { display: flex; gap: 12px; align-items: center; }
+    .logout-btn { background: transparent; color: #fff; border: 1px solid #fff; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+    .back-btn { background: #95a5a6; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-bottom: 16px; }
+    .main { display: flex; min-height: calc(100vh - 64px); }
+    .sidebar { width: 250px; background: #34495e; color: #fff; padding: 24px 0; }
+    .content { flex: 1; padding: 24px; }
+    .nav-item { display: block; padding: 12px 24px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.3s; color: #fff; text-decoration: none; }
+    .nav-item:hover, .nav-item.active { background: #2c3e50; border-left-color: #3498db; }
+    .card { background: #fff; border-radius: 8px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .card h3 { margin-bottom: 16px; color: #2d3e50; }
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #f8f9fa; font-weight: 600; }
+    .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-right: 8px; }
+    .btn-primary { background: #3498db; color: #fff; }
+    .btn-success { background: #27ae60; color: #fff; }
+    .btn-warning { background: #f39c12; color: #fff; }
+    .btn-danger { background: #e74c3c; color: #fff; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 500; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .status { padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 500; }
+    .status.active { background: #d4edda; color: #155724; }
+    .status.pending { background: #fff3cd; color: #856404; }
+    .status.inactive { background: #f8d7da; color: #721c24; }
+    .status.approved { background: #d1ecf1; color: #0c5460; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: #fff; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .stat-number { font-size: 2rem; font-weight: bold; margin: 8px 0; }
+    .stat-label { color: #666; font-size: 0.9rem; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .alert { padding: 12px; border-radius: 6px; margin-bottom: 16px; }
+    .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .alert-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+    .alert-danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    /* Modal styles for messaging */
+    #message-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1100;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+    #message-modal .modal-content {
+      background: #fff;
+      padding: 24px;
+      border-radius: 8px;
+      width: 500px;
+      max-width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+    #message-modal h3 {
+      margin-top: 0;
+      color: #2d3e50;
+      user-select: none;
+    }
+    #message-modal textarea {
+      width: 100%;
+      height: 120px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 1rem;
+      resize: vertical;
+    }
+    #message-modal .modal-actions {
+      margin-top: 12px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    @media (max-width: 768px) {
+      .main { flex-direction: column; }
+      .sidebar { width: 100%; }
+      .header { flex-direction: column; gap: 12px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .info-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Application Details</h1>
+    <div class="header-right">
+      <span>Clinic Admin</span>
+      <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="sidebar">
+      <a class="nav-item active" href="clinic-dashboard.html">🏠 Dashboard</a>
+      <a class="nav-item" href="clinic-applications.html">📝 Applications</a>
+      <a class="nav-item" href="clinic-students.html">👩‍🎓 Students</a>
+      <a class="nav-item" href="clinic-preceptors.html">👨‍⚕️ Preceptors</a>
+      <a class="nav-item" href="clinic-messages.html">💬 Messages</a>
+      <a class="nav-item" href="clinic-schedule.html">📅 Schedule</a>
+      <a class="nav-item" href="clinic-billing.html">💳 Billing</a>
+      <a class="nav-item" href="clinic-reports.html">📈 Reports</a>
+      <a class="nav-item" href="clinic-settings.html">⚙️ Settings</a>
+      <a class="nav-item" href="clinic-job-postings.html">📋 Job Postings</a>
+    </div>
+    <div class="content">
+      <button class="back-btn" onclick="history.back()">← Back</button>
+
+      <div class="alert alert-warning" id="status-alert">
+        <strong>Pending Review:</strong> This application requires clinic approval.
+      </div>
+
+      <div class="info-grid">
+        <div class="card">
+          <h3>Student Information</h3>
+          <p><strong>Name:</strong> Lisa Chen</p>
+          <p><strong>Email:</strong> l.chen@student.edu</p>
+          <p><strong>Phone:</strong> (555) 234-5678</p>
+          <p><strong>School:</strong> State University NP Program</p>
+        </div>
+        <div class="card">
+          <h3>Application Details</h3>
+          <p><strong>Specialty:</strong> Family Practice</p>
+          <p><strong>Preferred Dates:</strong> Sep-Nov 2025</p>
+          <p><strong>Status:</strong> <span class="status pending">Pending Review</span></p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Personal Statement</h3>
+        <p>I am eager to complete my Family Practice rotation at your site. I have a strong interest in primary care and community health.</p>
+      </div>
+
+      <div class="card">
+        <h3>Required Documents</h3>
+        <table>
+          <thead>
+            <tr><th>Document</th><th>Status</th><th>Uploaded</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Resume/CV</td><td><span class="status approved">✓ Uploaded</span></td><td>2025-07-01</td><td><button class="btn btn-primary" onclick="viewDocument('resume.pdf')">View</button></td></tr>
+            <tr><td>Immunization Records</td><td><span class="status approved">✓ Uploaded</span></td><td>2025-07-01</td><td><button class="btn btn-primary" onclick="viewDocument('immunization.pdf')">View</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>Clinic Actions</h3>
+        <button class="btn btn-success" onclick="confirmAction('approve')">✓ Approve</button>
+        <button class="btn btn-danger" onclick="confirmAction('reject')">✗ Reject</button>
+        <button class="btn btn-warning" onclick="openMessageModal()">📧 Message Student</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message Modal -->
+  <div id="message-modal" role="dialog" aria-modal="true" aria-labelledby="message-modal-title" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1100; padding:1rem; box-sizing:border-box;">
+    <div class="modal-content">
+      <h3 id="message-modal-title">Message Student</h3>
+      <textarea id="message-text" placeholder="Type your message here..."></textarea>
+      <div class="modal-actions">
+        <button class="btn btn-danger" onclick="closeMessageModal()">Cancel</button>
+        <button class="btn btn-success" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function viewDocument(filename) {
+      alert('Open document: ' + filename);
+    }
+
+    function confirmAction(action) {
+      const actionText = action === 'approve' ? 'approve' : 'reject';
+      if (confirm(`Are you sure you want to ${actionText} this application?`)) {
+        alert(`Application ${actionText}d!`);
+        window.location.href = 'clinic-applications.html';
+      }
+    }
+
+    function openMessageModal() {
+      document.getElementById('message-modal').style.display = 'flex';
+    }
+
+    function closeMessageModal() {
+      document.getElementById('message-modal').style.display = 'none';
+    }
+
+    function sendMessage() {
+      const message = document.getElementById('message-text').value.trim();
+      if (!message) {
+        alert('Please enter a message.');
+        return;
+      }
+      alert('Message sent to student:\n\n' + message);
+      closeMessageModal();
+    }
+  </script>
+</body>
+</html>

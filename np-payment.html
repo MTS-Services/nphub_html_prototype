@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Payment - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      color: #2d3e50;
+      display: flex;
+      min-height: 100vh;
+    }
+    nav.sidebar {
+      width: 250px;
+      background: #34495e;
+      color: #ecf0f1;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+    nav.sidebar a {
+      color: #ecf0f1;
+      text-decoration: none;
+      padding: 14px 32px;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    nav.sidebar a.active,
+    nav.sidebar a:hover {
+      background: #667eea;
+      color: white;
+      cursor: pointer;
+    }
+    header.header {
+      background: #667eea;
+      color: white;
+      padding: 20px 32px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+      width: 100%;
+    }
+    header.header button.logout-btn {
+      background: #dc3545;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    header.header button.logout-btn:hover {
+      background: #b02a37;
+    }
+    main.content {
+      flex: 1;
+      padding: 32px;
+      background: white;
+      border-radius: 10px;
+      margin: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow-y: auto;
+      max-width: 900px;
+      box-sizing: border-box;
+    }
+    h1 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      color: #4a5ccf;
+    }
+    form.payment-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 400px;
+    }
+    fieldset {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 16px 20px;
+    }
+    legend {
+      font-weight: 700;
+      color: #4a5ccf;
+      padding: 0 8px;
+    }
+    label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    input[type="text"],
+    input[type="month"],
+    input[type="password"],
+    input[type="number"] {
+      padding: 10px 14px;
+      font-size: 1rem;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      transition: border-color 0.3s ease;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    input[type="text"]:focus,
+    input[type="month"]:focus,
+    input[type="password"]:focus,
+    input[type="number"]:focus {
+      border-color: #667eea;
+      outline: none;
+      box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
+    }
+    p.total-amount {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #2d3e50;
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+    button.pay-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: fit-content;
+    }
+    button.pay-btn:hover {
+      background: #4a5ccf;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #eee;
+      margin: 40px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background: #f5f7fa;
+      color: #4a5ccf;
+      font-weight: 700;
+    }
+    tr:nth-child(even) td {
+      background: #fafbfc;
+    }
+    a.receipt-link {
+      color: #3498db;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 0.95em;
+    }
+    a.receipt-link:hover {
+      color: #217dbb;
+    }
+    @media (max-width: 768px) {
+      nav.sidebar {
+        width: 200px;
+        padding: 16px 0;
+      }
+      main.content {
+        margin: 16px;
+        padding: 24px;
+      }
+      form.payment-form {
+        max-width: 100%;
+      }
+    }
+    @media (max-width: 480px) {
+      body {
+        flex-direction: column;
+      }
+      nav.sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 12px 0;
+      }
+      nav.sidebar a {
+        flex: 1 0 auto;
+        padding: 12px 16px;
+        font-size: 0.9rem;
+        text-align: center;
+      }
+      main.content {
+        margin: 12px;
+        padding: 16px;
+        border-radius: 0;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="sidebar" aria-label="Job Seeker Navigation">
+    <a href="job-seeker-dashboard.html">🏠 Dashboard</a>
+    <a href="np-profile.html">👤 Profile</a>
+    <a href="#">💾 Saved Jobs</a>
+    <a href="#">📝 Applications</a>
+    <a href="#">✉️ Messages</a>
+    <a href="np-payment.html" class="active" aria-current="page">💳 Payment</a>
+    <a href="np-documents.html">📁 Documents</a>
+    <a href="practice-launchpad.html">🚀 Practice Launchpad</a>
+    <a href="md-partnership-network.html">🤝 MD Partnership Network</a>
+    <a href="np-collaboration-request.html">📄 Collaboration Requests</a>
+    <a href="md-np-agreements.html">📄 My Agreements</a>
+  </nav>
+
+  <div style="flex:1; display:flex; flex-direction: column; min-height: 100vh;">
+    <header class="header">
+      Payment
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </header>
+
+    <main class="content" tabindex="0">
+      <h1>Make a Payment</h1>
+      <form class="payment-form" onsubmit="event.preventDefault(); processPayment();">
+        <fieldset>
+          <legend>Select Services to Purchase</legend>
+
+          <label>
+            <input type="checkbox" name="services" value="ebook" data-price="29.99" />
+            Practice Launch Pad (E-Book) - $29.99
+          </label>
+
+          <label>
+            <input type="checkbox" name="services" value="consulting" data-price="350" />
+            Practice Setup Consulting - $350
+          </label>
+
+          <label>
+            <input type="checkbox" name="services" value="md-network" data-price="50" />
+            MD Partnership Network Access (Monthly) - $50
+          </label>
+
+          <label>
+            <input type="checkbox" name="services" value="agreement-fee" data-price="150" />
+            MD-NP Agreement Management Fee - $150
+          </label>
+        </fieldset>
+
+        <p class="total-amount">Total Amount: $<span id="totalAmount">0.00</span></p>
+
+        <label for="cardName">Name on Card</label>
+        <input type="text" id="cardName" name="cardName" required />
+
+        <label for="cardNumber">Card Number</label>
+        <input type="text" id="cardNumber" name="cardNumber" maxlength="19" placeholder="xxxx xxxx xxxx xxxx" required />
+
+        <label for="expiryDate">Expiry Date</label>
+        <input type="month" id="expiryDate" name="expiryDate" required />
+
+        <label for="cvv">CVV</label>
+        <input type="password" id="cvv" name="cvv" maxlength="4" required />
+
+        <button type="submit" class="pay-btn">Pay Now</button>
+      </form>
+
+      <hr>
+
+      <section>
+        <h2>Payment History</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Services</th>
+              <th>Amount</th>
+              <th>Stripe Status</th>
+              <th>Receipt</th>
+            </tr>
+          </thead>
+          <tbody id="paymentHistoryTable">
+            <!-- Payment rows will be inserted here -->
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const checkboxes = document.querySelectorAll('input[name="services"]');
+    const totalAmountEl = document.getElementById('totalAmount');
+    const paymentHistoryTable = document.getElementById('paymentHistoryTable');
+
+    function updateTotal() {
+      let total = 0;
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          total += parseFloat(cb.dataset.price);
+        }
+      });
+      totalAmountEl.textContent = total.toFixed(2);
+    }
+
+    checkboxes.forEach(cb => cb.addEventListener('change', updateTotal));
+    updateTotal(); // initialize total
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    }
+
+    // Simulate a Stripe Payment ID generator
+    function generateStripePaymentId() {
+      return 'pi_' + Math.random().toString(36).substr(2, 12);
+    }
+
+    function processPayment() {
+      const selectedServices = [];
+      let total = 0;
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          selectedServices.push(cb.parentElement.textContent.trim());
+          total += parseFloat(cb.dataset.price);
+        }
+      });
+      if (selectedServices.length === 0) {
+        alert('Please select at least one service to pay for.');
+        return;
+      }
+      // Simulate payment success via Stripe
+      const stripePaymentId = generateStripePaymentId();
+      const stripeStatus = "Paid"; // In real integration, get this from Stripe API
+
+      alert(`Payment successful for: ${selectedServices.join(', ')}\nTotal: $${total.toFixed(2)}\nStripe Payment ID: ${stripePaymentId}`);
+
+      // Save payment to localStorage
+      const paymentHistory = JSON.parse(localStorage.getItem('npPaymentHistory') || '[]');
+      paymentHistory.push({
+        date: new Date().toLocaleString(),
+        services: selectedServices.join(', '),
+        amount: `$${total.toFixed(2)}`,
+        stripeStatus: stripeStatus,
+        stripePaymentId: stripePaymentId
+      });
+      localStorage.setItem('npPaymentHistory', JSON.stringify(paymentHistory));
+      renderPaymentHistory();
+      // Optionally, reset form
+      document.querySelector('.payment-form').reset();
+      updateTotal();
+    }
+
+    function downloadReceipt(payment) {
+      const receiptText =
+`NP Clinical Hub Payment Receipt
+
+Date: ${payment.date}
+Services: ${payment.services}
+Amount: ${payment.amount}
+Stripe Status: ${payment.stripeStatus}
+Stripe Payment ID: ${payment.stripePaymentId}
+
+Thank you for your payment!`;
+
+      const blob = new Blob([receiptText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `receipt_${payment.stripePaymentId}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+    }
+
+    function renderPaymentHistory() {
+      const paymentHistory = JSON.parse(localStorage.getItem('npPaymentHistory') || '[]');
+      paymentHistoryTable.innerHTML = '';
+      if (paymentHistory.length === 0) {
+        paymentHistoryTable.innerHTML = '<tr><td colspan="5">No payments made yet.</td></tr>';
+        return;
+      }
+      paymentHistory.slice().reverse().forEach((payment, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${payment.date}</td>
+          <td>${payment.services}</td>
+          <td>${payment.amount}</td>
+          <td>${payment.stripeStatus} <br><span style="font-size:0.95em;color:#888;">${payment.stripePaymentId}</span></td>
+          <td><a class="receipt-link" href="#" onclick="downloadReceiptFromTable(${paymentHistory.length-1-idx});return false;">Download</a></td>
+        `;
+        paymentHistoryTable.appendChild(tr);
+      });
+    }
+
+    // Helper for download link (since paymentHistory is reversed in display)
+    function downloadReceiptFromTable(idx) {
+      const paymentHistory = JSON.parse(localStorage.getItem('npPaymentHistory') || '[]');
+      downloadReceipt(paymentHistory[idx]);
+    }
+
+    // Render history on page load
+    renderPaymentHistory();
+
+    // Expose downloadReceiptFromTable globally for inline onclick
+    window.downloadReceiptFromTable = downloadReceiptFromTable;
+  </script>
+</body>
+</html>

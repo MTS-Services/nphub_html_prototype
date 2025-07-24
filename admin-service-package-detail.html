@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Service Package Details | NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #F7F9FB;
+      --color-white: #FFF;
+      --color-text: #2D2D2D;
+      --border-radius: 14px;
+      --box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      --transition: 0.3s;
+      --sidebar-width: 250px;
+      --section-gap: 36px;
+    }
+    body, html {
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 18px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .main {
+      display: flex;
+      min-height: 100vh;
+    }
+    nav.sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 28px 0;
+      min-height: 100vh;
+      flex-shrink: 0;
+    }
+    nav.sidebar .sidebar-section { margin-bottom: 28px; }
+    nav.sidebar .sidebar-section h3 {
+      padding-left: 24px;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+    }
+    nav.sidebar a {
+      display: block;
+      padding: 12px 24px;
+      color: var(--color-white);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background var(--transition), border-color var(--transition);
+      cursor: pointer;
+    }
+    nav.sidebar a:hover,
+    nav.sidebar a.active {
+      background: var(--color-primary);
+      border-left-color: var(--color-secondary);
+    }
+    main.content {
+      flex: 1 1 auto;
+      padding: 48px 0 48px 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      background: var(--color-bg);
+    }
+    .detail-container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 48px 56px 40px 56px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--section-gap);
+      position: relative;
+    }
+    .detail-header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 24px;
+    }
+    .detail-header-info {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .detail-img-lg, .detail-hero-img {
+      width: 110px;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 16px;
+      border: 1.5px solid #e0e0e0;
+      background: #f5f5f5;
+      flex-shrink: 0;
+    }
+    .detail-hero-img {
+      width: 100%;
+      max-width: 400px;
+      height: 180px;
+      border-radius: 18px;
+      margin-bottom: 12px;
+      object-fit: cover;
+      display: block;
+    }
+    .detail-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--color-primary-dark);
+      margin-bottom: 4px;
+    }
+    .detail-category {
+      font-size: 1.1rem;
+      color: var(--color-secondary);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .detail-status {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      background: #0A2540;
+      border-radius: 8px;
+      padding: 2px 12px;
+      display: inline-block;
+      margin-left: 8px;
+    }
+    .detail-actions {
+      display: flex;
+      gap: 14px;
+      margin-top: 4px;
+      align-items: flex-start;
+    }
+    .btn-primary, .btn-secondary {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition);
+    }
+    .btn-primary {
+      background: var(--color-primary);
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: var(--color-primary-dark);
+    }
+    .btn-secondary {
+      background: #f0f0f0;
+      color: var(--color-primary);
+    }
+    .btn-secondary:hover {
+      background: var(--color-primary);
+      color: #fff;
+    }
+    section.detail-section {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    section.detail-section:last-child {
+      border-bottom: none;
+    }
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+    }
+    .section-content {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px 48px;
+    }
+    .field-group {
+      min-width: 220px;
+      margin-bottom: 10px;
+      flex: 1 1 220px;
+    }
+    .field-label {
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 2px;
+      font-size: 1.05rem;
+    }
+    .field-value {
+      font-size: 1.08rem;
+      color: #222;
+      margin-bottom: 6px;
+      word-break: break-word;
+    }
+    .features-list, .highlights-list, .tags-list, .testimonials-list, .resources-list, .faqs-list {
+      margin: 0 0 0 18px;
+      padding: 0;
+      color: #444;
+      font-size: 1rem;
+    }
+    .features-list li, .highlights-list li, .tags-list li, .testimonials-list li, .resources-list li {
+      margin-bottom: 2px;
+    }
+    .faqs-list li {
+      margin-bottom: 10px;
+    }
+    .provider-profile {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      margin-top: 8px;
+    }
+    .provider-img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid #e0e0e0;
+      background: #f5f5f5;
+    }
+    .provider-bio {
+      font-size: 1rem;
+      color: #333;
+      margin-top: 4px;
+    }
+    @media (max-width: 900px) {
+      .detail-container { padding: 24px 8px; }
+      .detail-header-row { flex-direction: column; gap: 12px; }
+      .detail-header-info { flex-direction: column; gap: 12px; align-items: flex-start; }
+      .section-content { flex-direction: column; gap: 12px; }
+      .detail-hero-img { max-width: 100%; }
+    }
+    @media (max-width: 600px) {
+      .detail-title { font-size: 1.3rem; }
+      .detail-container { padding: 8px 2vw; }
+      .section-title { font-size: 1.05rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span>Service Package Details</span>
+    <a href="admin-practice-launchpad.html" class="btn-secondary" style="text-decoration:none;">← Back to Launchpad</a>
+  </div>
+  <div class="main">
+    <nav class="sidebar" aria-label="Admin navigation">
+      <div class="sidebar-section">
+        <h3>People</h3>
+        <a href="admin-md-collaborators.html" class="nav-item">👨‍⚕️ MD Collaborators</a>
+        <a href="admin-nps.html" class="nav-item">🩺 NPs / Job Seekers</a>
+        <a href="admin-students.html" class="nav-item">🎓 Students</a>
+        <a href="admin-program-coordinators.html" class="nav-item">👩‍💼 Program Coordinators</a>
+        <a href="admin-preceptors.html" class="nav-item">👨‍⚕️ Preceptors</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>Services</h3>
+        <a href="admin-rotation-applications.html" class="nav-item">📝 Rotations</a>
+        <a href="admin-job-applications.html" class="nav-item">📄 Job Applications</a>
+        <a href="admin-job-postings.html" class="nav-item">📋 Job Postings</a>
+        <a href="admin-scheduling.html" class="nav-item">📅 Scheduling</a>
+        <a href="admin-messaging.html" class="nav-item">💬 Messaging</a>
+        <a href="admin-billing.html" class="nav-item">💳 Billing</a>
+        <a href="admin-md-collaborations.html" class="nav-item">👨‍⚕️ MD Collaborations</a>
+        <a href="admin-practice-launchpad.html" class="nav-item active">🚀 Practice Launchpad</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>Organization</h3>
+        <a href="admin-clinics.html" class="nav-item">🏥 Clinics</a>
+        <a href="admin-institutions.html" class="nav-item">🏫 Institutions</a>
+        <a href="admin-programs.html" class="nav-item">📋 Programs</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>System</h3>
+        <a href="admin-dashboard.html" class="nav-item">🏠 Dashboard</a>
+        <a href="admin-reports.html" class="nav-item">📊 Reports</a>
+        <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+      </div>
+    </nav>
+    <main class="content">
+      <div class="detail-container" id="packageDetailContainer">
+        <div class="detail-header-row">
+          <div class="detail-header-info">
+            <img id="detailImg" class="detail-img-lg" src="" alt="Service Package Image" style="display:none;" />
+            <div>
+              <div class="detail-title" id="detailTitle"></div>
+              <div class="detail-category" id="detailCategory"></div>
+              <span class="detail-status" id="detailStatus"></span>
+            </div>
+          </div>
+          <div class="detail-actions">
+            <button class="btn-primary" id="editBtn">Edit</button>
+            <button class="btn-secondary" id="deleteBtn">Delete</button>
+          </div>
+        </div>
+
+        <img id="detailHeroImg" class="detail-hero-img" src="" alt="Hero Image" style="display:none;" />
+
+        <section class="detail-section">
+          <div class="section-title">Basic Info</div>
+          <div class="section-content">
+            <div class="field-group">
+              <div class="field-label">Description</div>
+              <div class="field-value" id="detailDescription"></div>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Category</div>
+              <div class="field-value" id="detailCategory2"></div>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Status</div>
+              <div class="field-value" id="detailStatus2"></div>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Created From Idea</div>
+              <div class="field-value" id="detailCreatedFromIdea"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <div class="section-title">Features</div>
+          <div class="section-content">
+            <div class="field-group" style="flex:2;">
+              <ul class="features-list" id="detailFeatures"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <div class="section-title">Highlights</div>
+          <div class="section-content">
+            <div class="field-group" style="flex:2;">
+              <ul class="highlights-list" id="detailHighlights"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <div class="section-title">FAQs</div>
+          <div class="section-content">
+            <div class="field-group" style="flex:2;">
+              <ul class="faqs-list" id="detailFaqs"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <div class="section-title">Tags</div>
+          <div class="section-content">
+            <div class="field-group" style="flex:2;">
+              <ul class="tags-list" id="detailTags"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <div class="section-title">Testimonials</div>
+          <div class="section-content">
+            <div class="field-group" style="flex:2;">
+              <ul class="testimonials-list" id="detailTestimonials"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <div class="section-title">Downloadable Resources</div>
+          <div class="section-content">
+            <div class="field-group" style="flex:2;">
+              <ul class="resources-list" id="detailResources"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <div class="section-title">Availability & Pricing</div>
+          <div class="section-content">
+            <div class="field-group">
+              <div class="field-label">Price</div>
+              <div class="field-value" id="detailPrice"></div>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Delivery Time</div>
+              <div class="field-value" id="detailDelivery"></div>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Available</div>
+              <div class="field-value" id="detailAvailable"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <div class="section-title">Provider & Contact</div>
+          <div class="section-content">
+            <div class="field-group">
+              <div class="field-label">Provider</div>
+              <div class="field-value" id="detailProvider"></div>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Contact Email</div>
+              <div class="field-value" id="detailContact"></div>
+            </div>
+            <div class="field-group" style="flex:2;">
+              <div class="field-label">Provider Profile</div>
+              <div class="provider-profile" id="detailProviderProfile"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="detail-section">
+          <div class="section-title">Purchase</div>
+          <div class="section-content">
+            <div class="field-group">
+              <div class="field-label">Purchase URL</div>
+              <div class="field-value"><a id="detailPurchaseUrl" href="#" target="_blank" rel="noopener"></a></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  <script type="module">
+    import { doc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    import { db } from './firebase-init.js';
+
+    function getQueryParam(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+
+    async function loadPackageDetail() {
+      const id = getQueryParam('id');
+      if (!id) {
+        document.getElementById('packageDetailContainer').innerHTML = '<div style="color:#b02a37;font-weight:700;">No package ID provided.</div>';
+        return;
+      }
+      const docRef = doc(db, 'servicePackages', id);
+      const docSnap = await getDoc(docRef);
+      if (!docSnap.exists()) {
+        document.getElementById('packageDetailContainer').innerHTML = '<div style="color:#b02a37;font-weight:700;">Service Package not found.</div>';
+        return;
+      }
+      const pkg = docSnap.data();
+
+      // Header
+      document.getElementById('detailTitle').textContent = pkg.title || '';
+      document.getElementById('detailCategory').textContent = pkg.category || '';
+      document.getElementById('detailStatus').textContent = pkg.status || '';
+
+      // Hero Image
+      const heroImg = document.getElementById('detailHeroImg');
+      if (pkg.heroImage) {
+        heroImg.src = pkg.heroImage;
+        heroImg.style.display = '';
+      } else {
+        heroImg.style.display = 'none';
+      }
+
+      // Basic Info
+      document.getElementById('detailDescription').textContent = pkg.description || '';
+      document.getElementById('detailCategory2').textContent = pkg.category || '';
+      document.getElementById('detailStatus2').textContent = pkg.status || '';
+      document.getElementById('detailCreatedFromIdea').textContent = pkg.createdFromIdea || '';
+
+      // Features
+      const featuresList = document.getElementById('detailFeatures');
+      featuresList.innerHTML = '';
+      if (Array.isArray(pkg.features) && pkg.features.length) {
+        pkg.features.forEach(f => {
+          const li = document.createElement('li');
+          li.textContent = f;
+          featuresList.appendChild(li);
+        });
+      }
+
+      // Highlights
+      const highlightsList = document.getElementById('detailHighlights');
+      highlightsList.innerHTML = '';
+      if (Array.isArray(pkg.highlights) && pkg.highlights.length) {
+        pkg.highlights.forEach(h => {
+          const li = document.createElement('li');
+          li.textContent = h;
+          highlightsList.appendChild(li);
+        });
+      }
+
+      // FAQs
+      const faqsList = document.getElementById('detailFaqs');
+      faqsList.innerHTML = '';
+      if (Array.isArray(pkg.faqs) && pkg.faqs.length) {
+        pkg.faqs.forEach(faq => {
+          const li = document.createElement('li');
+          li.innerHTML = `<strong>Q:</strong> ${faq.question || ''}<br/><strong>A:</strong> ${faq.answer || ''}`;
+          faqsList.appendChild(li);
+        });
+      }
+
+      // Tags
+      const tagsList = document.getElementById('detailTags');
+      tagsList.innerHTML = '';
+      if (Array.isArray(pkg.tags) && pkg.tags.length) {
+        pkg.tags.forEach(tag => {
+          const li = document.createElement('li');
+          li.textContent = tag;
+          tagsList.appendChild(li);
+        });
+      }
+
+      // Testimonials
+      const testimonialsList = document.getElementById('detailTestimonials');
+      testimonialsList.innerHTML = '';
+      if (Array.isArray(pkg.testimonials) && pkg.testimonials.length) {
+        pkg.testimonials.forEach(t => {
+          const li = document.createElement('li');
+          li.textContent = t;
+          testimonialsList.appendChild(li);
+        });
+      }
+
+      // Downloadable Resources
+      const resourcesList = document.getElementById('detailResources');
+      resourcesList.innerHTML = '';
+      if (Array.isArray(pkg.downloadableResources) && pkg.downloadableResources.length) {
+        pkg.downloadableResources.forEach(url => {
+          const li = document.createElement('li');
+          li.innerHTML = `<a href="${url}" target="_blank" rel="noopener">${url}</a>`;
+          resourcesList.appendChild(li);
+        });
+      }
+
+      // Availability & Pricing
+      document.getElementById('detailPrice').textContent = pkg.price ? `$${pkg.price}` : '';
+      document.getElementById('detailDelivery').textContent = pkg.deliveryTime || '';
+      document.getElementById('detailAvailable').textContent = (pkg.availableFrom || '-') + ' to ' + (pkg.availableUntil || '-');
+
+      // Provider & Contact
+      document.getElementById('detailProvider').textContent = pkg.provider || '';
+      document.getElementById('detailContact').textContent = pkg.contactEmail || '';
+
+      // Provider Profile
+      const providerProfileDiv = document.getElementById('detailProviderProfile');
+      providerProfileDiv.innerHTML = '';
+      if (pkg.providerProfile && (pkg.providerProfile.bio || pkg.providerProfile.image)) {
+        if (pkg.providerProfile.image) {
+          const img = document.createElement('img');
+          img.src = pkg.providerProfile.image;
+          img.className = 'provider-img';
+          img.alt = 'Provider Image';
+          providerProfileDiv.appendChild(img);
+        }
+        const bioDiv = document.createElement('div');
+        bioDiv.className = 'provider-bio';
+        bioDiv.textContent = pkg.providerProfile.bio || '';
+        providerProfileDiv.appendChild(bioDiv);
+      }
+
+      // Purchase
+      const purchaseUrl = document.getElementById('detailPurchaseUrl');
+      purchaseUrl.textContent = pkg.purchaseUrl || '';
+      purchaseUrl.href = pkg.purchaseUrl || '#';
+
+      // Main image
+      const img = document.getElementById('detailImg');
+      if (pkg.imageUrl) {
+        img.src = pkg.imageUrl;
+        img.style.display = '';
+      } else {
+        img.style.display = 'none';
+      }
+
+      // Edit/Delete
+      document.getElementById('editBtn').onclick = () => {
+        window.location.href = `admin-practice-launchpad.html?edit=${id}`;
+      };
+      document.getElementById('deleteBtn').onclick = async () => {
+        if (confirm('Delete this service package?')) {
+          await deleteDoc(docRef);
+          window.location.href = 'admin-practice-launchpad.html';
+        }
+      };
+    }
+
+    loadPackageDetail();
+  </script>
+</body>
+</html>

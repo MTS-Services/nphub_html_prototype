@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rotation Available Detail - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-accent1: #4A90E2; /* blue */
+      --color-accent2: #50E3C2; /* teal */
+      --color-accent3: #F5A623; /* orange */
+      --color-accent4: #D64545; /* red */
+      --color-accent5: #8E44AD; /* purple */
+      --color-bg: #F0F4F8;
+      --color-text: #2D2D2D;
+      --color-white: #FFFFFF;
+      --border-radius: 16px;
+      --box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+      --transition: 0.3s ease;
+      --gap: 28px;
+      --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      --icon-size: 28px;
+      --icon-bg-size: 48px;
+      --icon-color: var(--color-primary);
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body, html {
+      margin: 0;
+      height: 100%;
+      font-family: var(--font-family);
+      background: var(--color-bg);
+      color: var(--color-text);
+      display: flex;
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+    nav.sidebar {
+      width: 260px;
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+      user-select: none;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    nav.sidebar .sidebar-section {
+      margin-bottom: 32px;
+    }
+    nav.sidebar .sidebar-section h3 {
+      padding-left: 24px;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+    }
+    nav.sidebar a.nav-item {
+      display: block;
+      padding: 14px 28px;
+      color: var(--color-white);
+      text-decoration: none;
+      border-left: 4px solid transparent;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background var(--transition), border-color var(--transition);
+      cursor: pointer;
+    }
+    nav.sidebar a.nav-item:hover,
+    nav.sidebar a.nav-item.active {
+      background: var(--color-primary);
+      border-left-color: var(--color-secondary);
+    }
+    main.content {
+      flex: 1;
+      padding: var(--gap);
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin: 24px;
+      max-width: calc(100vw - 320px);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .header-wrapper {
+      position: sticky;
+      top: 0;
+      background: var(--color-white);
+      padding-bottom: 16px;
+      margin-bottom: 32px;
+      z-index: 10;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .back-link {
+      color: var(--color-accent1);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+      white-space: nowrap;
+    }
+    .back-link:hover {
+      color: var(--color-primary-dark);
+      text-decoration: underline;
+    }
+    h1 {
+      margin: 0;
+      color: var(--color-primary);
+      font-weight: 800;
+      font-size: 2.4rem;
+      letter-spacing: 0.04em;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      flex-grow: 1;
+    }
+    section.detail-section {
+      margin-bottom: 40px;
+      border-radius: var(--border-radius);
+      background: #f9fbfd;
+      box-shadow: 0 6px 18px rgba(74, 144, 226, 0.15);
+      padding: 28px 36px;
+    }
+    section.detail-section:last-child {
+      margin-bottom: 0;
+    }
+    section.detail-section > h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--color-accent1);
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--color-accent2);
+      padding-bottom: 8px;
+      letter-spacing: 0.05em;
+    }
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      align-items: center;
+      gap: 24px;
+      padding: 12px 0;
+      border-bottom: 1px solid #e3e8ef;
+      transition: background 0.3s ease;
+    }
+    .field-row:last-child {
+      border-bottom: none;
+    }
+    .field-row:hover {
+      background: #e6f2ff;
+      border-radius: 8px;
+    }
+    .field-label {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-weight: 700;
+      color: var(--color-primary);
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: default;
+      position: relative;
+    }
+    .icon-bg {
+      width: var(--icon-bg-size);
+      height: var(--icon-bg-size);
+      border-radius: 50%;
+      background: #e1e9f7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+      transition: background 0.3s ease;
+    }
+    .field-label:hover .icon-bg {
+      background: #c3d4f7;
+      box-shadow: 0 6px 18px rgba(74, 144, 226, 0.5);
+    }
+    svg.icon {
+      width: var(--icon-size);
+      height: var(--icon-size);
+    }
+    .field-value {
+      font-size: 1.15rem;
+      color: var(--color-primary-dark);
+      word-wrap: break-word;
+      white-space: pre-wrap;
+      line-height: 1.4;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 10px 26px;
+      border-radius: 32px;
+      font-weight: 800;
+      font-size: 1.05rem;
+      text-transform: uppercase;
+      color: white;
+      user-select: none;
+      width: fit-content;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      transition: background 0.3s ease;
+    }
+    .status-active {
+      background: linear-gradient(45deg, #28a745, #1e7e34);
+      box-shadow: 0 8px 24px rgba(40, 167, 69, 0.6);
+    }
+    .status-inactive {
+      background: linear-gradient(45deg, #dc3545, #a71d2a);
+      box-shadow: 0 8px 24px rgba(220, 53, 69, 0.6);
+    }
+    /* Tooltip */
+    .tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      pointer-events: none;
+      z-index: 20;
+    }
+    /* Links */
+    .clickable-link {
+      color: var(--color-accent3);
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+    .clickable-link:hover {
+      color: var(--color-primary-dark);
+      text-decoration: underline;
+    }
+    /* Apply Button */
+    #apply-button {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      background: var(--color-accent1);
+      color: var(--color-white);
+      border: none;
+      border-radius: 32px;
+      padding: 16px 36px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      box-shadow: 0 8px 24px rgba(74, 144, 226, 0.6);
+      cursor: pointer;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      z-index: 100;
+    }
+    #apply-button:hover {
+      background: var(--color-accent2);
+      box-shadow: 0 10px 30px rgba(80, 227, 194, 0.8);
+    }
+    @media (max-width: 900px) {
+      main.content {
+        margin: 12px;
+        max-width: 100vw;
+      }
+      section.detail-section {
+        padding: 20px 24px;
+      }
+      .field-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .field-label {
+        font-size: 1.1rem;
+      }
+      .field-value {
+        font-size: 1.15rem;
+      }
+      #apply-button {
+        bottom: 16px;
+        right: 16px;
+        padding: 14px 28px;
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="sidebar" aria-label="Admin navigation">
+    <div class="sidebar-section">
+      <h3>People</h3>
+      <a href="admin-md-collaborators.html" class="nav-item">👨‍⚕️ MD Collaborators</a>
+      <a href="admin-nps.html" class="nav-item">🩺 NPs / Job Seekers</a>
+      <a href="admin-students.html" class="nav-item">🎓 Students</a>
+      <a href="admin-program-coordinators.html" class="nav-item">👩‍💼 Program Coordinators</a>
+      <a href="admin-preceptors.html" class="nav-item">👨‍⚕️ Preceptors</a>
+    </div>
+    <div class="sidebar-section">
+      <h3>Services</h3>
+      <a href="admin-rotation-applications.html" class="nav-item">📝 Rotations</a>
+      <a href="admin-job-applications.html" class="nav-item">📄 Job Applications</a>
+      <a href="admin-job-postings.html" class="nav-item">📋 Job Postings</a>
+      <a href="admin-scheduling.html" class="nav-item">📅 Scheduling</a>
+      <a href="admin-billing.html" class="nav-item">💳 Billing</a>
+      <a href="admin-messaging.html" class="nav-item">💬 Messaging</a>
+      <a href="admin-md-collaborations.html" class="nav-item">👨‍⚕️ MD Collaborations</a>
+      <a href="admin-practice-launchpad.html" class="nav-item">🚀 Practice Launchpad</a>
+    </div>
+    <div class="sidebar-section">
+      <h3>Organization</h3>
+      <a href="admin-clinics.html" class="nav-item">🏥 Clinics</a>
+      <a href="admin-institutions.html" class="nav-item">🏫 Institutions</a>
+      <a href="admin-programs.html" class="nav-item">📋 Programs</a>
+    </div>
+    <div class="sidebar-section">
+      <h3>System</h3>
+      <a href="admin-dashboard.html" class="nav-item">🏠 Dashboard</a>
+      <a href="admin-reports.html" class="nav-item">📊 Reports</a>
+      <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+    </div>
+  </nav>
+
+  <main class="content" role="main" aria-label="Rotation Available Detail">
+    <div class="header-wrapper">
+      <a href="admin-rotation-applications.html" class="back-link" aria-label="Back to rotation applications">← Back to Rotations</a>
+      <h1>Rotation Available Detail</h1>
+    </div>
+    <div id="rotation-details" aria-live="polite" aria-busy="true" role="region" aria-label="Rotation details">
+      Loading rotation details...
+    </div>
+  </main>
+
+  <button id="apply-button" aria-label="Apply for this rotation">Apply</button>
+
+  <script type="module">
+    import { doc, getDoc, Timestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    import { db } from './firebase-init.js';
+
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    function formatDate(date, withTime = false) {
+      if (!date) return 'N/A';
+      if (date instanceof Timestamp) {
+        const d = date.toDate();
+        return withTime ? d.toLocaleString() : d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+      }
+      if (typeof date === 'string' || date instanceof String) {
+        const d = new Date(date);
+        return withTime ? d.toLocaleString() : d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+      }
+      return 'N/A';
+    }
+
+    function createTooltip(text) {
+      return `<span class="tooltip" role="tooltip">${text}</span>`;
+    }
+
+    function iconForField(field) {
+      const colors = {
+        accent1: '#4A90E2', // blue
+        accent2: '#50E3C2', // teal
+        accent3: '#F5A623', // orange
+        accent4: '#D64545', // red
+        accent5: '#8E44AD'  // purple
+      };
+
+      const createIcon = (path, fill) => `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="${fill}"><path d="${path}"/></svg>`;
+
+      switch(field) {
+        case 'Rotation Code':
+          return createIcon('M3 4v16h18V4H3zm16 14H5V6h14v12z', colors.accent1);
+        case 'Rotation Title':
+          return createIcon('M12 4v16m8-8H4', colors.accent2);
+        case 'Clinic ID':
+          return createIcon('M12 2L2 7v13h20V7L12 2z', colors.accent3);
+        case 'Description':
+          return createIcon('M4 4h16v16H4z', colors.accent4);
+        case 'Requirements':
+          return createIcon('M3 13h18v-2H3v2z', colors.accent5);
+        case 'Seasons Available':
+          return createIcon('M12 12m-10 0a10 10 0 1 0 20 0a10 10 0 1 0 -20 0', colors.accent1);
+        case 'Specialty':
+          return createIcon('M12 2l7 20H5l7-20z', colors.accent2);
+        case 'Patient Population':
+          return createIcon('M12 12m-8 0a8 8 0 1 0 16 0a8 8 0 1 0 -16 0', colors.accent3);
+        case 'Psychiatric Services':
+          return createIcon('M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z', colors.accent4);
+        case 'Rotation Setting':
+          return createIcon('M3 12h18', colors.accent5);
+        case 'Dress Code':
+          return createIcon('M12 2l7 20H5l7-20z', colors.accent1);
+        case 'Vaccination Requirement':
+          return createIcon('M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z', colors.accent2);
+        case 'Preceptor Credentials':
+          return createIcon('M4 4h16v16H4z', colors.accent3);
+        case 'Average Patients Per Day':
+          return createIcon('M3 12h18', colors.accent4);
+        case 'Rotation Highlights':
+          return createIcon('M12 2l7 20H5l7-20z', colors.accent5);
+        case 'Preceptor Schedule':
+          return createIcon('M4 4h16v16H4z', colors.accent1);
+        case 'Existing Affiliations':
+          return createIcon('M12 12m-10 0a10 10 0 1 0 20 0a10 10 0 1 0 -20 0', colors.accent2);
+        case 'Location Address':
+          return createIcon('M12 2L2 7v13h20V7L12 2z', colors.accent3);
+        case 'Location City':
+          return createIcon('M12 2v20', colors.accent4);
+        case 'Location State':
+          return createIcon('M2 12h20', colors.accent5);
+        case 'Location Zip':
+          return createIcon('M4 4h16v16H4z', colors.accent1);
+        case 'Rotation Summary':
+          return createIcon('M3 13h18v-2H3v2z', colors.accent2);
+        case 'Start Date':
+          return createIcon('M7 2v4M17 2v4M3 10h18v10H3z', colors.accent3);
+        case 'End Date':
+          return createIcon('M7 2v4M17 2v4M3 10h18v10H3z', colors.accent4);
+        case 'Status':
+          return createIcon('M12 12m-10 0a10 10 0 1 0 20 0a10 10 0 1 0 -20 0', colors.accent5);
+        case 'Source':
+          return createIcon('M12 2L2 7v13h20V7L12 2z', colors.accent1);
+        case 'Created At':
+          return createIcon('M12 8v4l3 3', colors.accent2);
+        default:
+          return createIcon('M12 12m-10 0a10 10 0 1 0 20 0a10 10 0 1 0 -20 0', colors.accent3);
+      }
+    }
+
+    function createField(label, value, isStatus = false, isLink = false, linkUrl = '') {
+      const icon = iconForField(label);
+      const tooltip = `<span class="tooltip" role="tooltip">${label}</span>`;
+      let valueHtml = value || 'N/A';
+
+      if (isLink && value && linkUrl) {
+        valueHtml = `<a href="${linkUrl}" target="_blank" rel="noopener noreferrer" class="clickable-link">${value}</a>`;
+      }
+
+      if (isStatus) {
+        const statusClass = value && value.toLowerCase() === 'active' ? 'status-active' : 'status-inactive';
+        return `
+          <div class="field-row" role="group" aria-labelledby="label-${label.replace(/\s+/g, '')}">
+            <div class="field-label" id="label-${label.replace(/\s+/g, '')}" tabindex="0" aria-describedby="tooltip-${label.replace(/\s+/g, '')}">
+              <span class="icon-bg">${icon}</span>${label}
+              ${tooltip}
+            </div>
+            <div class="field-value"><span class="status-badge ${statusClass}">${valueHtml}</span></div>
+          </div>
+        `;
+      }
+      return `
+        <div class="field-row" role="group" aria-labelledby="label-${label.replace(/\s+/g, '')}">
+          <div class="field-label" id="label-${label.replace(/\s+/g, '')}" tabindex="0" aria-describedby="tooltip-${label.replace(/\s+/g, '')}">
+            <span class="icon-bg">${icon}</span>${label}
+            ${tooltip}
+          </div>
+          <div class="field-value">${valueHtml}</div>
+        </div>
+      `;
+    }
+
+    async function loadRotationDetail(id) {
+      const container = document.getElementById('rotation-details');
+      container.setAttribute('aria-busy', 'true');
+      try {
+        const docRef = doc(db, 'rotations', id);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) {
+          container.innerHTML = '<p>Rotation not found.</p>';
+          container.setAttribute('aria-busy', 'false');
+          return;
+        }
+        const data = docSnap.data();
+
+        // Format arrays nicely
+        const seasons = Array.isArray(data.seasonsAvailable) ? data.seasonsAvailable.join(', ') : 'N/A';
+        const specialties = Array.isArray(data.specialty) ? data.specialty.join(', ') : 'N/A';
+        const affiliations = Array.isArray(data.existingAffiliations) ? data.existingAffiliations.join(', ') : 'N/A';
+
+        // Construct links for Clinic and Affiliations (assuming detail pages exist)
+        const clinicLink = data.clinicId ? `admin-clinic-details.html?id=${encodeURIComponent(data.clinicId)}` : '';
+        const affiliationsLinks = Array.isArray(data.existingAffiliations)
+          ? data.existingAffiliations.map(aff => `<a href="admin-institutions-detail.html?id=${encodeURIComponent(aff)}" target="_blank" rel="noopener noreferrer" class="clickable-link">${aff}</a>`).join(', ')
+          : 'N/A';
+
+        container.innerHTML = `
+          <section class="detail-section" aria-labelledby="section-basic-info">
+            <h2 id="section-basic-info">Basic Info</h2>
+            ${createField('Rotation Code', data.rotationCode)}
+            ${createField('Rotation Title', data.title)}
+            ${createField('Clinic ID', data.clinicId, false, true, clinicLink)}
+            ${createField('Description', data.description)}
+            ${createField('Requirements', data.requirements)}
+            ${createField('Seasons Available', seasons)}
+            ${createField('Specialty', specialties)}
+          </section>
+
+          <section class="detail-section" aria-labelledby="section-patient-services">
+            <h2 id="section-patient-services">Patient & Services</h2>
+            ${createField('Patient Population', data.patientPopulation)}
+            ${createField('Psychiatric Services', data.psychiatricServices)}
+            ${createField('Rotation Setting', data.rotationSetting)}
+            ${createField('Dress Code', data.dressCode)}
+            ${createField('Vaccination Requirement', data.vaccinationRequirement)}
+          </section>
+
+          <section class="detail-section" aria-labelledby="section-preceptor-info">
+            <h2 id="section-preceptor-info">Preceptor Info</h2>
+            ${createField('Preceptor Credentials', data.preceptorCredentials)}
+            ${createField('Average Patients Per Day', data.avgPatientsPerDay)}
+            ${createField('Rotation Highlights', data.rotationHighlights)}
+            ${createField('Preceptor Schedule', data.preceptorSchedule)}
+          </section>
+
+          <section class="detail-section" aria-labelledby="section-affiliations-location">
+            <h2 id="section-affiliations-location">Affiliations & Location</h2>
+            ${createField('Existing Affiliations', affiliationsLinks, false, false)}
+            ${createField('Location Address', data.locationAddress)}
+            ${createField('Location City', data.locationCity)}
+            ${createField('Location State', data.locationState)}
+            ${createField('Location Zip', data.locationZip)}
+          </section>
+
+          <section class="detail-section" aria-labelledby="section-summary-dates">
+            <h2 id="section-summary-dates">Summary & Dates</h2>
+            ${createField('Rotation Summary', data.rotationSummary)}
+            ${createField('Start Date', formatDate(data.startDate))}
+            ${createField('End Date', formatDate(data.endDate))}
+            ${createField('Status', data.status, true)}
+            ${createField('Source', data.source)}
+            ${createField('Created At', formatDate(data.createdAt, true))}
+          </section>
+        `;
+        container.setAttribute('aria-busy', 'false');
+      } catch (error) {
+        console.error('Error loading rotation detail:', error);
+        container.innerHTML = '<p>Failed to load rotation details.</p>';
+        container.setAttribute('aria-busy', 'false');
+      }
+    }
+
+    const rotationId = getQueryParam('id');
+    if (rotationId) {
+      loadRotationDetail(rotationId);
+    } else {
+      const container = document.getElementById('rotation-details');
+      container.innerHTML = '<p>No rotation ID specified.</p>';
+      container.setAttribute('aria-busy', 'false');
+    }
+
+    // Apply button click handler placeholder
+    document.getElementById('apply-button').addEventListener('click', () => {
+      alert('Apply button clicked! Implement your apply flow here.');
+      // Example: window.location.href = `apply.html?rotationId=${encodeURIComponent(rotationId)}`;
+    });
+  </script>
+</body>
+</html>

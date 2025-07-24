@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Program Coordinators - NP Clinical Hub Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #ECECEC;
+      --color-text: #2D2D2D;
+      --color-white: #FFFFFF;
+      --border-radius: 8px;
+      --transition: 0.3s ease;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+    }
+    .header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 { font-size: 1.5rem; user-select: none; }
+    .header-right {
+      display: flex; gap: 12px; align-items: center; user-select: none;
+    }
+    .logout-btn {
+      background: transparent;
+      color: var(--color-white);
+      border: 1px solid var(--color-white);
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background var(--transition);
+      user-select: none;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,0.2); }
+    .main { display: flex; min-height: calc(100vh - 64px); }
+    .sidebar {
+      width: 250px;
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 24px 0;
+      flex-shrink: 0;
+    }
+    .sidebar-section { margin-bottom: 24px; }
+    .sidebar-section h3 {
+      padding-left: 24px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      user-select: none;
+    }
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      color: var(--color-white);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background var(--transition), border-color var(--transition);
+      cursor: pointer;
+      user-select: none;
+    }
+    .nav-item:hover, .nav-item.active {
+      background: var(--color-primary);
+      border-left-color: var(--color-secondary);
+    }
+    .content {
+      flex: 1;
+      padding: 24px;
+      background: var(--color-bg);
+      overflow-y: auto;
+    }
+    .card {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--box-shadow);
+      max-width: 100%;
+      margin-left: 0;
+      margin-right: 0;
+    }
+    h3 { margin-bottom: 16px; color: var(--color-primary); user-select: none; }
+    .filters {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .filters-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .filters-right { display: flex; gap: 12px; }
+    label { font-weight: 600; user-select: none; }
+    select, input[type="search"] {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: var(--border-radius);
+      transition: border var(--transition);
+      font-size: 1rem;
+    }
+    select:focus, input[type="search"]:focus {
+      border-color: var(--color-primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(10,37,64,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      vertical-align: middle;
+    }
+    th { background: var(--color-bg); font-weight: 600; }
+    tr + tr td { border-top: 1px solid #ddd; }
+    .status {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-block;
+      user-select: none;
+    }
+    .status.active { background: #d4edda; color: #155724; }
+    .status.inactive { background: #f8d7da; color: #721c24; }
+    .status.pending { background: #fff3cd; color: #856404; }
+    .btn {
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      user-select: none;
+      border: none;
+      transition: background var(--transition);
+      margin-right: 6px;
+    }
+    .btn-primary { background: var(--color-primary); color: var(--color-white); }
+    .btn-primary:hover { background: var(--color-primary-dark); }
+    .btn-edit { background: #2196F3; color: white; }
+    .btn-edit:hover { background: #0b7dda; }
+    .btn-view { background: #4CAF50; color: white; }
+    .btn-view:hover { background: #45a049; }
+    .loading {
+      font-style: italic;
+      color: #555;
+      margin-top: 20px;
+      text-align: center;
+    }
+    @media (max-width: 900px) {
+      .main { flex-direction: column; }
+      .sidebar { width: 100%; }
+      .filters { flex-direction: column; align-items: stretch; }
+      .filters-left, .filters-right { justify-content: center; }
+      .filters-right { gap: 8px; }
+      .btn { width: 100%; }
+      table, thead, tbody, th, td, tr { display: block; }
+      th, td { padding: 8px; }
+      tr { margin-bottom: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Program Coordinators</h1>
+    <div class="header-right">
+      <span>Admin User</span>
+      <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <nav class="sidebar" aria-label="Admin navigation">
+      <div class="sidebar-section">
+        <h3>People</h3>
+        <a href="admin-md-collaborators.html" class="nav-item">👨‍⚕️ MD Collaborators</a>
+        <a href="admin-nps.html" class="nav-item">🩺 NPs / Job Seekers</a>
+        <a href="admin-students.html" class="nav-item">🎓 Students</a>
+        <a href="admin-program-coordinators.html" class="nav-item active">👩‍💼 Program Coordinators</a>
+        <a href="admin-preceptors.html" class="nav-item">👨‍⚕️ Preceptors</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>Services</h3>
+        <a href="admin-rotation-applications.html" class="nav-item">📝 Rotations</a>
+        <a href="admin-job-applications.html" class="nav-item">📄 Job Applications</a>
+        <a href="admin-job-postings.html" class="nav-item">📋 Job Postings</a>
+        <a href="admin-scheduling.html" class="nav-item">📅 Scheduling</a>
+        <a href="admin-billing.html" class="nav-item">💳 Billing</a>
+        <a href="admin-messaging.html" class="nav-item">💬 Messaging</a>
+        <a href="admin-md-collaborations.html" class="nav-item">🤝 MD Collaborations</a>
+        <a href="admin-practice-launchpad.html" class="nav-item">🚀 Practice Launchpad</a>
+        <a href="admin-launchpad-service-packages.html" class="nav-item">📦 Service Packages</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>Organization</h3>
+        <a href="admin-clinics.html" class="nav-item">🏥 Clinics</a>
+        <a href="admin-institutions.html" class="nav-item">🏫 Institutions</a>
+        <a href="admin-programs.html" class="nav-item">📋 Programs</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>System</h3>
+        <a href="admin-dashboard.html" class="nav-item">🏠 Dashboard</a>
+        <a href="admin-reports.html" class="nav-item">📊 Reports</a>
+        <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+      </div>
+    </nav>
+    <main class="content">
+      <div class="card">
+        <h3>Manage Program Coordinators</h3>
+        <div class="filters">
+          <div class="filters-left">
+            <label for="coordinator-status-filter">Status:</label>
+            <select id="coordinator-status-filter">
+              <option value="all">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="pending">Pending</option>
+            </select>
+            <label for="coordinator-search" style="margin-left:12px;">Search:</label>
+            <input type="search" id="coordinator-search" placeholder="Name, email..." />
+          </div>
+          <div class="filters-right">
+            <button class="btn btn-primary" onclick="window.location.href='admin-program-coordinator-edit.html'">+ Add Coordinator</button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Date Added</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="coordinators-table-body">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+  <script type="module">
+    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    import { db } from './firebase-init.js';
+
+    let coordinators = [];
+
+    const coordinatorsTableBody = document.getElementById('coordinators-table-body');
+    const coordinatorStatusFilter = document.getElementById('coordinator-status-filter');
+    const coordinatorSearchInput = document.getElementById('coordinator-search');
+
+    async function loadCoordinatorsFromFirestore() {
+      const colRef = collection(db, 'programCoordinators');
+      const snapshot = await getDocs(colRef);
+      coordinators = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      renderCoordinators();
+    }
+
+    function renderCoordinators() {
+      const statusFilter = coordinatorStatusFilter.value;
+      const searchText = coordinatorSearchInput.value.trim().toLowerCase();
+
+      coordinatorsTableBody.innerHTML = '';
+      let filtered = coordinators;
+
+      if (statusFilter !== 'all') {
+        filtered = filtered.filter(c => (c.Status || '').toLowerCase() === statusFilter);
+      }
+      if (searchText) {
+        filtered = filtered.filter(c =>
+          ((c.Name || '').toLowerCase()).includes(searchText) ||
+          (c.Email || '').toLowerCase().includes(searchText)
+        );
+      }
+
+      if(filtered.length === 0){
+        coordinatorsTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888;">No coordinators found.</td></tr>';
+        return;
+      }
+      filtered.forEach(c => {
+        const statusClass = (c.Status || 'pending').toLowerCase();
+        const dateAdded = c.dateAdded || (c.createdAt && c.createdAt.toDate ? c.createdAt.toDate().toISOString().split('T')[0] : 'N/A');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${c.Name || ''}</td>
+          <td>${c.Email || ''}</td>
+          <td><span class="status ${statusClass}">${(c.Status || 'Pending').charAt(0).toUpperCase() + (c.Status || 'Pending').slice(1)}</span></td>
+          <td>${dateAdded}</td>
+          <td>
+            <a href="admin-program-coordinator-detail.html?id=${encodeURIComponent(c.id)}" class="btn btn-view" title="View">View</a>
+            <a href="admin-program-coordinator-edit.html?id=${encodeURIComponent(c.id)}" class="btn btn-edit" title="Edit">Edit</a>
+          </td>`;
+        coordinatorsTableBody.appendChild(tr);
+      });
+    }
+
+    coordinatorStatusFilter.addEventListener('change', renderCoordinators);
+    coordinatorSearchInput.addEventListener('input', renderCoordinators);
+
+    window.addEventListener('DOMContentLoaded', loadCoordinatorsFromFirestore);
+  </script>
+</body>
+</html>
