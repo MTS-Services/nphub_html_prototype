@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Job Seeker Dashboard - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #667eea;
+      --color-primary-dark: #4a5ccf;
+      --color-bg: #f5f7fa;
+      --color-sidebar-bg: #34495e;
+      --color-sidebar-text: #ecf0f1;
+      --color-text: #2d3e50;
+      --color-white: #fff;
+      --border-radius: 10px;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: 0.3s ease;
+      --badge-bg: #4a90e2;
+      --badge-color: #fff;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      display: flex;
+      min-height: 100vh;
+      color: var(--color-text);
+    }
+
+    /* Sidebar */
+    nav.sidebar {
+      width: 250px;
+      background: var(--color-sidebar-bg);
+      color: var(--color-sidebar-text);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+
+    nav.sidebar a {
+      color: var(--color-sidebar-text);
+      text-decoration: none;
+      padding: 14px 32px;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color var(--transition);
+      user-select: none;
+      position: relative;
+    }
+
+    nav.sidebar a.active,
+    nav.sidebar a:hover {
+      background: var(--color-primary);
+      color: var(--color-white);
+      cursor: pointer;
+    }
+
+    nav.sidebar a .notification-badge {
+      background: #dc3545;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 50%;
+      padding: 2px 7px;
+      position: absolute;
+      right: 20px;
+      top: 14px;
+    }
+
+    /* Header */
+    header.header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 20px 32px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    header.header button.logout-btn {
+      background: #dc3545;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color var(--transition);
+    }
+
+    header.header button.logout-btn:hover {
+      background: #b02a37;
+    }
+
+    /* Main content */
+    main.content {
+      flex: 1;
+      padding: 32px;
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      margin: 24px;
+      box-shadow: var(--box-shadow);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    main.content h1 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      color: var(--color-primary-dark);
+    }
+
+    /* Profile summary */
+    .profile-summary {
+      background: #e8eaf6;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      max-width: 400px;
+    }
+
+    .profile-summary h2 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: var(--color-primary);
+    }
+
+    .profile-summary p {
+      margin: 6px 0;
+      font-size: 1rem;
+    }
+
+    .profile-summary a.edit-profile {
+      display: inline-block;
+      margin-top: 12px;
+      color: var(--color-primary);
+      font-weight: 600;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    /* Application summary */
+    .application-summary {
+      background: #f0f4ff;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      max-width: 600px;
+    }
+
+    .application-summary h2 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: var(--color-primary);
+    }
+
+    .application-status-list {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .status-item {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 16px 24px;
+      flex: 1 1 120px;
+      text-align: center;
+      font-weight: 700;
+      color: var(--color-primary-dark);
+      cursor: default;
+    }
+
+    /* Search & filter */
+    .job-search-filter {
+      max-width: 800px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .job-search-filter input[type="text"],
+    .job-search-filter select {
+      padding: 10px 14px;
+      font-size: 1rem;
+      border: 2px solid #ccc;
+      border-radius: var(--border-radius);
+      flex: 1 1 200px;
+      transition: border-color var(--transition);
+    }
+
+    .job-search-filter input[type="text"]:focus,
+    .job-search-filter select:focus {
+      border-color: var(--color-primary);
+      outline: none;
+      box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
+    }
+
+    .job-search-filter button {
+      padding: 12px 28px;
+      font-size: 1rem;
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-weight: 700;
+      transition: background-color var(--transition);
+      flex: 0 0 auto;
+    }
+
+    .job-search-filter button:hover {
+      background: var(--color-primary-dark);
+    }
+
+    /* Job listings */
+    .job-listings {
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .job-listings h2 {
+      margin-bottom: 16px;
+      color: var(--color-primary);
+    }
+
+    .job-item {
+      background: #f0f4ff;
+      border-radius: var(--border-radius);
+      padding: 16px 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: background-color var(--transition);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+    }
+
+    .job-item:hover {
+      background: #d6e0ff;
+    }
+
+    .job-title {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--color-primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      background: var(--badge-bg);
+      color: var(--badge-color);
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 12px;
+      padding: 2px 10px;
+      user-select: none;
+    }
+
+    .job-location {
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .job-description {
+      font-size: 0.95rem;
+      color: #333;
+    }
+
+    .apply-btn {
+      align-self: flex-start;
+      margin-top: 8px;
+      padding: 8px 20px;
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      border-radius: var(--border-radius);
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color var(--transition);
+    }
+
+    .apply-btn:hover {
+      background: var(--color-primary-dark);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    }
+
+    .modal {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      padding: 24px 32px;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: var(--box-shadow);
+      position: relative;
+    }
+
+    .modal h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: var(--color-primary-dark);
+    }
+
+    .modal p {
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .modal .close-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--color-primary-dark);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav.sidebar {
+        width: 200px;
+        padding: 16px 0;
+      }
+
+      main.content {
+        margin: 16px;
+        padding: 24px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        flex-direction: column;
+      }
+
+      nav.sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 12px 0;
+      }
+
+      nav.sidebar a {
+        flex: 1 0 auto;
+        padding: 12px 16px;
+        font-size: 0.9rem;
+        text-align: center;
+      }
+
+      main.content {
+        margin: 12px;
+        padding: 16px;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="sidebar" aria-label="Job Seeker Navigation">
+  <a href="job-seeker-dashboard.html" class="active" aria-current="page">🏠 Dashboard</a>
+  <a href="#" >👤 Profile</a>
+  <a href="#" >💾 Saved Jobs</a>
+  <a href="#" >📝 Applications</a>
+  <a href="#" >✉️ Messages</a>
+  <a href="np-payment.html">💳 Payment</a>
+  <a href="np-documents.html">📁 Documents</a>
+  <a href="practice-launchpad.html">🚀 Practice Launchpad</a>
+  <a href="md-partnership-network.html" >🤝 MD Partnership Network</a>
+  <a href="np-collaboration-request.html">📄 Collaboration Requests</a>
+  <a href="md-np-agreements.html">📄 My Agreements</a>
+</nav>
+
+  <div style="flex:1; display:flex; flex-direction: column; min-height: 100vh;">
+    <header class="header">
+      Job Seeker Dashboard
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </header>
+
+    <main class="content" tabindex="0">
+      <h1>Welcome, Jane Doe</h1>
+
+      <section class="profile-summary" aria-label="Profile Summary">
+        <h2>Your Profile</h2>
+        <p><strong>Name:</strong> Jane Doe</p>
+        <p><strong>Email:</strong> jane.doe@jobseeker.com</p>
+        <p><strong>License:</strong> NP License #123456</p>
+        <p><strong>Specialty:</strong> Family Nurse Practitioner</p>
+        <a href="#" class="edit-profile" aria-label="Edit Profile">Edit Profile</a>
+      </section>
+
+      <section class="application-summary" aria-label="Application Summary">
+        <h2>Your Applications</h2>
+        <div class="application-status-list">
+          <div class="status-item" aria-label="3 applications submitted">Submitted: 3</div>
+          <div class="status-item" aria-label="1 interview scheduled">Interview: 1</div>
+          <div class="status-item" aria-label="0 offers received">Offer: 0</div>
+          <div class="status-item" aria-label="2 applications rejected">Rejected: 2</div>
+        </div>
+      </section>
+
+      <section aria-label="Search and Filter Jobs">
+        <form class="job-search-filter" onsubmit="event.preventDefault(); filterJobs();">
+          <input type="text" id="searchKeyword" placeholder="Job title, specialty, or keyword" aria-label="Job keyword" />
+          <select id="searchLocation" aria-label="Select location">
+            <option value="">All Locations</option>
+            <option value="New York, NY">New York, NY</option>
+            <option value="San Francisco, CA">San Francisco, CA</option>
+            <option value="Chicago, IL">Chicago, IL</option>
+          </select>
+          <select id="searchType" aria-label="Select job type">
+            <option value="">All Types</option>
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Contract">Contract</option>
+            <option value="Remote">Remote</option>
+          </select>
+          <button type="submit">Search</button>
+        </form>
+      </section>
+
+      <section class="job-listings" aria-label="Available Job Listings" id="jobListings">
+        <h2>Available Clinical Jobs</h2>
+
+        <!-- Job items inserted by JS -->
+      </section>
+    </main>
+  </div>
+
+  <!-- Job Details Modal -->
+  <div class="modal-overlay" id="jobModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
+    <div class="modal">
+      <button class="close-btn" aria-label="Close modal" onclick="closeJobModal()">&times;</button>
+      <h3 id="modalTitle"></h3>
+      <p id="modalLocation"></p>
+      <p id="modalDesc"></p>
+      <button class="apply-btn" id="modalApplyBtn">Apply Now</button>
+    </div>
+  </div>
+
+  <script>
+    const jobs = [
+      {
+        id: 1,
+        title: 'NP - Family Practice',
+        location: 'New York, NY',
+        description: 'Full-time position at a busy family practice clinic. Requires 2+ years experience.',
+        type: 'Full-time',
+        tags: ['Full-time', 'Urgent']
+      },
+      {
+        id: 2,
+        title: 'NP - Pediatrics',
+        location: 'San Francisco, CA',
+        description: 'Part-time pediatric NP needed for outpatient clinic. Flexible schedule.',
+        type: 'Part-time',
+        tags: ['Part-time']
+      },
+      {
+        id: 3,
+        title: 'NP - Emergency Department',
+        location: 'Chicago, IL',
+        description: 'Urgent care NP position with flexible hours. Must be licensed in Illinois.',
+        type: 'Contract',
+        tags: ['Contract', 'Urgent']
+      },
+      {
+        id: 4,
+        title: 'NP - Telehealth',
+        location: 'Remote',
+        description: 'Remote telehealth NP position with flexible hours.',
+        type: 'Remote',
+        tags: ['Remote']
+      }
+    ];
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    }
+
+    function renderJobs(jobList) {
+      const container = document.getElementById('jobListings');
+      container.innerHTML = '<h2>Available Clinical Jobs</h2>';
+      if (jobList.length === 0) {
+        container.innerHTML += '<p>No jobs found matching your criteria.</p>';
+        return;
+      }
+      jobList.forEach(job => {
+        const jobEl = document.createElement('article');
+        jobEl.className = 'job-item';
+        jobEl.tabIndex = 0;
+        jobEl.setAttribute('role', 'button');
+        jobEl.setAttribute('aria-pressed', 'false');
+        jobEl.onclick = () => openJobModal(job.id);
+        jobEl.onkeypress = (e) => { if (e.key === 'Enter') openJobModal(job.id); };
+
+        const titleEl = document.createElement('div');
+        titleEl.className = 'job-title';
+        titleEl.textContent = job.title;
+
+        job.tags.forEach(tag => {
+          const badge = document.createElement('span');
+          badge.className = 'badge';
+          badge.textContent = tag;
+          titleEl.appendChild(badge);
+        });
+
+        const locationEl = document.createElement('div');
+        locationEl.className = 'job-location';
+        locationEl.textContent = job.location;
+
+        const descEl = document.createElement('div');
+        descEl.className = 'job-description';
+        descEl.textContent = job.description;
+
+        const applyBtn = document.createElement('button');
+        applyBtn.className = 'apply-btn';
+        applyBtn.textContent = 'Apply Now';
+        applyBtn.onclick = (e) => {
+          e.stopPropagation();
+          alert(`Redirecting to application for: ${job.title}`);
+          // Here you would redirect to application page or open form
+        };
+
+        jobEl.appendChild(titleEl);
+        jobEl.appendChild(locationEl);
+        jobEl.appendChild(descEl);
+        jobEl.appendChild(applyBtn);
+
+        container.appendChild(jobEl);
+      });
+    }
+
+    function openJobModal(jobId) {
+      const job = jobs.find(j => j.id === jobId);
+      if (!job) return;
+      document.getElementById('modalTitle').textContent = job.title;
+      document.getElementById('modalLocation').textContent = `Location: ${job.location}`;
+      document.getElementById('modalDesc').textContent = job.description;
+      const applyBtn = document.getElementById('modalApplyBtn');
+      applyBtn.onclick = () => {
+        alert(`Redirecting to application for: ${job.title}`);
+        closeJobModal();
+      };
+      document.getElementById('jobModal').style.display = 'flex';
+      document.getElementById('jobModal').focus();
+    }
+
+    function closeJobModal() {
+      document.getElementById('jobModal').style.display = 'none';
+    }
+
+    function filterJobs() {
+      const keyword = document.getElementById('searchKeyword').value.toLowerCase();
+      const location = document.getElementById('searchLocation').value;
+      const type = document.getElementById('searchType').value;
+
+      const filtered = jobs.filter(job => {
+        const matchesKeyword = keyword === '' || job.title.toLowerCase().includes(keyword) || job.description.toLowerCase().includes(keyword);
+        const matchesLocation = location === '' || job.location === location;
+        const matchesType = type === '' || job.type === type;
+        return matchesKeyword && matchesLocation && matchesType;
+      });
+
+      renderJobs(filtered);
+    }
+
+    // Initial render
+    renderJobs(jobs);
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeJobModal();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Super Admin – Platform Settings | NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #F8FAFC;
+      --color-white: #fff;
+      --color-muted: #6c757d;
+      --border-radius: 14px;
+      --box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      --sidebar-width: 250px;
+    }
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 24px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header .user-info {
+      font-size: 1rem;
+      color: var(--color-secondary);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header .logout-btn {
+      background: #dc3545;
+      border: none;
+      color: var(--color-white);
+      padding: 8px 18px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: 24px;
+      transition: background-color 0.2s;
+    }
+    .header .logout-btn:hover {
+      background: #b02a37;
+    }
+    .main {
+      display: flex;
+      flex: 1 1 auto;
+      min-height: 0;
+      height: calc(100vh - 72px);
+      overflow: hidden;
+    }
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 36px 0;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      height: 100%;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 36px;
+      color: var(--color-white);
+      text-decoration: none;
+      border-left: 4px solid transparent;
+      background: none;
+      transition: background 0.18s, border-color 0.18s, font-weight 0.18s;
+      font-size: 1.08rem;
+      font-weight: 500;
+      cursor: pointer;
+      outline: none;
+    }
+    .nav-item.active {
+      background: var(--color-primary);
+      border-left: 4px solid var(--color-secondary);
+      color: var(--color-secondary);
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(10,37,64,0.07);
+    }
+    .nav-item:hover:not(.active) {
+      background: var(--color-primary);
+      border-left: 4px solid var(--color-secondary);
+      color: var(--color-secondary);
+      font-weight: 600;
+    }
+    .content {
+      flex: 1;
+      padding: 48px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 0;
+      max-width: 100vw;
+      box-sizing: border-box;
+      margin-left: 0;
+      overflow-y: auto;
+    }
+    .settings-container {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      max-width: 1200px;
+      width: 100%;
+      padding: 40px 48px 32px 48px;
+      margin: 0 24px;
+      box-sizing: border-box;
+    }
+    .settings-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .settings-section {
+      margin-bottom: 36px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .settings-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .section-header {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--color-primary-dark);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .settings-form-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px 24px;
+      margin-bottom: 18px;
+    }
+    .settings-form-field {
+      display: flex;
+      flex-direction: column;
+      min-width: 220px;
+      margin-bottom: 8px;
+    }
+    .settings-form-field label {
+      font-size: 1rem;
+      color: var(--color-muted);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .settings-form-field input[type="text"],
+    .settings-form-field input[type="email"],
+    .settings-form-field input[type="number"],
+    .settings-form-field input[type="url"],
+    .settings-form-field input[type="password"],
+    .settings-form-field select,
+    .settings-form-field textarea {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      background: #f8fafc;
+      margin-bottom: 2px;
+    }
+    .settings-form-field input[type="checkbox"] {
+      margin-right: 8px;
+      accent-color: var(--color-primary);
+    }
+    .settings-form-field .toggle-label {
+      display: flex;
+      align-items: center;
+      font-size: 1rem;
+      color: var(--color-primary);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    .branding-logo-preview {
+      margin-top: 6px;
+      max-width: 120px;
+      max-height: 60px;
+      border-radius: 6px;
+      background: #f8fafc;
+      border: 1px solid #eee;
+      padding: 4px;
+    }
+    .save-btn {
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      border-radius: 8px;
+      padding: 12px 32px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 18px;
+      transition: background 0.2s;
+      float: right;
+    }
+    .save-btn:hover {
+      background: var(--color-primary-dark);
+    }
+    @media (max-width: 1100px) {
+      .settings-container { padding: 24px 8px; }
+      .settings-form-group { grid-template-columns: 1fr; gap: 18px; }
+    }
+    @media (max-width: 900px) {
+      .sidebar { width: 100px; }
+    }
+    @media (max-width: 600px) {
+      .sidebar { display: none; }
+      .content { padding: 8px 0; }
+      .settings-container { margin: 0 2px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1><i class="fa-solid fa-shield-halved"></i> Super Admin Dashboard</h1>
+    <div class="user-info">
+      <i class="fa-solid fa-user-shield"></i> superadmin@npclinicalhub.com
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <nav class="sidebar" aria-label="Super Admin navigation">
+      <a class="nav-item" href="super-admin-dashboard.html"><i class="fa-solid fa-gauge"></i> Platform Overview</a>
+      <a class="nav-item" href="super-admin-tenants.html"><i class="fa-solid fa-users"></i> Tenants</a>
+      <a class="nav-item" href="super-admin-users.html"><i class="fa-solid fa-user-group"></i> Users</a>
+      <a class="nav-item" href="super-admin-billing.html"><i class="fa-solid fa-credit-card"></i> Billing</a>
+      <a class="nav-item active" href="super-admin-settings.html"><i class="fa-solid fa-gear"></i> Platform Settings</a>
+      <a class="nav-item" href="super-admin-analytics.html"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+      <a class="nav-item" href="super-admin-audit-logs.html"><i class="fa-solid fa-file-alt"></i> Audit Logs</a>
+      <a class="nav-item" href="super-admin-support.html"><i class="fa-solid fa-headset"></i> Support</a>
+      <a class="nav-item" href="super-admin-system-health.html"><i class="fa-solid fa-heart-pulse"></i> System Health</a>
+    </nav>
+    <div class="content">
+      <form class="settings-container" onsubmit="saveSettings(event)">
+        <div class="settings-title">
+          <i class="fa-solid fa-gear"></i> Platform Settings
+        </div>
+        <!-- General -->
+        <div class="settings-section">
+          <div class="section-header"><i class="fa-solid fa-sliders-h"></i> General</div>
+          <div class="settings-form-group">
+            <div class="settings-form-field">
+              <label for="platformName">Platform Name</label>
+              <input type="text" id="platformName" value="NP Clinical Hub" />
+            </div>
+            <div class="settings-form-field">
+              <label for="supportEmail">Support Email</label>
+              <input type="email" id="supportEmail" value="support@npclinicalhub.com" />
+            </div>
+            <div class="settings-form-field">
+              <label for="defaultTimezone">Default Timezone</label>
+              <select id="defaultTimezone">
+                <option value="America/New_York" selected>America/New_York (Eastern)</option>
+                <option value="America/Chicago">America/Chicago (Central)</option>
+                <option value="America/Denver">America/Denver (Mountain)</option>
+                <option value="America/Los_Angeles">America/Los_Angeles (Pacific)</option>
+              </select>
+            </div>
+            <div class="settings-form-field">
+              <label for="platformDomain">Platform Domain</label>
+              <input type="text" id="platformDomain" value="npclinicalhub.com" />
+            </div>
+          </div>
+        </div>
+        <!-- Branding -->
+        <div class="settings-section">
+          <div class="section-header"><i class="fa-solid fa-paint-brush"></i> Branding</div>
+          <div class="settings-form-group">
+            <div class="settings-form-field">
+              <label for="logoUpload">Logo</label>
+              <input type="file" id="logoUpload" accept="image/*" onchange="previewLogo(event)" />
+              <img id="logoPreview" class="branding-logo-preview" src="https://placehold.co/120x60?text=Logo" alt="Logo Preview" />
+            </div>
+            <div class="settings-form-field">
+              <label for="primaryColor">Primary Color</label>
+              <input type="color" id="primaryColor" value="#0A2540" />
+            </div>
+            <div class="settings-form-field">
+              <label for="secondaryColor">Secondary Color</label>
+              <input type="color" id="secondaryColor" value="#FFD700" />
+            </div>
+            <div class="settings-form-field">
+              <label for="faviconUpload">Favicon</label>
+              <input type="file" id="faviconUpload" accept="image/x-icon,image/png" />
+            </div>
+          </div>
+        </div>
+        <!-- Billing -->
+        <div class="settings-section">
+          <div class="section-header"><i class="fa-solid fa-file-invoice-dollar"></i> Billing</div>
+          <div class="settings-form-group">
+            <div class="settings-form-field">
+              <label for="defaultCurrency">Default Currency</label>
+              <select id="defaultCurrency">
+                <option value="USD" selected>USD ($)</option>
+                <option value="CAD">CAD (C$)</option>
+                <option value="EUR">EUR (€)</option>
+              </select>
+            </div>
+            <div class="settings-form-field">
+              <label for="invoicePrefix">Invoice Prefix</label>
+              <input type="text" id="invoicePrefix" value="INV-" />
+            </div>
+            <div class="settings-form-field">
+              <label for="taxRate">Default Tax Rate (%)</label>
+              <input type="number" id="taxRate" value="0" min="0" max="100" />
+            </div>
+            <div class="settings-form-field">
+              <label for="billingContact">Billing Contact Email</label>
+              <input type="email" id="billingContact" value="billing@npclinicalhub.com" />
+            </div>
+          </div>
+        </div>
+        <!-- Security -->
+        <div class="settings-section">
+          <div class="section-header"><i class="fa-solid fa-shield-alt"></i> Security</div>
+          <div class="settings-form-group">
+            <div class="settings-form-field">
+              <label class="toggle-label">
+                <input type="checkbox" id="require2FA" checked />
+                Require 2FA for Admins
+              </label>
+            </div>
+            <div class="settings-form-field">
+              <label class="toggle-label">
+                <input type="checkbox" id="passwordPolicy" />
+                Enforce Strong Password Policy
+              </label>
+            </div>
+            <div class="settings-form-field">
+              <label for="sessionTimeout">Session Timeout (minutes)</label>
+              <input type="number" id="sessionTimeout" value="60" min="5" max="480" />
+            </div>
+            <div class="settings-form-field">
+              <label for="allowedIPs">Allowed Admin IPs (comma separated)</label>
+              <input type="text" id="allowedIPs" placeholder="e.g. 192.168.1.1, 10.0.0.2" />
+            </div>
+          </div>
+        </div>
+        <!-- Notifications -->
+        <div class="settings-section">
+          <div class="section-header"><i class="fa-solid fa-bell"></i> Notifications</div>
+          <div class="settings-form-group">
+            <div class="settings-form-field">
+              <label class="toggle-label">
+                <input type="checkbox" id="notifyBilling" checked />
+                Email Billing Reminders
+              </label>
+            </div>
+            <div class="settings-form-field">
+              <label class="toggle-label">
+                <input type="checkbox" id="notifySystem" checked />
+                System Maintenance Alerts
+              </label>
+            </div>
+            <div class="settings-form-field">
+              <label class="toggle-label">
+                <input type="checkbox" id="notifyNewUser" />
+                Notify on New User Registration
+              </label>
+            </div>
+            <div class="settings-form-field">
+              <label for="slackWebhook">Slack Webhook URL</label>
+              <input type="url" id="slackWebhook" value="https://hooks.slack.com/services/..." />
+            </div>
+          </div>
+        </div>
+        <!-- Email Templates -->
+        <div class="settings-section">
+          <div class="section-header"><i class="fa-solid fa-envelope"></i> Email Templates</div>
+          <div class="settings-form-group">
+            <div class="settings-form-field">
+              <label for="welcomeEmail">Welcome Email Subject</label>
+              <input type="text" id="welcomeEmail" value="Welcome to NP Clinical Hub!" />
+            </div>
+            <div class="settings-form-field">
+              <label for="resetEmail">Password Reset Email Subject</label>
+              <input type="text" id="resetEmail" value="Reset Your Password" />
+            </div>
+            <div class="settings-form-field" style="grid-column: span 2;">
+              <label for="emailFooter">Email Footer</label>
+              <textarea id="emailFooter" rows="2">Thank you for using NP Clinical Hub.</textarea>
+            </div>
+          </div>
+        </div>
+        <!-- Data Retention -->
+        <div class="settings-section">
+          <div class="section-header"><i class="fa-solid fa-database"></i> Data Retention</div>
+          <div class="settings-form-group">
+            <div class="settings-form-field">
+              <label for="logRetention">Audit Log Retention (months)</label>
+              <input type="number" id="logRetention" value="12" min="1" max="60" />
+            </div>
+            <div class="settings-form-field">
+              <label for="userRetention">Inactive User Deletion (months)</label>
+              <input type="number" id="userRetention" value="24" min="1" max="120" />
+            </div>
+          </div>
+        </div>
+        <!-- Integrations -->
+        <div class="settings-section">
+          <div class="section-header"><i class="fa-solid fa-plug"></i> Integrations</div>
+          <div class="settings-form-group">
+            <div class="settings-form-field">
+              <label for="stripeKey">Stripe API Key</label>
+              <input type="password" id="stripeKey" value="sk_live_xxx" />
+            </div>
+            <div class="settings-form-field">
+              <label for="sendgridKey">SendGrid API Key</label>
+              <input type="password" id="sendgridKey" value="SG.xxxxx" />
+            </div>
+          </div>
+        </div>
+        <button class="save-btn" type="submit"><i class="fa-solid fa-save"></i> Save Changes</button>
+      </form>
+    </div>
+  </div>
+  <script>
+    function logout() {
+      localStorage.removeItem('userToken');
+      window.location.href = 'index.html';
+    }
+    function saveSettings(e) {
+      e.preventDefault();
+      alert('Settings saved! (This is a placeholder)');
+    }
+    function previewLogo(event) {
+      const [file] = event.target.files;
+      if (file) {
+        document.getElementById('logoPreview').src = URL.createObjectURL(file);
+      }
+    }
+  </script>
+</body>
+</html>
