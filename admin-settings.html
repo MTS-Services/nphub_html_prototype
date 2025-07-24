@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Settings - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* Base styles */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; color: #2d3e50; }
+    .header { background: #2d3e50; color: #fff; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 1.5rem; }
+    .header-right { display: flex; gap: 12px; align-items: center; }
+    .revenue-badge { background: #27ae60; padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; font-weight: bold; }
+    .logout-btn { background: transparent; color: #fff; border: 1px solid #fff; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+    .main { display: flex; min-height: calc(100vh - 64px); }
+    .sidebar { width: 250px; background: #34495e; color: #fff; padding: 24px 0; }
+    .content { flex: 1; padding: 24px; overflow-y: auto; }
+    .nav-item { display: block; padding: 12px 24px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.3s; color: #fff; text-decoration: none; }
+    .nav-item:hover, .nav-item.active { background: #2c3e50; border-left-color: #3498db; }
+    .card { background: #fff; border-radius: 8px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .card h3 { margin-bottom: 16px; color: #2d3e50; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; }
+    button { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; background: #3498db; color: white; transition: background 0.3s; }
+    button:hover { background: #2980b9; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
+    th { background: #f8f9fa; font-weight: 600; }
+    .btn-small { padding: 6px 12px; font-size: 0.85rem; border-radius: 4px; }
+    .btn-danger { background: #e74c3c; color: white; border: none; cursor: pointer; }
+    .btn-success { background: #27ae60; color: white; border: none; cursor: pointer; }
+    .btn-warning { background: #f39c12; color: white; border: none; cursor: pointer; }
+    .status-active { color: #27ae60; font-weight: 600; }
+    .status-inactive { color: #e74c3c; font-weight: 600; }
+    .file-input-wrapper {
+      border: 2px dashed #3498db;
+      padding: 20px;
+      text-align: center;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #3498db;
+      margin-bottom: 16px;
+    }
+    .file-input-wrapper:hover {
+      background: #ecf6fd;
+    }
+    /* Tabs */
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid #ddd;
+      margin-bottom: 24px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .tab {
+      padding: 12px 24px;
+      cursor: pointer;
+      border-radius: 6px 6px 0 0;
+      background: #eee;
+      color: #2d3e50;
+      font-weight: 600;
+      user-select: none;
+      transition: background 0.3s;
+    }
+    .tab.active {
+      background: #3498db;
+      color: white;
+      box-shadow: 0 -2px 6px rgba(52,152,219,0.6);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Modal styles */
+    #plan-modal, #institution-modal, #program-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 1rem;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    .modal-content {
+      background: #fff;
+      border-radius: 8px;
+      width: 400px;
+      max-width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      padding: 24px;
+      box-sizing: border-box;
+    }
+    .modal-content h3 {
+      margin-bottom: 16px;
+      color: #2d3e50;
+    }
+    .modal-content .form-group label {
+      font-weight: 600;
+    }
+    .modal-content .form-group input,
+    .modal-content .form-group select,
+    .modal-content .form-group textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      margin-bottom: 12px;
+    }
+    .modal-actions {
+      text-align: right;
+    }
+    .modal-actions button {
+      margin-left: 8px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-cancel {
+      background: #95a5a6;
+      color: white;
+    }
+    .btn-save {
+      background: #27ae60;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Admin Settings</h1>
+    <div class="header-right">
+      <div class="revenue-badge">💰 Monthly Revenue: $12,450</div>
+      <span>Admin User</span>
+      <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <nav class="sidebar" aria-label="Admin navigation">
+      <a class="nav-item" href="admin-dashboard.html">📊 Dashboard</a>
+      <a class="nav-item" href="admin-users.html">👥 User Management</a>
+      <a class="nav-item" href="admin-applications.html">📝 Applications</a>
+      <a class="nav-item" href="admin-clinics.html">🏥 Clinics</a>
+      <a class="nav-item" href="admin-job-postings.html">📋 Job Postings</a>
+      <a class="nav-item" href="admin-preceptors.html">👨‍⚕️ Preceptors</a>
+      <a class="nav-item" href="admin-scheduling.html">📅 Scheduling</a>
+      <a class="nav-item" href="admin-messaging.html">💬 Messaging</a>
+      <a class="nav-item" href="admin-billing.html">💳 Billing & Revenue</a>
+      <a class="nav-item" href="admin-reports.html">📈 Reports</a>
+      <a class="nav-item active" href="admin-settings.html">⚙️ Settings</a>
+    </nav>
+    <div class="content">
+      <div class="tabs">
+        <div class="tab active" data-tab="institution">Institution</div>
+        <div class="tab" data-tab="programs">Programs</div>
+        <div class="tab" data-tab="plans">Payment Plans</div>
+        <div class="tab" data-tab="platform">Platform Config</div>
+        <div class="tab" data-tab="backup">Backup & Restore</div>
+      </div>
+
+      <!-- Institution Tab -->
+      <section id="institution" class="tab-content active">
+        <div class="card">
+          <h3>Institutions</h3>
+          <button class="btn-success" onclick="openInstitutionModal()">+ Add Institution</button>
+          <table id="institution-table" style="margin-top:12px;">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Contact Email</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Programs Tab -->
+      <section id="programs" class="tab-content">
+        <div class="card">
+          <h3>Programs for Institution: <span id="selected-institution-name">None</span></h3>
+          <button class="btn-success" onclick="openProgramModal()" id="add-program-btn" disabled>+ Add Program</button>
+          <table id="program-table" style="margin-top:12px;">
+            <thead>
+              <tr>
+                <th>Program Name</th>
+                <th>Type</th>
+                <th>Duration</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <p id="no-institution-msg" style="color:#888; margin-top:12px;">Select an institution in the Institution tab to manage programs.</p>
+        </div>
+      </section>
+
+      <!-- Payment Plans Tab -->
+      <section id="plans" class="tab-content">
+        <div class="card">
+          <h3>Payment Plans</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>User Type</th>
+                <th>Plan Name</th>
+                <th>Price (Monthly $)</th>
+                <th>Billing Cycle</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="plans-table-body"></tbody>
+          </table>
+          <button onclick="openPlanModal()" style="margin-top: 12px;">+ Add New Plan</button>
+        </div>
+      </section>
+
+      <!-- Platform Config Tab -->
+      <section id="platform" class="tab-content">
+        <div class="card">
+          <h3>Platform Configuration</h3>
+
+          <h4>User Type Default Settings</h4>
+          <table style="width:100%; margin-bottom: 24px; border-collapse: collapse;">
+            <thead>
+              <tr style="background:#f0f0f0;">
+                <th style="padding:8px; border:1px solid #ddd;">User Type</th>
+                <th style="padding:8px; border:1px solid #ddd;">Max Free Rotations</th>
+                <th style="padding:8px; border:1px solid #ddd;">Messaging Enabled</th>
+                <th style="padding:8px; border:1px solid #ddd;">Billing Enabled</th>
+              </tr>
+            </thead>
+            <tbody id="user-type-defaults-body">
+              <!-- Rows inserted by JS -->
+            </tbody>
+          </table>
+          <button id="save-user-type-defaults-btn" style="margin-bottom: 32px;">Save User Type Defaults</button>
+
+          <h4>Global Platform Settings</h4>
+          <form id="platform-settings-form" onsubmit="event.preventDefault(); saveGlobalSettings();">
+            <div class="form-group">
+              <label for="global-messaging-enabled">Enable Messaging Platform-wide</label>
+              <select id="global-messaging-enabled" required>
+                <option value="true">Enabled</option>
+                <option value="false">Disabled</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="global-billing-enabled">Enable Billing Platform-wide</label>
+              <select id="global-billing-enabled" required>
+                <option value="true">Enabled</option>
+                <option value="false">Disabled</option>
+              </select>
+            </div>
+            <button type="submit">Save Global Settings</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- Backup & Restore Tab -->
+      <section id="backup" class="tab-content">
+        <div class="card">
+          <h3>Backup & Restore Settings</h3>
+          <button onclick="exportSettings()" class="btn btn-success" style="margin-right: 12px;">Export All Settings</button>
+          <button onclick="document.getElementById('restore-file').click()" class="btn btn-warning">Import Settings</button>
+          <input type="file" id="restore-file" accept=".json" style="display:none" onchange="importSettings(event)" />
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Institution Modal -->
+  <div id="institution-modal">
+    <div class="modal-content">
+      <h3 id="institution-modal-title">Add Institution</h3>
+      <form id="institution-form-modal">
+        <input type="hidden" id="institution-id" />
+        <div class="form-group">
+          <label for="institution-name-modal">Institution Name</label>
+          <input id="institution-name-modal" type="text" placeholder="Enter institution name" required />
+        </div>
+        <div class="form-group">
+          <label for="institution-address-modal">Address</label>
+          <textarea id="institution-address-modal" rows="3" placeholder="Enter institution address" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="institution-contact-modal">Contact Email</label>
+          <input id="institution-contact-modal" type="email" placeholder="Enter contact email" required />
+        </div>
+        <div class="form-group">
+          <label for="institution-status-modal">Status</label>
+          <select id="institution-status-modal" required>
+            <option value="active" selected>Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick="closeInstitutionModal()">Cancel</button>
+          <button type="submit" class="btn-save">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Program Modal -->
+  <div id="program-modal">
+    <div class="modal-content">
+      <h3 id="program-modal-title">Add Program</h3>
+      <form id="program-form-modal">
+        <input type="hidden" id="program-id" />
+        <div class="form-group">
+          <label for="program-name-modal">Program Name</label>
+          <input id="program-name-modal" type="text" placeholder="Enter program name" required />
+        </div>
+        <div class="form-group">
+          <label for="program-type-modal">Program Type</label>
+          <select id="program-type-modal" required>
+            <option value="MSN">MSN</option>
+            <option value="DNP">DNP</option>
+            <option value="NP">NP</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="program-duration-modal">Duration</label>
+          <input id="program-duration-modal" type="text" placeholder="e.g. 2 years" required />
+        </div>
+        <div class="form-group">
+          <label for="program-status-modal">Status</label>
+          <select id="program-status-modal" required>
+            <option value="active" selected>Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick="closeProgramModal()">Cancel</button>
+          <button type="submit" class="btn-save">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Payment Plan Modal -->
+  <div id="plan-modal">
+    <div class="modal-content">
+      <h3 id="modal-title">Add/Edit Payment Plan</h3>
+      <form id="plan-form">
+        <input type="hidden" id="plan-id" />
+        <div class="form-group">
+          <label for="plan-user-type">User Type</label>
+          <select id="plan-user-type" required>
+            <option value="Student">Student</option>
+            <option value="Preceptor">Preceptor</option>
+            <option value="Clinic">Clinic</option>
+            <option value="Admin">Admin</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="plan-name">Plan Name</label>
+          <input id="plan-name" type="text" placeholder="Enter plan name" required />
+        </div>
+        <div class="form-group">
+          <label for="plan-price">Price (Monthly $)</label>
+          <input id="plan-price" type="number" min="0" step="0.01" value="0" required />
+        </div>
+        <div class="form-group">
+          <label for="plan-billing-cycle">Billing Cycle</label>
+          <select id="plan-billing-cycle" required>
+            <option value="Monthly">Monthly</option>
+            <option value="Yearly">Yearly</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Features Included</label>
+          <div>
+            <label><input type="checkbox" name="features" value="maxRotations" /> Max Rotations</label><br/>
+            <label><input type="checkbox" name="features" value="messaging" /> Messaging</label><br/>
+            <label><input type="checkbox" name="features" value="prioritySupport" /> Priority Support</label><br/>
+            <label><input type="checkbox" name="features" value="billingAccess" /> Billing Access</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="plan-status">Status</label>
+          <select id="plan-status" required>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+        <div style="text-align:right; margin-top:16px;">
+          <button type="button" class="btn-cancel" onclick="closePlanModal()">Cancel</button>
+          <button type="submit" class="btn-save">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const target = tab.getAttribute('data-tab');
+        tabContents.forEach(tc => {
+          tc.classList.toggle('active', tc.id === target);
+        });
+      });
+    });
+
+    // Data stores
+    let institutions = [
+      { id: 1, name: 'NP Clinical Hub', address: '123 Main St, City, State, ZIP', contact: 'contact@npclinicalhub.com', status: 'active' },
+      { id: 2, name: 'Other Institution', address: '456 Elm St, City, State, ZIP', contact: 'info@otherinst.edu', status: 'active' }
+    ];
+    let programs = [
+      { id: 1, institutionId: 1, name: 'Family NP', type: 'MSN', duration: '2 years', status: 'active' },
+      { id: 2, institutionId: 1, name: 'Pediatric NP', type: 'DNP', duration: '3 years', status: 'active' },
+      { id: 3, institutionId: 2, name: 'Adult NP', type: 'MSN', duration: '2 years', status: 'active' }
+    ];
+    let paymentPlans = [
+      { id: 1, userType: 'Student', planName: 'Free', price: 0, billingCycle: 'Monthly', features: ['maxRotations'], status: 'active' },
+      { id: 2, userType: 'Student', planName: 'Pro', price: 29, billingCycle: 'Monthly', features: ['maxRotations', 'messaging', 'prioritySupport'], status: 'active' }
+    ];
+
+    // Institution Table Rendering
+    const institutionTableBody = document.querySelector('#institution-table tbody');
+    let selectedInstitutionId = null;
+
+    function renderInstitutions() {
+      institutionTableBody.innerHTML = '';
+      institutions.forEach(inst => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><a href="#" onclick="selectInstitution(${inst.id});return false;">${inst.name}</a></td>
+          <td>${inst.address}</td>
+          <td>${inst.contact}</td>
+          <td>${inst.status === 'active' ? '<span class="status-active">Active</span>' : '<span class="status-inactive">Inactive</span>'}</td>
+          <td>
+            <button class="btn-small" onclick="editInstitution(${inst.id})">Edit</button>
+            <button class="btn-danger btn-small" onclick="deleteInstitution(${inst.id})">Delete</button>
+          </td>
+        `;
+        institutionTableBody.appendChild(tr);
+      });
+    }
+
+    function selectInstitution(id) {
+      selectedInstitutionId = id;
+      const inst = institutions.find(i => i.id === id);
+      document.getElementById('selected-institution-name').textContent = inst ? inst.name : 'None';
+      document.getElementById('add-program-btn').disabled = !inst;
+      renderPrograms();
+      // Switch to Programs tab automatically
+      tabs.forEach(t => t.classList.remove('active'));
+      tabContents.forEach(tc => tc.classList.remove('active'));
+      document.querySelector('.tab[data-tab="programs"]').classList.add('active');
+      document.getElementById('programs').classList.add('active');
+    }
+
+    function openInstitutionModal(inst = null) {
+      const modal = document.getElementById('institution-modal');
+      modal.style.display = 'flex';
+      if (inst) {
+        document.getElementById('institution-modal-title').textContent = 'Edit Institution';
+        document.getElementById('institution-id').value = inst.id;
+        document.getElementById('institution-name-modal').value = inst.name;
+        document.getElementById('institution-address-modal').value = inst.address;
+        document.getElementById('institution-contact-modal').value = inst.contact;
+        document.getElementById('institution-status-modal').value = inst.status;
+      } else {
+        document.getElementById('institution-modal-title').textContent = 'Add Institution';
+        document.getElementById('institution-form-modal').reset();
+        document.getElementById('institution-id').value = '';
+      }
+    }
+    function closeInstitutionModal() {
+      document.getElementById('institution-modal').style.display = 'none';
+    }
+    document.getElementById('institution-form-modal').addEventListener('submit', e => {
+      e.preventDefault();
+      const id = document.getElementById('institution-id').value;
+      const name = document.getElementById('institution-name-modal').value.trim();
+      const address = document.getElementById('institution-address-modal').value.trim();
+      const contact = document.getElementById('institution-contact-modal').value.trim();
+      const status = document.getElementById('institution-status-modal').value;
+      if (!name || !address || !contact) {
+        alert('Please fill all fields.');
+        return;
+      }
+      if (id) {
+        // Edit
+        const inst = institutions.find(i => i.id == id);
+        if (inst) {
+          inst.name = name;
+          inst.address = address;
+          inst.contact = contact;
+          inst.status = status;
+        }
+      } else {
+        // Add
+        const newId = institutions.length ? Math.max(...institutions.map(i => i.id)) + 1 : 1;
+        institutions.push({ id: newId, name, address, contact, status });
+      }
+      renderInstitutions();
+      closeInstitutionModal();
+    });
+    function editInstitution(id) {
+      const inst = institutions.find(i => i.id === id);
+      if (inst) openInstitutionModal(inst);
+    }
+    function deleteInstitution(id) {
+      if (confirm('Delete this institution? All its programs will also be deleted.')) {
+        institutions = institutions.filter(i => i.id !== id);
+        programs = programs.filter(p => p.institutionId !== id);
+        if (selectedInstitutionId === id) {
+          selectedInstitutionId = null;
+          document.getElementById('selected-institution-name').textContent = 'None';
+          document.getElementById('add-program-btn').disabled = true;
+          renderPrograms();
+        }
+        renderInstitutions();
+      }
+    }
+
+    // Programs Table Rendering
+    const programTableBody = document.querySelector('#program-table tbody');
+    function renderPrograms() {
+      programTableBody.innerHTML = '';
+      if (!selectedInstitutionId) {
+        document.getElementById('no-institution-msg').style.display = 'block';
+        document.getElementById('program-table').style.display = 'none';
+        return;
+      }
+      document.getElementById('no-institution-msg').style.display = 'none';
+      document.getElementById('program-table').style.display = 'table';
+      const filteredPrograms = programs.filter(p => p.institutionId === selectedInstitutionId);
+      if (filteredPrograms.length === 0) {
+        programTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#888;">No programs found for this institution.</td></tr>`;
+        return;
+      }
+      filteredPrograms.forEach(prog => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${prog.name}</td>
+          <td>${prog.type}</td>
+          <td>${prog.duration}</td>
+          <td>${prog.status === 'active' ? '<span class="status-active">Active</span>' : '<span class="status-inactive">Inactive</span>'}</td>
+          <td>
+            <button class="btn-small" onclick="editProgram(${prog.id})">Edit</button>
+            <button class="btn-danger btn-small" onclick="deleteProgram(${prog.id})">Delete</button>
+          </td>
+        `;
+        programTableBody.appendChild(tr);
+      });
+    }
+
+    function openProgramModal(prog = null) {
+      if (!selectedInstitutionId) {
+        alert('Please select an institution first.');
+        return;
+      }
+      const modal = document.getElementById('program-modal');
+      modal.style.display = 'flex';
+      if (prog) {
+        document.getElementById('program-modal-title').textContent = 'Edit Program';
+        document.getElementById('program-id').value = prog.id;
+        document.getElementById('program-name-modal').value = prog.name;
+        document.getElementById('program-type-modal').value = prog.type;
+        document.getElementById('program-duration-modal').value = prog.duration;
+        document.getElementById('program-status-modal').value = prog.status;
+      } else {
+        document.getElementById('program-modal-title').textContent = 'Add Program';
+        document.getElementById('program-form-modal').reset();
+        document.getElementById('program-id').value = '';
+      }
+    }
+    function closeProgramModal() {
+      document.getElementById('program-modal').style.display = 'none';
+    }
+    document.getElementById('program-form-modal').addEventListener('submit', e => {
+      e.preventDefault();
+      const id = document.getElementById('program-id').value;
+      const name = document.getElementById('program-name-modal').value.trim();
+      const type = document.getElementById('program-type-modal').value;
+      const duration = document.getElementById('program-duration-modal').value.trim();
+      const status = document.getElementById('program-status-modal').value;
+      if (!name || !duration) {
+        alert('Please fill all fields.');
+        return;
+      }
+      if (id) {
+        // Edit
+        const prog = programs.find(p => p.id == id);
+        if (prog) {
+          prog.name = name;
+          prog.type = type;
+          prog.duration = duration;
+          prog.status = status;
+        }
+      } else {
+        // Add
+        const newId = programs.length ? Math.max(...programs.map(p => p.id)) + 1 : 1;
+        programs.push({ id: newId, institutionId: selectedInstitutionId, name, type, duration, status });
+      }
+      renderPrograms();
+      closeProgramModal();
+    });
+    function editProgram(id) {
+      const prog = programs.find(p => p.id === id);
+      if (prog) openProgramModal(prog);
+    }
+    function deleteProgram(id) {
+      if (confirm('Delete this program?')) {
+        programs = programs.filter(p => p.id !== id);
+        renderPrograms();
+      }
+    }
+
+    // Payment Plans
+    const plansTableBody = document.getElementById('plans-table-body');
+    function renderPlans() {
+      plansTableBody.innerHTML = '';
+      paymentPlans.forEach(plan => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${plan.userType}</td>
+          <td>${plan.planName}</td>
+          <td>$${plan.price.toFixed(2)}</td>
+          <td>${plan.billingCycle}</td>
+          <td>${plan.status === 'active' ? '<span class="status-active">Active</span>' : '<span class="status-inactive">Inactive</span>'}</td>
+          <td>
+            <button class="btn-small" onclick="editPlan(${plan.id})" style="margin-right:8px;">Edit</button>
+            <button class="btn-danger btn-small" onclick="deletePlan(${plan.id})">Delete</button>
+          </td>
+        `;
+        plansTableBody.appendChild(tr);
+      });
+    }
+    function openPlanModal(plan = null) {
+      const modal = document.getElementById('plan-modal');
+      modal.style.display = 'flex';
+      if (plan) {
+        document.getElementById('modal-title').textContent = 'Edit Payment Plan';
+        document.getElementById('plan-id').value = plan.id;
+        document.getElementById('plan-user-type').value = plan.userType;
+        document.getElementById('plan-name').value = plan.planName;
+        document.getElementById('plan-price').value = plan.price;
+        document.getElementById('plan-billing-cycle').value = plan.billingCycle;
+        document.getElementById('plan-status').value = plan.status;
+        document.querySelectorAll('input[name="features"]').forEach(cb => {
+          cb.checked = plan.features.includes(cb.value);
+        });
+      } else {
+        document.getElementById('modal-title').textContent = 'Add New Payment Plan';
+        document.getElementById('plan-form').reset();
+        document.getElementById('plan-id').value = '';
+      }
+    }
+    function closePlanModal() {
+      document.getElementById('plan-modal').style.display = 'none';
+    }
+    document.getElementById('plan-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const id = document.getElementById('plan-id').value;
+      const userType = document.getElementById('plan-user-type').value;
+      const planName = document.getElementById('plan-name').value.trim();
+      const price = parseFloat(document.getElementById('plan-price').value);
+      const billingCycle = document.getElementById('plan-billing-cycle').value;
+      const status = document.getElementById('plan-status').value;
+      const features = Array.from(document.querySelectorAll('input[name="features"]:checked')).map(cb => cb.value);
+      if (!planName) {
+        alert('Plan name is required.');
+        return;
+      }
+      if (isNaN(price) || price < 0) {
+        alert('Price must be a positive number.');
+        return;
+      }
+      if (id) {
+        const plan = paymentPlans.find(p => p.id == id);
+        if (plan) {
+          plan.userType = userType;
+          plan.planName = planName;
+          plan.price = price;
+          plan.billingCycle = billingCycle;
+          plan.status = status;
+          plan.features = features;
+        }
+      } else {
+        const newId = paymentPlans.length ? Math.max(...paymentPlans.map(p => p.id)) + 1 : 1;
+        paymentPlans.push({ id: newId, userType, planName, price, billingCycle, status, features });
+      }
+      renderPlans();
+      closePlanModal();
+    });
+    function editPlan(id) {
+      const plan = paymentPlans.find(p => p.id === id);
+      if (plan) openPlanModal(plan);
+    }
+    function deletePlan(id) {
+      if (confirm('Are you sure you want to delete this plan?')) {
+        paymentPlans = paymentPlans.filter(p => p.id !== id);
+        renderPlans();
+      }
+    }
+
+    // Platform Config - User Type Defaults & Global Settings
+    let userTypeDefaults = {
+      Student: { maxFreeRotations: 2, messagingEnabled: true, billingEnabled: true },
+      Preceptor: { maxFreeRotations: 0, messagingEnabled: true, billingEnabled: false },
+      Clinic: { maxFreeRotations: 0, messagingEnabled: true, billingEnabled: true },
+      Admin: { maxFreeRotations: 0, messagingEnabled: true, billingEnabled: true }
+    };
+
+    let globalSettings = {
+      messagingEnabled: true,
+      billingEnabled: true
+    };
+
+    function renderUserTypeDefaults() {
+      const tbody = document.getElementById('user-type-defaults-body');
+      tbody.innerHTML = '';
+      Object.entries(userTypeDefaults).forEach(([userType, settings]) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="padding:8px; border:1px solid #ddd;">${userType}</td>
+          <td style="padding:8px; border:1px solid #ddd;">
+            <input type="number" min="0" max="10" value="${settings.maxFreeRotations}" data-usertype="${userType}" class="max-rotations-input" style="width:60px;" />
+          </td>
+          <td style="padding:8px; border:1px solid #ddd; text-align:center;">
+            <input type="checkbox" data-usertype="${userType}" class="messaging-enabled-checkbox" ${settings.messagingEnabled ? 'checked' : ''} />
+          </td>
+          <td style="padding:8px; border:1px solid #ddd; text-align:center;">
+            <input type="checkbox" data-usertype="${userType}" class="billing-enabled-checkbox" ${settings.billingEnabled ? 'checked' : ''} />
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById('save-user-type-defaults-btn').addEventListener('click', () => {
+      const maxRotInputs = document.querySelectorAll('.max-rotations-input');
+      maxRotInputs.forEach(input => {
+        const userType = input.dataset.usertype;
+        const val = parseInt(input.value);
+        if (!isNaN(val) && val >= 0) {
+          userTypeDefaults[userType].maxFreeRotations = val;
+        }
+      });
+      const messagingCheckboxes = document.querySelectorAll('.messaging-enabled-checkbox');
+      messagingCheckboxes.forEach(cb => {
+        const userType = cb.dataset.usertype;
+        userTypeDefaults[userType].messagingEnabled = cb.checked;
+      });
+      const billingCheckboxes = document.querySelectorAll('.billing-enabled-checkbox');
+      billingCheckboxes.forEach(cb => {
+        const userType = cb.dataset.usertype;
+        userTypeDefaults[userType].billingEnabled = cb.checked;
+      });
+      alert('User Type Default Settings saved!');
+    });
+
+    function loadGlobalSettings() {
+      document.getElementById('global-messaging-enabled').value = globalSettings.messagingEnabled.toString();
+      document.getElementById('global-billing-enabled').value = globalSettings.billingEnabled.toString();
+    }
+
+    function saveGlobalSettings() {
+      globalSettings.messagingEnabled = document.getElementById('global-messaging-enabled').value === 'true';
+      globalSettings.billingEnabled = document.getElementById('global-billing-enabled').value === 'true';
+      alert('Global Platform Settings saved!');
+    }
+
+    // Backup & Restore
+    function exportSettings() {
+      const settings = {
+        institutions,
+        programs,
+        paymentPlans,
+        userTypeDefaults,
+        globalSettings
+      };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(settings, null, 2));
+      const dlAnchorElem = document.createElement('a');
+      dlAnchorElem.setAttribute("href", dataStr);
+      dlAnchorElem.setAttribute("download", "npclinicalhub-settings.json");
+      dlAnchorElem.click();
+    }
+    function importSettings(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const settings = JSON.parse(e.target.result);
+          if (settings.institutions) {
+            institutions = settings.institutions;
+            renderInstitutions();
+          }
+          if (settings.programs) {
+            programs = settings.programs;
+            if (selectedInstitutionId) renderPrograms();
+          }
+          if (settings.paymentPlans) {
+            paymentPlans = settings.paymentPlans;
+            renderPlans();
+          }
+          if (settings.userTypeDefaults) {
+            userTypeDefaults = settings.userTypeDefaults;
+            renderUserTypeDefaults();
+          }
+          if (settings.globalSettings) {
+            globalSettings = settings.globalSettings;
+            loadGlobalSettings();
+          }
+          alert('Settings imported successfully!');
+        } catch (err) {
+          alert('Failed to import settings: Invalid file format.');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    // Initial render
+    renderInstitutions();
+    renderPlans();
+    renderUserTypeDefaults();
+    loadGlobalSettings();
+  </script>
+</body>
+</html>

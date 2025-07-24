@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About Us - NP Clinical Hub</title>
+  <style>
+    body { background: #f6f7fb; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .about-hero { background: #0A2540; color: #fff; padding: 60px 0 40px 0; text-align: center; }
+    .about-hero h1 { font-size: 2.5rem; margin-bottom: 12px; }
+    .about-hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto; }
+    .about-content { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 40px 32px; }
+    .about-section { margin-bottom: 32px; }
+    .about-section:last-child { margin-bottom: 0; }
+    .about-section h2 { color: #0A2540; margin-bottom: 10px; }
+    .about-values { display: flex; gap: 32px; flex-wrap: wrap; }
+    .about-value { flex: 1 1 220px; background: #f6f7fb; border-radius: 8px; padding: 18px; margin-bottom: 12px; }
+    .about-value h3 { margin: 0 0 6px 0; color: #FFD700; }
+    @media (max-width: 700px) {
+      .about-content { padding: 20px 8px; }
+      .about-values { flex-direction: column; gap: 12px; }
+    }
+    /* Header/Footer styles from landing.html (if any) */
+    .site-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 32px;
+      background: #0A2540;
+      color: #fff;
+    }
+    .site-nav__logo {
+      font-weight: 700; font-size: 1.5rem;
+      cursor: pointer; user-select: none;
+    }
+    .site-nav__list {
+      list-style: none; display: flex; gap: 24px;
+      margin: 0; padding: 0;
+    }
+    .site-nav__list a {
+      color: #fff;
+      text-decoration: none; font-weight: 600;
+      transition: color 0.3s;
+    }
+    .site-nav__list a:hover,
+    .site-nav__list a:focus {
+      color: #FFD700;
+      outline: none;
+    }
+    .link--disabled {
+      pointer-events: none; opacity: 0.6; cursor: default;
+    }
+    footer {
+      background: #0A2540;
+      color: #fff;
+      text-align: center;
+      padding: 24px 0 12px 0;
+      margin-top: 40px;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+    }
+    .footer-links {
+      margin-bottom: 10px;
+    }
+    .footer-links a {
+      color: #FFD700;
+      text-decoration: none;
+      margin: 0 12px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header: copied exactly from landing.html -->
+  <header>
+    <nav class="site-nav" aria-label="Primary Navigation">
+      <div class="site-nav__logo" tabindex="0">NP Clinical Hub</div>
+      <ul class="site-nav__list">
+        <li><a href="landing.html">Home</a></li>
+        <li><a href="public-job-search.html">Jobs</a></li>
+        <li><a href="find-rotation.html">Find Rotation</a></li>
+        <li>
+          <a href="#" class="link--disabled" aria-disabled="true" title="Please sign in to access Practice Launchpad">Practice Launchpad</a>
+        </li>
+        <li>
+          <a href="#" class="link--disabled" aria-disabled="true" title="Please sign in to access MD Partnership Network">MD Partnership Network</a>
+        </li>
+        <li><a href="about.html" aria-current="page" style="color:#FFD700;">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="index.html">Sign In</a></li>
+        <li><a href="register.html">Register</a></li>
+      </ul>
+    </nav>
+  </header>
+  <section class="about-hero">
+    <h1>About NP Clinical Hub</h1>
+    <p>
+      NP Clinical Hub is dedicated to empowering nurse practitioners and healthcare professionals by connecting them with the best jobs, clinical rotations, and collaborative opportunities nationwide.
+    </p>
+  </section>
+  <main class="about-content">
+    <div class="about-section">
+      <h2>Our Mission</h2>
+      <p>
+        To streamline the journey for nurse practitioners and medical professionals by providing a comprehensive platform for job search, clinical rotations, and professional collaboration. We believe in making healthcare careers more accessible, transparent, and rewarding.
+      </p>
+    </div>
+    <div class="about-section">
+      <h2>What Makes Us Unique</h2>
+      <ul>
+        <li>All-in-one platform for jobs, rotations, and MD partnerships</li>
+        <li>Curated, up-to-date opportunities from trusted institutions</li>
+        <li>Easy-to-use search and application process</li>
+        <li>Support for both new graduates and experienced professionals</li>
+      </ul>
+    </div>
+    <div class="about-section">
+      <h2>Our Values</h2>
+      <div class="about-values">
+        <div class="about-value">
+          <h3>Integrity</h3>
+          <p>We are committed to transparency and honesty in all our interactions.</p>
+        </div>
+        <div class="about-value">
+          <h3>Empowerment</h3>
+          <p>We help healthcare professionals take control of their careers.</p>
+        </div>
+        <div class="about-value">
+          <h3>Innovation</h3>
+          <p>We use technology to simplify and enhance the job and rotation search process.</p>
+        </div>
+        <div class="about-value">
+          <h3>Community</h3>
+          <p>We foster connections and collaboration across the healthcare ecosystem.</p>
+        </div>
+      </div>
+    </div>
+    <div class="about-section">
+      <h2>Contact Us</h2>
+      <p>
+        Have questions or want to partner with us? <a href="contact.html" style="color:#0A2540;font-weight:600;">Contact us here</a>.
+      </p>
+    </div>
+  </main>
+  <footer>
+    <div class="footer-links">
+      <a href="landing.html">Home</a>|
+      <a href="public-job-search.html">Jobs</a>|
+      <a href="find-rotation.html">Find Rotation</a>|
+      <a href="about.html" style="color:#FFD700;">About</a>|
+      <a href="contact.html">Contact</a>|
+      <a href="index.html">Sign In</a>|
+      <a href="register.html">Register</a>
+    </div>
+    &copy; 2025 NP Clinical Hub. All rights reserved.
+  </footer>
+</body>
+</html>

@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Search Results - NP Clinical Hub</title>
+  <!-- Firebase CDN scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f6f7fb;
+      color: #222;
+      width: 100vw;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    header {
+      position: sticky; top: 0; z-index: 1000;
+      background: #0A2540;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .site-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 32px;
+    }
+    .site-nav__logo {
+      font-weight: 700; font-size: 1.5rem;
+      cursor: pointer; user-select: none;
+    }
+    .site-nav__list {
+      list-style: none; display: flex; gap: 24px;
+      margin: 0; padding: 0;
+    }
+    .site-nav__list a {
+      color: #fff;
+      text-decoration: none; font-weight: 600;
+      transition: color 0.3s;
+    }
+    .site-nav__list a:hover,
+    .site-nav__list a:focus {
+      color: #FFD700;
+      outline: none;
+    }
+    .link--disabled {
+      pointer-events: none; opacity: 0.6; cursor: default;
+    }
+    .search-page {
+      display: flex;
+      gap: 32px;
+      width: 100vw;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0 0 40px 0;
+      box-sizing: border-box;
+    }
+    .sidebar {
+      width: 260px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 24px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    .sidebar h3 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      color: #0A2540;
+    }
+    .sidebar label {
+      display: block;
+      margin-bottom: 12px;
+      font-weight: 600;
+      color: #333;
+    }
+    .sidebar input, .sidebar select {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1.5px solid #d0d4db;
+      margin-top: 4px;
+      margin-bottom: 16px;
+      font-size: 1rem;
+      background: #f9fafb;
+      transition: border-color 0.2s;
+    }
+    .sidebar input:focus, .sidebar select:focus {
+      border-color: #0A2540;
+      outline: none;
+    }
+    .sidebar button {
+      background: #0A2540;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 0;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .sidebar button:hover {
+      background: #021426;
+    }
+    .results-main {
+      flex: 1;
+      min-width: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 40px 40px 0 0;
+      box-sizing: border-box;
+    }
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .results-header span {
+      font-size: 1.1rem;
+      color: #0A2540;
+      font-weight: 600;
+    }
+    .results-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .result-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: box-shadow 0.2s, transform 0.2s;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+    .result-card:hover, .result-card:focus-within {
+      box-shadow: 0 6px 20px rgba(0,0,0,0.13);
+      border-color: #FFD700;
+      transform: translateY(-2px) scale(1.01);
+      outline: none;
+    }
+    .result-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #0A2540;
+      margin-bottom: 2px;
+    }
+    .result-meta {
+      font-size: 0.98rem;
+      color: #555;
+      margin-bottom: 6px;
+    }
+    .result-desc {
+      font-size: 1rem;
+      color: #333;
+      margin-bottom: 10px;
+      min-height: 40px;
+    }
+    .result-highlight {
+      background: #fff3b0;
+      font-weight: bold;
+      border-radius: 3px;
+      padding: 0 2px;
+    }
+    .btn-view-details {
+      align-self: flex-start;
+      background: #FFD700;
+      color: #0A2540;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .btn-view-details:hover, .btn-view-details:focus {
+      background: #c9a700;
+      outline: none;
+    }
+    #load-more-btn {
+      margin: 32px auto 0;
+      display: block;
+      background: #0A2540;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 36px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #load-more-btn:hover {
+      background: #021426;
+    }
+    footer {
+      background: #0A2540;
+      color: #fff;
+      text-align: center;
+      padding: 24px 0 12px 0;
+      margin-top: 40px;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+    }
+    .footer-links {
+      margin-bottom: 10px;
+    }
+    .footer-links a {
+      color: #FFD700;
+      text-decoration: none;
+      margin: 0 12px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
+    @media (max-width: 1200px) {
+      .results-main {
+        padding-right: 10px;
+      }
+    }
+    @media (max-width: 900px) {
+      .search-page { flex-direction: column; }
+      .sidebar { width: 100%; min-height: unset; margin-bottom: 20px; }
+      .results-main { padding: 0 0 40px 0; }
+      .results-list { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .results-main { padding: 0 0 20px 0; }
+      .sidebar { padding: 16px; }
+      .result-card { padding: 14px 8px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="site-nav" aria-label="Primary Navigation">
+      <div class="site-nav__logo" tabindex="0">NP Clinical Hub</div>
+      <ul class="site-nav__list">
+        <li><a href="landing.html">Home</a></li>
+        <li><a href="public-job-search.html">Jobs</a></li>
+        <li><a href="find-rotation.html">Find Rotation</a></li>
+        <li>
+          <a href="#" id="nav-launchpad" role="link"
+            class="link--disabled" aria-disabled="true"
+            title="Please sign in to access Practice Launchpad">
+            Practice Launchpad
+          </a>
+        </li>
+        <li>
+          <a href="#" id="nav-mdnetwork" role="link"
+            class="link--disabled" aria-disabled="true"
+            title="Please sign in to access MD Partnership Network">
+            MD Partnership Network
+          </a>
+        </li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="index.html">Sign In</a></li>
+        <li><a href="register.html">Register</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="search-page">
+    <aside class="sidebar">
+      <h3>Filter Results</h3>
+      <form id="filterForm">
+        <label>
+          Type:
+          <select name="type" id="filterType">
+            <option value="jobs">Jobs</option>
+            <option value="collaborators">MD Collaborators</option>
+            <option value="rotations">Rotations</option>
+            <option value="servicepackage">Service Package</option>
+          </select>
+        </label>
+        <div id="dynamicFields"></div>
+        <button type="submit">Apply Filters</button>
+      </form>
+    </aside>
+    <main class="results-main">
+      <div class="results-header">
+        <span id="results-count">Loading results...</span>
+      </div>
+      <div class="results-list" id="results-list"></div>
+      <button id="load-more-btn" style="display:none;">Load More</button>
+    </main>
+  </div>
+  <footer>
+    <div class="footer-links">
+      <a href="landing.html">Home</a>|
+      <a href="public-job-search.html">Jobs</a>|
+      <a href="find-rotation.html">Find Rotation</a>|
+      <a href="about.html">About</a>|
+      <a href="contact.html">Contact</a>|
+      <a href="index.html">Sign In</a>|
+      <a href="register.html">Register</a>
+    </div>
+    &copy; 2025 NP Clinical Hub. All rights reserved.
+  </footer>
+  <script>
+    // Firebase config and initialization
+    const firebaseConfig = {
+      apiKey: "AIzaSyC2MXxO_4Zayv2g8-Az6G9WOoxF2CdrpJ8",
+      authDomain: "np-clinical-hub-prototype.firebaseapp.com",
+      projectId: "np-clinical-hub-prototype",
+      storageBucket: "np-clinical-hub-prototype.firebasestorage.app",
+      messagingSenderId: "843798932639",
+      appId: "1:843798932639:web:fb768c55f404c25c3306aa"
+    };
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    // UI Elements
+    const filterForm = document.getElementById('filterForm');
+    const resultsList = document.getElementById('results-list');
+    const resultsCount = document.getElementById('results-count');
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    const filterType = document.getElementById('filterType');
+    const dynamicFields = document.getElementById('dynamicFields');
+
+    // Dynamic fields for each type
+    const fieldTemplates = {
+      jobs: [
+        { label: "Job Title", name: "title", type: "text", placeholder: "e.g. Nurse Practitioner" },
+        { label: "Location", name: "location", type: "text", placeholder: "City, state, or zip" },
+        { label: "Specialty", name: "specialty", type: "text", placeholder: "e.g. Family Medicine" }
+      ],
+      collaborators: [
+        { label: "Name", name: "name", type: "text", placeholder: "e.g. Dr. Smith" },
+        { label: "Specialty", name: "specialty", type: "text", placeholder: "e.g. Cardiology" },
+        { label: "Office", name: "office", type: "text", placeholder: "e.g. Main Street Clinic" }
+      ],
+      rotations: [
+        { label: "Rotation Title", name: "title", type: "text", placeholder: "e.g. Pediatrics" },
+        { label: "Location", name: "location", type: "text", placeholder: "City, state, or zip" },
+        { label: "Specialty", name: "specialty", type: "text", placeholder: "e.g. Surgery" }
+      ],
+      servicepackage: [
+        { label: "Package Name", name: "name", type: "text", placeholder: "e.g. Premium Support" },
+        { label: "Price Range", name: "price", type: "text", placeholder: "e.g. 100-500" },
+        { label: "Features", name: "features", type: "text", placeholder: "e.g. 24/7, Customizable" }
+      ]
+    };
+
+    // Render dynamic fields
+    function renderDynamicFields(type) {
+      dynamicFields.innerHTML = '';
+      (fieldTemplates[type] || []).forEach(field => {
+        const label = document.createElement('label');
+        label.textContent = field.label + ':';
+        const input = document.createElement('input');
+        input.type = field.type;
+        input.name = field.name;
+        input.placeholder = field.placeholder;
+        label.appendChild(input);
+        dynamicFields.appendChild(label);
+      });
+    }
+
+    // Helper: get query params
+    function getQueryParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        type: params.get('type') || 'jobs',
+        q: params.get('q') || '',
+        location: params.get('location') || ''
+      };
+    }
+
+    // Set initial state from URL
+    const params = getQueryParams();
+    filterType.value = params.type === 'servicePackages' ? 'servicepackage' : params.type; // match select value
+    renderDynamicFields(filterType.value);
+
+    // Pre-fill dynamic fields from URL
+    setTimeout(() => {
+      if (params.q) {
+        // Try to fill the first text field (usually title/name)
+        const firstInput = dynamicFields.querySelector('input[type="text"]');
+        if (firstInput) firstInput.value = params.q;
+      }
+      if (params.location) {
+        const locInput = dynamicFields.querySelector('input[name="location"]');
+        if (locInput) locInput.value = params.location;
+      }
+    }, 0);
+
+    // State
+    let currentType = filterType.value;
+    let currentFilters = {};
+    let resultsData = [];
+    let lastDocs = {};
+    let pageSize = 8;
+    let loading = false;
+
+    // Helper: highlight search terms
+    function highlight(text, query) {
+      if (!query) return text;
+      const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+      return text.replace(regex, '<span class="result-highlight">$1</span>');
+    }
+
+    // Helper: get detail URL
+    function getDetailUrl(type, id) {
+      switch(type) {
+        case 'jobs': return `public-job-detail.html?id=${id}`;
+        case 'rotations': return `public-rotation-detail.html?id=${id}`;
+        case 'collaborators': return `public-md-collaborator-detail.html?id=${id}`;
+        case 'servicepackage': return `public-service-package-detail.html?id=${id}`;
+        default: return '#';
+      }
+    }
+
+    // Render a single card
+    function renderCard(item, type, filters) {
+      let title, meta, desc;
+      if (type === 'jobs') {
+        title = item.title || 'Untitled Job';
+        meta = [item.organization, item.city, item.state, item.zip].filter(Boolean).join(', ');
+        desc = item.description || '';
+      } else if (type === 'rotations') {
+        title = item.title || 'Untitled Rotation';
+        meta = item.location || '';
+        desc = item.description || '';
+      } else if (type === 'collaborators') {
+        title = item.name || 'Unnamed Collaborator';
+        meta = item.office || '';
+        desc = [item.specialty, item.credentials].filter(Boolean).join(' - ');
+      } else if (type === 'servicepackage') {
+        // Debug logging for service packages
+        console.log('Service package item:', item);
+        title = item.name || item.packageName || item.title || 'Unnamed Package';
+        meta = item.price ? `$${item.price}` : '';
+        desc = item.features || item.description || '';
+      }
+      // Highlight query in title/desc/meta
+      let query = '';
+      Object.values(filters).forEach(val => { if (val) query += ' ' + val; });
+      return `
+        <div class="result-card" tabindex="0" role="link" aria-label="${title}, ${meta}">
+          <div class="result-title">${highlight(title, query.trim())}</div>
+          <div class="result-meta">${highlight(meta, query.trim())}</div>
+          <div class="result-desc">${highlight(desc, query.trim())}</div>
+          <a class="btn-view-details" href="${getDetailUrl(type, item.id)}" tabindex="0">View Details</a>
+        </div>
+      `;
+    }
+
+    // Render all results
+    function renderResults(data, filters) {
+      resultsList.innerHTML = '';
+      if (data.length === 0) {
+        resultsList.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#888;font-size:1.2rem;margin-top:40px;">No results found. Try adjusting your filters.</div>`;
+        resultsCount.textContent = `No results found`;
+        loadMoreBtn.style.display = 'none';
+        return;
+      }
+      data.forEach(({item, type}) => {
+        const div = document.createElement('div');
+        div.innerHTML = renderCard(item, type, filters);
+        resultsList.appendChild(div.firstElementChild);
+      });
+      resultsCount.textContent = `Showing ${data.length} result${data.length > 1 ? 's' : ''}`;
+      loadMoreBtn.style.display = data.length % pageSize === 0 ? 'block' : 'none';
+    }
+
+    // Fetch results from Firestore
+    async function fetchResults({type, filters, append = false}) {
+      loading = true;
+      if (!append) {
+        resultsData = [];
+        lastDocs = {};
+        resultsList.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;">Loading...</div>';
+        resultsCount.textContent = 'Loading results...';
+      }
+      let collections = [];
+      if (type === 'jobs') {
+        collections = [{type: 'jobs', coll: 'jobPostings', fields: ['title', 'description', 'specialty', 'city', 'state', 'zip', 'organization']}];
+      } else if (type === 'rotations') {
+        collections = [{type: 'rotations', coll: 'rotations', fields: ['title', 'description', 'specialty', 'location']}];
+      } else if (type === 'collaborators') {
+        collections = [{type: 'collaborators', coll: 'mdcollaborators', fields: ['name', 'specialty', 'email', 'office', 'credentials']}];
+      } else if (type === 'servicepackage') {
+        collections = [{type: 'servicepackage', coll: 'servicePackages', fields: ['name', 'features', 'price']}];
+      }
+
+      let allResults = [];
+      for (const {type: t, coll, fields} of collections) {
+        let queryRef = db.collection(coll);
+        // Apply filters
+        Object.entries(filters).forEach(([key, val]) => {
+          if (val && key !== 'location') {
+            queryRef = queryRef.where(key, '==', val);
+          }
+        });
+        if (lastDocs[coll]) queryRef = queryRef.startAfter(lastDocs[coll]);
+        queryRef = queryRef.limit(pageSize);
+
+        const snap = await queryRef.get();
+        lastDocs[coll] = snap.docs[snap.docs.length - 1];
+
+        snap.forEach(doc => {
+          const data = {id: doc.id, ...doc.data()};
+          // Filter by location and other text fields
+          let matches = true;
+          if (filters.location) {
+            const locString = [data.city, data.state, data.zip, data.location, data.office].filter(Boolean).join(' ').toLowerCase();
+            if (!locString.includes(filters.location.toLowerCase())) matches = false;
+          }
+          // For other text fields, do substring match if not using Firestore where
+          Object.entries(filters).forEach(([key, val]) => {
+            if (val && key !== 'location' && !queryRef._queryOptions?.filters?.some(f => f.field.fieldPath === key)) {
+              if ((data[key] || '').toLowerCase().indexOf(val.toLowerCase()) === -1) matches = false;
+            }
+          });
+          if (matches) allResults.push({item: data, type: t});
+        });
+      }
+      if (append) {
+        resultsData = resultsData.concat(allResults);
+      } else {
+        resultsData = allResults;
+      }
+      renderResults(resultsData, filters);
+      loading = false;
+    }
+
+    // Filter form handler
+    filterForm.addEventListener('submit', e => {
+      e.preventDefault();
+      currentType = filterType.value;
+      // Gather filters
+      const formData = new FormData(filterForm);
+      currentFilters = {};
+      (fieldTemplates[currentType] || []).forEach(field => {
+        currentFilters[field.name] = formData.get(field.name).trim();
+      });
+      fetchResults({
+        type: currentType,
+        filters: currentFilters,
+        append: false
+      });
+    });
+
+    // Load more handler
+    loadMoreBtn.addEventListener('click', () => {
+      if (loading) return;
+      fetchResults({
+        type: currentType,
+        filters: currentFilters,
+        append: true
+      });
+    });
+
+    // Initial load: use URL params
+    document.addEventListener('DOMContentLoaded', () => {
+      // Build filters from URL
+      currentType = filterType.value;
+      currentFilters = {};
+      (fieldTemplates[currentType] || []).forEach(field => {
+        if (field.name === 'location' && params.location) {
+          currentFilters[field.name] = params.location;
+        } else if (params.q && (field.name === 'title' || field.name === 'name')) {
+          currentFilters[field.name] = params.q;
+        } else {
+          currentFilters[field.name] = '';
+        }
+      });
+      fetchResults({
+        type: currentType,
+        filters: currentFilters,
+        append: false
+      });
+    });
+
+    // Change fields on type change
+    filterType.addEventListener('change', () => {
+      renderDynamicFields(filterType.value);
+    });
+  </script>
+</body>
+</html>

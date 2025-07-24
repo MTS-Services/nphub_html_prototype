@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Request Collaboration - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #667eea;
+      --color-primary-dark: #4a5ccf;
+      --color-bg: #f5f7fa;
+      --color-sidebar-bg: #34495e;
+      --color-sidebar-text: #ecf0f1;
+      --color-text: #2d3e50;
+      --color-white: #fff;
+      --border-radius: 10px;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: 0.3s ease;
+      --badge-bg: #4a90e2;
+      --badge-color: #fff;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      display: flex;
+      min-height: 100vh;
+      color: var(--color-text);
+    }
+
+    /* Sidebar */
+    nav.sidebar {
+      width: 250px;
+      background: var(--color-sidebar-bg);
+      color: var(--color-sidebar-text);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+
+    nav.sidebar a {
+      color: var(--color-sidebar-text);
+      text-decoration: none;
+      padding: 14px 32px;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color var(--transition);
+      user-select: none;
+      position: relative;
+    }
+
+    nav.sidebar a.active,
+    nav.sidebar a:hover {
+      background: var(--color-primary);
+      color: var(--color-white);
+      cursor: pointer;
+    }
+
+    nav.sidebar a .notification-badge {
+      background: #dc3545;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 50%;
+      padding: 2px 7px;
+      position: absolute;
+      right: 20px;
+      top: 14px;
+    }
+
+    /* Header */
+    header.header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 20px 32px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    header.header button.logout-btn {
+      background: #dc3545;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color var(--transition);
+    }
+
+    header.header button.logout-btn:hover {
+      background: #b02a37;
+    }
+
+    /* Main content */
+    main.content {
+      flex: 1;
+      padding: 32px;
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      margin: 24px;
+      box-shadow: var(--box-shadow);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      max-width: 700px;
+    }
+
+    main.content h1 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      color: var(--color-primary-dark);
+    }
+
+    form.collab-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: block;
+      color: var(--color-primary-dark);
+    }
+
+    select, textarea, input[type="text"], input[type="email"] {
+      padding: 12px 14px;
+      font-size: 1rem;
+      border: 2px solid #ccc;
+      border-radius: var(--border-radius);
+      transition: border-color var(--transition);
+      width: 100%;
+      box-sizing: border-box;
+      font-family: inherit;
+      resize: vertical;
+    }
+
+    select:focus, textarea:focus, input[type="text"]:focus, input[type="email"]:focus {
+      border-color: var(--color-primary);
+      outline: none;
+      box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
+    }
+
+    textarea {
+      min-height: 120px;
+    }
+
+    button.submit-btn {
+      align-self: flex-start;
+      padding: 14px 36px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background-color var(--transition);
+    }
+
+    button.submit-btn:hover {
+      background: var(--color-primary-dark);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      main.content {
+        margin: 16px;
+        padding: 24px;
+        max-width: 100%;
+      }
+      nav.sidebar {
+        width: 200px;
+        padding: 16px 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        flex-direction: column;
+      }
+      nav.sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 12px 0;
+      }
+      nav.sidebar a {
+        flex: 1 0 auto;
+        padding: 12px 16px;
+        font-size: 0.9rem;
+        text-align: center;
+      }
+      main.content {
+        margin: 12px;
+        padding: 16px;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="sidebar" aria-label="Job Seeker Navigation">
+    <a href="job-seeker-dashboard.html">🏠 Dashboard</a>
+    <a href="#" >👤 Profile</a>
+    <a href="#" >💾 Saved Jobs</a>
+    <a href="#" >📝 Applications</a>
+    <a href="#" >✉️ Messages</a>
+    <a href="np-payment.html">💳 Payment</a>
+    <a href="np-documents.html">📁 Documents</a>
+    <a href="practice-launchpad.html">🚀 Practice Launchpad</a>
+    <a href="md-partnership-network.html">🤝 MD Partnership Network</a>
+    <a href="np-collaboration-request.html" class="active" aria-current="page">📝 Request Collaboration</a>
+    <a href="md-np-agreements.html">📄 My Agreements</a>
+
+  </nav>
+
+  <div style="flex:1; display:flex; flex-direction: column; min-height: 100vh;">
+    <header class="header">
+      Request Collaborative Agreement
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </header>
+
+    <main class="content" tabindex="0" aria-label="Collaboration Request Form">
+      <h1>Request Collaborative Agreement with MD</h1>
+      <form class="collab-form" id="collabRequestForm" novalidate>
+        <div>
+          <label for="mdSelect">Select MD to Collaborate With <span aria-hidden="true" style="color:#dc3545;">*</span></label>
+          <select id="mdSelect" name="mdSelect" required aria-required="true" aria-describedby="mdSelectHelp">
+            <option value="">-- Select an MD --</option>
+            <option value="md1">Dr. John Smith - Family Medicine</option>
+            <option value="md2">Dr. Emily Clark - Pediatrics</option>
+            <option value="md3">Dr. Michael Lee - Psychiatry</option>
+            <option value="md4">Dr. Sarah Johnson - Internal Medicine</option>
+          </select>
+          <small id="mdSelectHelp" style="color:#666;">Choose an MD from the network to request collaboration.</small>
+        </div>
+
+        <div>
+          <label for="npSummary">Brief Summary About Yourself <span aria-hidden="true" style="color:#dc3545;">*</span></label>
+          <textarea id="npSummary" name="npSummary" placeholder="Describe your specialty, experience, and goals..." required aria-required="true"></textarea>
+        </div>
+
+        <div>
+          <label for="message">Message to MD (Optional)</label>
+          <textarea id="message" name="message" placeholder="Add any additional information or questions..."></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn" aria-label="Submit Collaboration Request">Submit Request</button>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    }
+
+    document.getElementById('collabRequestForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const mdSelect = document.getElementById('mdSelect');
+      const npSummary = document.getElementById('npSummary');
+
+      if (!mdSelect.value) {
+        alert('Please select an MD to collaborate with.');
+        mdSelect.focus();
+        return;
+      }
+      if (!npSummary.value.trim()) {
+        alert('Please provide a brief summary about yourself.');
+        npSummary.focus();
+        return;
+      }
+
+      // Here you would send the form data to your backend API
+      // For demo, just show confirmation
+      alert('Your collaboration request has been submitted successfully!');
+
+      // Optionally reset form
+      this.reset();
+    });
+  </script>
+</body>
+</html>

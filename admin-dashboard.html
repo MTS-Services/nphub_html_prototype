@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard | NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #ECECEC;
+      --color-white: #FFF;
+      --color-text: #2D2D2D;
+      --border-radius: 12px;
+      --box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      --transition: 0.3s ease;
+      --sidebar-width: 250px;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body, html {
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      user-select: none;
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .logout-btn {
+      background: #dc3545;
+      border: none;
+      color: var(--color-white);
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color var(--transition);
+      user-select: none;
+    }
+    .logout-btn:hover {
+      background: #b02a37;
+    }
+    .main {
+      display: flex;
+      flex: 1 1 auto;
+      height: calc(100vh - 64px);
+      overflow: hidden;
+    }
+    nav.sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 24px 0;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    nav.sidebar .sidebar-section {
+      margin-bottom: 24px;
+    }
+    nav.sidebar .sidebar-section h3 {
+      padding-left: 24px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      user-select: none;
+    }
+    nav.sidebar a {
+      display: block;
+      padding: 12px 24px;
+      color: var(--color-white);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background var(--transition), border-color var(--transition);
+      cursor: pointer;
+      user-select: none;
+    }
+    nav.sidebar a:hover,
+    nav.sidebar a.active {
+      background: var(--color-primary);
+      border-left-color: var(--color-secondary);
+    }
+    main.content {
+      flex: 1 1 auto;
+      padding: 32px 48px;
+      overflow-y: auto;
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      margin: 24px;
+      box-shadow: var(--box-shadow);
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    main.content h1 {
+      margin-bottom: 24px;
+      color: var(--color-primary);
+      user-select: none;
+    }
+    /* Tenant Info Card */
+    .tenant-info-card {
+      background: #f6f8fa;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(10,37,64,0.04);
+      padding: 28px 24px 18px 24px;
+      margin-bottom: 32px;
+    }
+    .tenant-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #0A2540;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 10px;
+    }
+    .tenant-id {
+      font-size: 1rem;
+      color: #666;
+      margin-left: 18px;
+    }
+    .tenant-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px 40px;
+      font-size: 1.05rem;
+    }
+    .tenant-details div {
+      min-width: 220px;
+    }
+    .tenant-details a {
+      color: #0A2540;
+      text-decoration: underline;
+    }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .card {
+      background: var(--color-bg);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      user-select: none;
+      transition: box-shadow var(--transition);
+      cursor: default;
+    }
+    .card:hover {
+      box-shadow: var(--box-shadow);
+    }
+    .card .card-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      color: var(--color-primary-dark);
+    }
+    .card .card-value {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--color-primary);
+      line-height: 1;
+    }
+    .card .card-icon {
+      font-size: 3rem;
+      color: var(--color-secondary);
+      margin-left: auto;
+      margin-top: 12px;
+      user-select: none;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .action-btn {
+      flex: 1 1 280px;
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 18px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: background var(--transition);
+      user-select: none;
+      text-align: center;
+    }
+    .action-btn:hover {
+      background: var(--color-primary-dark);
+    }
+    .action-btn .icon {
+      font-size: 1.8rem;
+      user-select: none;
+    }
+    .bottom-panels {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .panel {
+      background: var(--color-bg);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      flex: 1 1 600px;
+      max-height: 400px;
+      overflow-y: auto;
+      user-select: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .panel h2 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: var(--color-primary-dark);
+      font-weight: 700;
+      font-size: 1.4rem;
+    }
+    table.activity-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+    table.activity-table th,
+    table.activity-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+      white-space: nowrap;
+    }
+    table.activity-table th {
+      background: var(--color-primary);
+      color: var(--color-white);
+      user-select: none;
+      font-weight: 700;
+    }
+    table.activity-table tbody tr:hover {
+      background: #f0f4ff;
+      cursor: pointer;
+    }
+    .notification-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+      font-weight: 600;
+      color: var(--color-primary-dark);
+      cursor: default;
+    }
+    .notification-item:last-child {
+      border-bottom: none;
+    }
+    .notification-item:hover {
+      background: #f0f4ff;
+    }
+    @media (max-width: 1024px) {
+      .bottom-panels {
+        flex-direction: column;
+      }
+      .panel {
+        max-height: none;
+        flex: 1 1 100%;
+      }
+    }
+    @media (max-width: 600px) {
+      main.content {
+        padding: 24px 24px;
+      }
+      nav.sidebar {
+        width: 220px;
+      }
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .actions {
+        flex-direction: column;
+      }
+      .tenant-details {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Admin Dashboard</h1>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="main">
+    <nav class="sidebar" aria-label="Admin navigation">
+      <div class="sidebar-section">
+        <h3>People</h3>
+        <a href="admin-md-collaborators.html" class="nav-item">👨‍⚕️ MD Collaborators</a>
+        <a href="admin-nps.html" class="nav-item">🩺 NPs / Job Seekers</a>
+        <a href="admin-students.html" class="nav-item">🎓 Students</a>
+        <a href="admin-program-coordinators.html" class="nav-item">👩‍💼 Program Coordinators</a>
+        <a href="admin-preceptors.html" class="nav-item">👨‍⚕️ Preceptors</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>Services</h3>
+        <a href="admin-rotation-applications.html" class="nav-item">📝 Rotations</a>
+        <a href="admin-job-applications.html" class="nav-item">📄 Job Applications</a>
+        <a href="admin-job-postings.html" class="nav-item">📋 Job Postings</a>
+        <a href="admin-scheduling.html" class="nav-item">📅 Scheduling</a>
+        <a href="admin-messaging.html" class="nav-item">💬 Messaging</a>
+        <a href="admin-billing.html" class="nav-item">💳 Billing</a>
+        <a href="admin-md-collaborations.html" class="nav-item">🤝 MD Collaborations</a>
+        <a href="admin-practice-launchpad.html" class="nav-item">🚀 Practice Launchpad</a>
+        <a href="admin-launchpad-service-packages.html" class="nav-item">📦 Service Packages</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>Organization</h3>
+        <a href="admin-clinics.html" class="nav-item">🏥 Clinics</a>
+        <a href="admin-institutions.html" class="nav-item">🏫 Institutions</a>
+        <a href="admin-programs.html" class="nav-item">📋 Programs</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>System</h3>
+        <a href="admin-dashboard.html" class="nav-item active">🏠 Dashboard</a>
+        <a href="admin-reports.html" class="nav-item">📊 Reports</a>
+        <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+      </div>
+    </nav>
+
+    <main class="content" role="main" aria-label="Admin Dashboard">
+      <!-- Tenant Info Card -->
+      <section class="tenant-info-card" aria-label="Tenant Information">
+        <div class="tenant-title">
+          <span>🏫 State University</span>
+          <span class="tenant-id">Tenant ID: <strong>su-00123</strong></span>
+        </div>
+        <div class="tenant-details">
+          <div><strong>Organization Type:</strong> University</div>
+          <div><strong>Subscription:</strong> Premium (Active)</div>
+          <div><strong>Primary Admin:</strong> Dr. Jane Doe (jane.doe@stateuniversity.edu)</div>
+          <div><strong>Billing Email:</strong> billing@stateuniversity.edu</div>
+          <div><strong>Active Users:</strong> 320 / 500</div>
+          <div><strong>Active Rotations:</strong> 12</div>
+          <div><strong>Next Billing Date:</strong> 2024-08-01</div>
+          <div><strong>Support:</strong> <a href="mailto:support@npclinicalhub.com">Contact Support</a></div>
+        </div>
+      </section>
+
+      <section class="dashboard-grid" aria-label="Key performance indicators">
+        <article class="card" tabindex="0" aria-describedby="total-users-desc">
+          <div class="card-title">Total Users</div>
+          <div class="card-value" id="total-users">1,245</div>
+          <div class="card-icon" aria-hidden="true">👥</div>
+          <p id="total-users-desc" class="visually-hidden">Total number of users registered on the platform</p>
+        </article>
+        <article class="card" tabindex="0" aria-describedby="active-jobs-desc">
+          <div class="card-title">Active Job Postings</div>
+          <div class="card-value" id="active-jobs">87</div>
+          <div class="card-icon" aria-hidden="true">📋</div>
+          <p id="active-jobs-desc" class="visually-hidden">Number of active job postings available</p>
+        </article>
+        <article class="card" tabindex="0" aria-describedby="pending-apps-desc">
+          <div class="card-title">Pending Applications</div>
+          <div class="card-value" id="pending-apps">34</div>
+          <div class="card-icon" aria-hidden="true">📝</div>
+          <p id="pending-apps-desc" class="visually-hidden">Number of applications awaiting review</p>
+        </article>
+        <article class="card" tabindex="0" aria-describedby="active-rotations-desc">
+          <div class="card-title">Active Rotations</div>
+          <div class="card-value" id="active-rotations">56</div>
+          <div class="card-icon" aria-hidden="true">🔄</div>
+          <p id="active-rotations-desc" class="visually-hidden">Number of ongoing clinical rotations</p>
+        </article>
+        <article class="card" tabindex="0" aria-describedby="revenue-desc">
+          <div class="card-title">Monthly Revenue</div>
+          <div class="card-value" id="revenue">$12,450</div>
+          <div class="card-icon" aria-hidden="true">💰</div>
+          <p id="revenue-desc" class="visually-hidden">Total revenue generated this month</p>
+        </article>
+        <article class="card" tabindex="0" aria-describedby="messages-desc">
+          <div class="card-title">Unread Messages</div>
+          <div class="card-value" id="messages">8</div>
+          <div class="card-icon" aria-hidden="true">💬</div>
+          <p id="messages-desc" class="visually-hidden">Number of unread messages</p>
+        </article>
+        <article class="card" tabindex="0" aria-describedby="total-students-desc" onclick="location.href='admin-students.html'" style="cursor:pointer;">
+          <div class="card-title">Total Students</div>
+          <div class="card-value" id="total-students">--</div>
+          <div class="card-icon" aria-hidden="true">🎓</div>
+          <p id="total-students-desc" class="visually-hidden">Total number of students registered</p>
+        </article>
+      </section>
+
+      <section class="actions" aria-label="Quick actions">
+        <button class="action-btn" onclick="location.href='admin-md-collaborations.html'">
+          <span class="icon" aria-hidden="true">🤝</span> Review MD Collaboration Requests
+        </button>
+        <button class="action-btn" onclick="location.href='admin-job-applications.html'">
+          <span class="icon" aria-hidden="true">📝</span> Approve Job Applications
+        </button>
+        <button class="action-btn" onclick="location.href='admin-launchpad-service-packages.html'">
+          <span class="icon" aria-hidden="true">📦</span> Manage Service Packages
+        </button>
+        <button class="action-btn" onclick="location.href='admin-billing.html'">
+          <span class="icon" aria-hidden="true">💳</span> Billing & Invoices
+        </button>
+      </section>
+
+      <div class="bottom-panels">
+        <section class="panel" aria-labelledby="recent-activity-title">
+          <h2 id="recent-activity-title">Recent Activity</h2>
+          <table class="activity-table" role="grid" aria-describedby="recent-activity-desc">
+            <caption id="recent-activity-desc" class="visually-hidden">List of recent applications, collaboration requests, and billing alerts</caption>
+            <thead>
+              <tr>
+                <th scope="col">Type</th>
+                <th scope="col">User</th>
+                <th scope="col">Details</th>
+                <th scope="col">Date</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr tabindex="0">
+                <td>MD Collaboration Request</td>
+                <td>Jane Smith</td>
+                <td>Request to collaborate with Dr. John Doe</td>
+                <td>2025-07-10</td>
+                <td>Pending</td>
+              </tr>
+              <tr tabindex="0">
+                <td>Job Application</td>
+                <td>Michael Brown</td>
+                <td>Applied for NP Job at City Clinic</td>
+                <td>2025-07-09</td>
+                <td>Under Review</td>
+              </tr>
+              <tr tabindex="0">
+                <td>Billing Alert</td>
+                <td>System</td>
+                <td>Invoice #12345 overdue</td>
+                <td>2025-07-08</td>
+                <td>Action Required</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="panel" aria-labelledby="notifications-title">
+          <h2 id="notifications-title">Notifications</h2>
+          <div class="notification-item" tabindex="0">3 MD collaboration requests pending approval</div>
+          <div class="notification-item" tabindex="0">5 service packages expiring soon</div>
+          <div class="notification-item" tabindex="0">Upcoming Practice Launchpad workshop on July 20</div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script type="module">
+    import { collection, getCountFromServer } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    import { db } from './firebase-init.js';
+
+    async function updateStudentCount() {
+      try {
+        const coll = collection(db, 'students');
+        const snapshot = await getCountFromServer(coll);
+        document.getElementById('total-students').textContent = snapshot.data().count;
+      } catch (error) {
+        console.error('Failed to fetch student count:', error);
+        document.getElementById('total-students').textContent = 'N/A';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('userToken');
+      window.location.href = 'index.html';
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      updateStudentCount();
+    });
+  </script>
+</body>
+</html>
