@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Super Admin Dashboard | NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #F8FAFC;
+      --color-white: #fff;
+      --color-muted: #6c757d;
+      --border-radius: 14px;
+      --box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      --sidebar-width: 250px;
+    }
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 24px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header .user-info {
+      font-size: 1rem;
+      color: var(--color-secondary);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header .logout-btn {
+      background: #dc3545;
+      border: none;
+      color: var(--color-white);
+      padding: 8px 18px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: 24px;
+      transition: background-color 0.2s;
+    }
+    .header .logout-btn:hover {
+      background: #b02a37;
+    }
+    .main {
+      display: flex;
+      flex: 1 1 auto;
+      min-height: 0;
+      height: calc(100vh - 72px);
+      overflow: hidden;
+    }
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 36px 0;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      height: 100%;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 36px;
+      color: var(--color-white);
+      text-decoration: none;
+      border-left: 4px solid transparent;
+      background: none;
+      transition: background 0.18s, border-color 0.18s, font-weight 0.18s;
+      font-size: 1.08rem;
+      font-weight: 500;
+      cursor: pointer;
+      outline: none;
+    }
+    .nav-item.active {
+      background: var(--color-primary);
+      border-left: 4px solid var(--color-secondary);
+      color: var(--color-secondary);
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(10,37,64,0.07);
+    }
+    .nav-item:hover:not(.active) {
+      background: var(--color-primary);
+      border-left: 4px solid var(--color-secondary);
+      color: var(--color-secondary);
+      font-weight: 600;
+    }
+    .content {
+      flex: 1;
+      padding: 48px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 0;
+      max-width: 100vw;
+      box-sizing: border-box;
+      margin-left: 0;
+      overflow-y: auto;
+    }
+    .dashboard-container {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      max-width: 1100px;
+      width: 100%;
+      padding: 40px 48px 32px 48px;
+      margin: 0 24px;
+      box-sizing: border-box;
+    }
+    .dashboard-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 28px;
+      margin-bottom: 36px;
+    }
+    .stat-card {
+      background: #f6f8fa;
+      border-radius: 10px;
+      padding: 28px 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      box-shadow: 0 2px 8px rgba(10,37,64,0.04);
+      min-height: 120px;
+    }
+    .stat-card .stat-label {
+      color: var(--color-muted);
+      font-size: 1.02rem;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .stat-card .stat-value {
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 4px;
+    }
+    .stat-card .stat-icon {
+      font-size: 1.5rem;
+      color: var(--color-secondary);
+      margin-bottom: 10px;
+    }
+    @media (max-width: 900px) {
+      .dashboard-container { padding: 24px 8px; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .sidebar { width: 100px; }
+    }
+    @media (max-width: 600px) {
+      .sidebar { display: none; }
+      .content { padding: 8px 0; }
+      .dashboard-container { margin: 0 2px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1><i class="fa-solid fa-shield-halved"></i> Super Admin Dashboard</h1>
+    <div class="user-info">
+      <i class="fa-solid fa-user-shield"></i> superadmin@npclinicalhub.com
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <nav class="sidebar" aria-label="Super Admin navigation">
+      <a class="nav-item active" href="super-admin-dashboard.html"><i class="fa-solid fa-gauge"></i> Platform Overview</a>
+      <a class="nav-item" href="super-admin-tenants.html"><i class="fa-solid fa-users"></i> Tenants</a>
+      <a class="nav-item" href="super-admin-users.html"><i class="fa-solid fa-user-group"></i> Users</a>
+      <a class="nav-item" href="super-admin-billing.html"><i class="fa-solid fa-credit-card"></i> Billing</a>
+      <a class="nav-item" href="super-admin-settings.html"><i class="fa-solid fa-gear"></i> Platform Settings</a>
+      <a class="nav-item" href="super-admin-analytics.html"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+      <a class="nav-item" href="super-admin-audit-logs.html"><i class="fa-solid fa-file-alt"></i> Audit Logs</a>
+      <a class="nav-item" href="super-admin-support.html"><i class="fa-solid fa-headset"></i> Support</a>
+      <a class="nav-item" href="super-admin-system-health.html"><i class="fa-solid fa-heart-pulse"></i> System Health</a>
+    </nav>
+    <div class="content">
+      <div class="dashboard-container">
+        <div class="dashboard-title">
+          <i class="fa-solid fa-gauge"></i> Platform Overview
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card" tabindex="0" aria-label="Total tenants">
+            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+            <div class="stat-label">Total Tenants</div>
+            <div class="stat-value" id="tenantCount">12</div>
+          </div>
+          <div class="stat-card" tabindex="0" aria-label="Total users">
+            <div class="stat-icon"><i class="fa-solid fa-user-group"></i></div>
+            <div class="stat-label">Total Users</div>
+            <div class="stat-value" id="userCount">1,245</div>
+          </div>
+          <div class="stat-card" tabindex="0" aria-label="Monthly revenue">
+            <div class="stat-icon"><i class="fa-solid fa-credit-card"></i></div>
+            <div class="stat-label">Monthly Revenue</div>
+            <div class="stat-value" id="revenue">$8,200</div>
+          </div>
+          <div class="stat-card" tabindex="0" aria-label="Active rotations">
+            <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="stat-label">Active Rotations</div>
+            <div class="stat-value" id="rotationCount">87</div>
+          </div>
+          <div class="stat-card" tabindex="0" aria-label="System health status">
+            <div class="stat-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+            <div class="stat-label">System Health</div>
+            <div class="stat-value" id="systemHealth">OK</div>
+          </div>
+        </div>
+        <!-- Add more platform-wide panels or charts here -->
+      </div>
+    </div>
+  </div>
+  <script>
+    function logout() {
+      localStorage.removeItem('userToken');
+      window.location.href = 'index.html';
+    }
+    
+    // TODO: Replace static stats with dynamic data from backend or Firestore
+  </script>
+</body>
+</html>

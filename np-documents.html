@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Documents - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      color: #2d3e50;
+      display: flex;
+      min-height: 100vh;
+    }
+    nav.sidebar {
+      width: 250px;
+      background: #34495e;
+      color: #ecf0f1;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+    nav.sidebar a {
+      color: #ecf0f1;
+      text-decoration: none;
+      padding: 14px 32px;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    nav.sidebar a.active,
+    nav.sidebar a:hover {
+      background: #667eea;
+      color: white;
+      cursor: pointer;
+    }
+    header.header {
+      background: #667eea;
+      color: white;
+      padding: 20px 32px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+      width: 100%;
+    }
+    header.header button.logout-btn {
+      background: #dc3545;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    header.header button.logout-btn:hover {
+      background: #b02a37;
+    }
+    main.content {
+      flex: 1;
+      padding: 32px;
+      background: white;
+      border-radius: 10px;
+      margin: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow-y: auto;
+      max-width: 900px;
+      box-sizing: border-box;
+    }
+    h1 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      color: #4a5ccf;
+    }
+    .documents-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 600px;
+    }
+    .document-item {
+      background: #f0f4ff;
+      padding: 16px 20px;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .document-name {
+      font-weight: 600;
+      color: #2d3e50;
+    }
+    .document-actions button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-left: 8px;
+    }
+    .document-actions button:hover {
+      background: #4a5ccf;
+    }
+    .upload-section {
+      margin-top: 32px;
+      max-width: 600px;
+    }
+    .upload-section label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .upload-section input[type="file"] {
+      padding: 6px;
+    }
+    .upload-section button {
+      margin-top: 12px;
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .upload-section button:hover {
+      background: #4a5ccf;
+    }
+  </style>
+</head>
+<body>
+  <nav class="sidebar" aria-label="Job Seeker Navigation">
+    <a href="job-seeker-dashboard.html">🏠 Dashboard</a>
+    <a href="np-profile.html">👤 Profile</a>
+    <a href="#">💾 Saved Jobs</a>
+    <a href="#">📝 Applications</a>
+    <a href="#">✉️ Messages</a>
+    <a href="np-payment.html">💳 Payment</a>
+    <a href="np-documents.html" class="active" aria-current="page">📁 Documents</a>
+    <a href="practice-launchpad.html">🚀 Practice Launchpad</a>
+    <a href="md-partnership-network.html">🤝 MD Partnership Network</a>
+    <a href="np-collaboration-request.html">📄 Collaboration Requests</a>
+    <a href="md-np-agreements.html">📄 My Agreements</a>
+  </nav>
+
+  <div style="flex:1; display:flex; flex-direction: column; min-height: 100vh;">
+    <header class="header">
+      Documents
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </header>
+
+    <main class="content" tabindex="0">
+      <h1>Your Documents</h1>
+
+      <section class="documents-list" id="documentsList" aria-label="List of uploaded documents">
+        <!-- Document items inserted by JS -->
+      </section>
+
+      <section class="upload-section" aria-label="Upload new document">
+        <label for="docUpload">Upload Document (PDF, JPG, PNG)</label>
+        <input type="file" id="docUpload" accept=".pdf,.jpg,.jpeg,.png" />
+        <button onclick="uploadDocument()">Upload</button>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const documents = [
+      { id: 1, name: 'NP License.pdf' },
+      { id: 2, name: 'Certification.jpg' }
+    ];
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    }
+
+    function renderDocuments() {
+      const container = document.getElementById('documentsList');
+      container.innerHTML = '';
+      if (documents.length === 0) {
+        container.innerHTML = '<p>No documents uploaded yet.</p>';
+        return;
+      }
+      documents.forEach(doc => {
+        const docItem = document.createElement('div');
+        docItem.className = 'document-item';
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'document-name';
+        nameSpan.textContent = doc.name;
+
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'document-actions';
+
+        const viewBtn = document.createElement('button');
+        viewBtn.textContent = 'View';
+        viewBtn.onclick = () => alert(`Viewing document: ${doc.name} (demo)`);
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.onclick = () => {
+          if (confirm(`Delete document: ${doc.name}?`)) {
+            const idx = documents.findIndex(d => d.id === doc.id);
+            if (idx > -1) {
+              documents.splice(idx, 1);
+              renderDocuments();
+            }
+          }
+        };
+
+        actionsDiv.appendChild(viewBtn);
+        actionsDiv.appendChild(deleteBtn);
+
+        docItem.appendChild(nameSpan);
+        docItem.appendChild(actionsDiv);
+
+        container.appendChild(docItem);
+      });
+    }
+
+    function uploadDocument() {
+      const input = document.getElementById('docUpload');
+      if (input.files.length === 0) {
+        alert('Please select a file to upload.');
+        return;
+      }
+      const file = input.files[0];
+      // In real app, upload file to server here
+      documents.push({ id: Date.now(), name: file.name });
+      renderDocuments();
+      input.value = '';
+      alert('Document uploaded (demo).');
+    }
+
+    // Initial render
+    renderDocuments();
+  </script>
+</body>
+</html>

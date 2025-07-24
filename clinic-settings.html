@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Settings - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; }
+    .header {
+      background: #2d3e50;
+      color: #fff;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 { font-size: 1.5rem; }
+    .header-right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .logout-btn {
+      background: transparent;
+      color: #fff;
+      border: 1px solid #fff;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .logout-btn:hover {
+      background-color: #fff;
+      color: #2d3e50;
+    }
+    .main {
+      display: flex;
+      min-height: calc(100vh - 64px);
+    }
+    .sidebar {
+      width: 250px;
+      background: #34495e;
+      color: #fff;
+      padding: 24px 0;
+    }
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      color: #fff;
+      text-decoration: none;
+    }
+    .nav-item:hover,
+    .nav-item.active {
+      background: #2c3e50;
+      border-left-color: #3498db;
+    }
+    .content {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .card h3 {
+      margin-bottom: 16px;
+      color: #2d3e50;
+    }
+    form {
+      max-width: 600px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      background-color: #27ae60;
+      color: white;
+      transition: background-color 0.3s;
+    }
+    .btn:hover {
+      background-color: #219150;
+    }
+    .stripe-connect-btn {
+      background-color: #6772e5;
+      border: none;
+      color: white;
+      padding: 12px 24px;
+      font-size: 1.1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .stripe-connect-btn:hover {
+      background-color: #5469d4;
+    }
+    @media (max-width: 768px) {
+      .main { flex-direction: column; }
+      .sidebar { width: 100%; }
+      .header { flex-direction: column; gap: 12px; }
+      form { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Settings</h1>
+    <div class="header-right">
+      <span>Clinic Admin</span>
+      <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="sidebar">
+      <a class="nav-item" href="clinic-dashboard.html">🏠 Dashboard</a>
+      <a class="nav-item" href="clinic-applications.html">📝 Applications</a>
+      <a class="nav-item" href="clinic-students.html">👩‍🎓 Students</a>
+      <a class="nav-item" href="clinic-preceptors.html">👨‍⚕️ Preceptors</a>
+      <a class="nav-item" href="clinic-messages.html">💬 Messages</a>
+      <a class="nav-item" href="clinic-schedule.html">📅 Schedule</a>
+      <a class="nav-item" href="clinic-billing.html">💳 Billing</a>
+      <a class="nav-item" href="clinic-reports.html">📈 Reports</a>
+      <a class="nav-item active" href="clinic-settings.html">⚙️ Settings</a>
+      <a class="nav-item" href="clinic-job-postings.html">📋 Job Postings</a>
+    </div>
+    <div class="content">
+      <div class="card">
+        <h3>Clinic Profile & Settings</h3>
+        <form id="profile-form">
+          <div class="form-group">
+            <label for="clinic-name">Clinic Name</label>
+            <input type="text" id="clinic-name" value="Metro General Hospital" required />
+          </div>
+          <div class="form-group">
+            <label for="admin-name">Admin Name</label>
+            <input type="text" id="admin-name" value="Jordan Lee" required />
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" value="j.lee@metro.com" required />
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" value="(555) 567-8901" required />
+          </div>
+          <div class="form-group">
+            <label for="notification-preferences">Notification Preferences</label>
+            <select id="notification-preferences" required>
+              <option value="email">Email Only</option>
+              <option value="sms">SMS Only</option>
+              <option value="both" selected>Email & SMS</option>
+              <option value="none">None</option>
+            </select>
+          </div>
+          <button type="submit" class="btn">Save Profile Settings</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3>Stripe Payment Setup</h3>
+        <p>Connect your Stripe account to securely receive payments and pay invoices.</p>
+        <button class="stripe-connect-btn" onclick="connectStripe()">Connect to Stripe</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('profile-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Profile settings saved successfully!');
+      // Add real save logic here
+    });
+
+    function connectStripe() {
+      // Redirect to Stripe OAuth or open modal for connection
+      alert('Redirecting to Stripe to connect your account...');
+      // Example: window.location.href = 'https://connect.stripe.com/oauth/authorize?...';
+    }
+  </script>
+</body>
+</html>
