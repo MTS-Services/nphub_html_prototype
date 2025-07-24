@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Job Search & Apply - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-success: #27ae60;
+      --color-success-dark: #388e3c;
+      --color-warning: #f39c12;
+      --color-warning-dark: #f57c00;
+      --color-info: #cce5ff;
+      --color-info-dark: #004085;
+      --color-bg: #ECECEC;
+      --color-text: #2D2D2D;
+      --color-muted: #6c757d;
+      --color-muted-light: #888;
+      --color-white: #FFFFFF;
+      --border-radius: 12px;
+      --transition: 0.3s ease;
+      --color-danger: #e74c3c;
+      --color-danger-dark: #c0392b;
+      --box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      --sidebar-width: 250px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      flex-grow: 1;
+    }
+
+    .header-right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .upgrade-btn {
+      background: var(--color-danger);
+      color: var(--color-white);
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background-color var(--transition);
+    }
+
+    .upgrade-btn:hover,
+    .upgrade-btn:focus {
+      background: var(--color-danger-dark);
+      outline: none;
+    }
+
+    .logout-btn {
+      background: #dc3545;
+      color: var(--color-white);
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color var(--transition);
+    }
+
+    .logout-btn:hover,
+    .logout-btn:focus {
+      background: #b02a37;
+      outline: none;
+    }
+
+    .main {
+      display: flex;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 24px 0;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all var(--transition);
+      color: var(--color-white);
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .nav-item:hover,
+    .nav-item:focus,
+    .nav-item.active {
+      background: var(--color-primary);
+      border-left-color: var(--color-secondary);
+      outline: none;
+    }
+
+    .content {
+      flex: 1;
+      padding: 32px 48px;
+      overflow-y: auto;
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      margin: 24px;
+      box-shadow: var(--box-shadow);
+      min-width: 0;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 3px solid var(--color-primary);
+    }
+
+    .page-header h2 {
+      color: var(--color-primary-dark);
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      color: var(--color-muted);
+      font-size: 1.1rem;
+    }
+
+    .career-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--color-bg);
+      border: 2px solid var(--color-primary);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      text-align: center;
+      transition: all var(--transition);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--box-shadow);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      color: var(--color-muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .search-filters {
+      background: var(--color-bg);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .search-filters h3 {
+      color: var(--color-primary-dark);
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--color-primary-dark);
+      font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #ddd;
+      border-radius: var(--border-radius);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: all var(--transition);
+      background: var(--color-white);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--color-primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.1);
+    }
+
+    .search-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search-button {
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      padding: 12px 32px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .search-button:hover,
+    .search-button:focus {
+      background: var(--color-primary-dark);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .clear-button {
+      background: transparent;
+      color: var(--color-muted);
+      border: 2px solid var(--color-muted);
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .clear-button:hover,
+    .clear-button:focus {
+      background: var(--color-muted);
+      color: var(--color-white);
+      outline: none;
+    }
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .results-info {
+      font-weight: 600;
+      color: var(--color-muted);
+      font-size: 1rem;
+    }
+
+    .sort-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sort-controls label {
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .sort-controls select {
+      padding: 8px 12px;
+      border: 2px solid #ddd;
+      border-radius: var(--border-radius);
+      background: var(--color-white);
+    }
+
+    .job-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .job-item {
+      background: var(--color-bg);
+      border: 2px solid transparent;
+      border-radius: var(--border-radius);
+      padding: 24px;
+      margin-bottom: 20px;
+      transition: all var(--transition);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .job-item:hover,
+    .job-item:focus {
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+      box-shadow: var(--box-shadow);
+      outline: none;
+    }
+
+    .job-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .job-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 4px;
+    }
+
+    .job-company {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--color-muted);
+      margin-bottom: 8px;
+    }
+
+    .job-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .job-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .job-badge.full-time {
+      background: var(--color-success);
+      color: var(--color-white);
+    }
+
+    .job-badge.part-time {
+      background: var(--color-warning);
+      color: var(--color-white);
+    }
+
+    .job-badge.remote {
+      background: var(--color-info);
+      color: var(--color-info-dark);
+    }
+
+    .job-badge.new {
+      background: var(--color-danger);
+      color: var(--color-white);
+    }
+
+    .job-meta {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      font-size: 0.95rem;
+      color: var(--color-muted);
+    }
+
+    .job-meta span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .job-description {
+      color: var(--color-text);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .job-requirements {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .job-requirements h4 {
+      color: var(--color-primary-dark);
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .job-requirements ul {
+      margin-left: 20px;
+      color: var(--color-text);
+    }
+
+    .job-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .apply-btn {
+      background: var(--color-success);
+      color: var(--color-white);
+      border: none;
+      padding: 10px 20px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .apply-btn:hover,
+    .apply-btn:focus {
+      background: var(--color-success-dark);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .save-btn {
+      background: transparent;
+      color: var(--color-primary);
+      border: 2px solid var(--color-primary);
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .save-btn:hover,
+    .save-btn:focus {
+      background: var(--color-primary);
+      color: var(--color-white);
+      outline: none;
+    }
+
+    .save-btn.saved {
+      background: var(--color-secondary);
+      border-color: var(--color-secondary);
+      color: var(--color-primary-dark);
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-top: 32px;
+      user-select: none;
+    }
+
+    .pagination button {
+      background: var(--color-primary);
+      border: none;
+      color: var(--color-white);
+      padding: 10px 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-weight: 600;
+      transition: all var(--transition);
+    }
+
+    .pagination button:disabled {
+      background: #ccc;
+      cursor: default;
+    }
+
+    .pagination button:hover:not(:disabled),
+    .pagination button:focus:not(:disabled) {
+      background: var(--color-primary-dark);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .page-info {
+      color: var(--color-muted);
+      font-weight: 600;
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      max-width: 800px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 32px;
+      box-shadow: var(--box-shadow);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: transparent;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--color-muted);
+      transition: color var(--transition);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+
+    .modal-close:hover,
+    .modal-close:focus {
+      color: var(--color-danger);
+      background: #f8f9fa;
+      outline: none;
+    }
+
+    .modal .job-title {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .modal .job-company {
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+    }
+
+    .apply-form {
+      background: var(--color-bg);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      margin-top: 24px;
+    }
+
+    .apply-form h3 {
+      color: var(--color-primary-dark);
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .apply-form input,
+    .apply-form textarea,
+    .apply-form select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #ddd;
+      border-radius: var(--border-radius);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: all var(--transition);
+      background: var(--color-white);
+    }
+
+    .apply-form input:focus,
+    .apply-form textarea:focus,
+    .apply-form select:focus {
+      border-color: var(--color-primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.1);
+    }
+
+    .apply-form textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .file-upload {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .file-upload input[type="file"] {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .file-upload-label {
+      display: block;
+      padding: 12px 16px;
+      border: 2px dashed #ddd;
+      border-radius: var(--border-radius);
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition);
+      background: var(--color-white);
+    }
+
+    .file-upload-label:hover {
+      border-color: var(--color-primary);
+      background: #f0f4ff;
+    }
+
+    .file-upload-label.has-file {
+      border-color: var(--color-success);
+      background: #f0fff4;
+      color: var(--color-success-dark);
+    }
+
+    .apply-button {
+      background: var(--color-success);
+      color: var(--color-white);
+      border: none;
+      padding: 14px 32px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all var(--transition);
+      width: 100%;
+      margin-top: 16px;
+    }
+
+    .apply-button:hover,
+    .apply-button:focus {
+      background: var(--color-success-dark);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .confirmation {
+      margin-top: 24px;
+      padding: 20px;
+      background: linear-gradient(135deg, #f0fff4 0%, #e8f5e8 100%);
+      border: 2px solid var(--color-success);
+      color: var(--color-success-dark);
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--color-muted);
+    }
+
+    .no-results h3 {
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+    }
+
+    .no-results p {
+      font-size: 1.1rem;
+      margin-bottom: 24px;
+    }
+
+    .required {
+      color: var(--color-danger);
+    }
+
+    @media (max-width: 1024px) {
+      .content {
+        padding: 24px;
+        margin: 16px;
+      }
+      .filter-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .career-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+      }
+      .header {
+        flex-direction: column;
+        gap: 12px;
+      }
+      .filter-grid {
+        grid-template-columns: 1fr;
+      }
+      .career-stats {
+        grid-template-columns: 1fr;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .results-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .job-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .job-meta {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .job-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+      .job-actions button {
+        width: 100%;
+      }
+      .modal {
+        padding: 20px;
+        margin: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header" role="banner">
+    <h1>Job Search & Apply</h1>
+    <div class="header-right">
+      <span>Welcome, Taylor Jones</span>
+      <button class="upgrade-btn" onclick="window.location.href='student-upgrade.html'" aria-label="Upgrade to Pro plan">Upgrade to Pro</button>
+      <button class="logout-btn" onclick="window.location.href='index.html'" aria-label="Logout">Logout</button>
+    </div>
+  </header>
+  
+  <div class="main">
+    <nav class="sidebar" aria-label="Student navigation">
+      <a class="nav-item" href="student-dashboard.html">📊 Overview</a>
+      <a class="nav-item" href="student-rotations.html">🏥 My Rotations</a>
+      <a class="nav-item" href="student-log-hours.html">⏰ Log Hours</a>
+      <a class="nav-item" href="student-applications.html">📝 Applications</a>
+      <a class="nav-item" href="student-evaluations.html">⭐ Evaluations</a>
+      <a class="nav-item" href="student-payment-history.html">💳 Payment History</a>
+      <a class="nav-item" href="student-profile.html">👤 Profile</a>
+      <a class="nav-item" href="student-support.html">🆘 Support</a>
+      <a class="nav-item active" href="student-job-search.html" aria-current="page">🔍 Job Search & Apply</a>
+    </nav>
+    
+    <main class="content" role="main" tabindex="0">
+      <div class="page-header">
+        <h2>🔍 Job Search & Career Opportunities</h2>
+        <p>Find your perfect NP position and launch your career with confidence</p>
+      </div>
+
+      <div class="career-stats">
+        <div class="stat-card">
+          <div class="stat-number">247</div>
+          <div class="stat-label">Active Job Postings</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">18</div>
+          <div class="stat-label">Applications Submitted</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">5</div>
+          <div class="stat-label">Saved Jobs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">3</div>
+          <div class="stat-label">Interview Requests</div>
+        </div>
+      </div>
+
+      <div class="search-filters">
+        <h3>🎯 Find Your Perfect Position</h3>
+        <form id="searchForm" aria-label="Job search filters">
+          <div class="filter-grid">
+            <div class="form-group">
+              <label for="keyword">Keywords</label>
+              <input type="text" id="keyword" name="keyword" placeholder="e.g. Family Nurse Practitioner, Primary Care" />
+            </div>
+            <div class="form-group">
+              <label for="location">Location</label>
+              <input type="text" id="location" name="location" placeholder="City, State or Zip Code" />
+            </div>
+            <div class="form-group">
+              <label for="jobType">Employment Type</label>
+              <select id="jobType" name="jobType">
+                <option value="">Any Type</option>
+                <option value="full-time">Full-time</option>
+                <option value="part-time">Part-time</option>
+                <option value="per-diem">Per Diem</option>
+                <option value="contract">Contract</option>
+                <option value="locum-tenens">Locum Tenens</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="specialty">Specialty</label>
+              <select id="specialty" name="specialty">
+                <option value="">Any Specialty</option>
+                <option value="family">Family Medicine</option>
+                <option value="adult-gero">Adult-Gerontology</option>
+                <option value="pediatrics">Pediatrics</option>
+                <option value="womens-health">Women's Health</option>
+                <option value="psych-mental">Psychiatric Mental Health</option>
+                <option value="acute-care">Acute Care</option>
+                <option value="emergency">Emergency Medicine</option>
+                <option value="cardiology">Cardiology</option>
+                <option value="dermatology">Dermatology</option>
+                <option value="orthopedics">Orthopedics</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="experience">Experience Level</label>
+              <select id="experience" name="experience">
+                <option value="">Any Experience</option>
+                <option value="new-grad">New Graduate</option>
+                <option value="0-2">0-2 Years</option>
+                <option value="2-5">2-5 Years</option>
+                <option value="5-10">5-10 Years</option>
+                <option value="10+">10+ Years</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="remote">Work Setting</label>
+              <select id="remote" name="remote">
+                <option value="">Any Setting</option>
+                <option value="remote">Remote/Telehealth</option>
+                <option value="on-site">On-site</option>
+                <option value="hybrid">Hybrid</option>
+                <option value="clinic">Clinic</option>
+                <option value="hospital">Hospital</option>
+                <option value="urgent-care">Urgent Care</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="salary">Salary Range</label>
+              <select id="salary" name="salary">
+                <option value="">Any Salary</option>
+                <option value="80-100">$80k - $100k</option>
+                <option value="100-120">$100k - $120k</option>
+                <option value="120-140">$120k - $140k</option>
+                <option value="140-160">$140k - $160k</option>
+                <option value="160+">$160k+</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="datePosted">Date Posted</label>
+              <select id="datePosted" name="datePosted">
+                <option value="">Anytime</option>
+                <option value="1">Last 24 hours</option>
+                <option value="3">Last 3 days</option>
+                <option value="7">Last 7 days</option>
+                <option value="30">Last 30 days</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="search-actions">
+            <button type="submit" class="search-button" aria-label="Search jobs">🔍 Search Jobs</button>
+            <button type="button" class="clear-button" onclick="clearFilters()">🗑️ Clear Filters</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="results-header">
+        <div class="results-info" id="resultsInfo" aria-live="polite" aria-atomic="true">
+          Loading job opportunities...
+        </div>
+        <div class="sort-controls">
+          <label for="sortBy">Sort by:</label>
+          <select id="sortBy" onchange="sortJobs()">
+            <option value="relevance">Relevance</option>
+            <option value="date">Date Posted</option>
+            <option value="salary">Salary</option>
+            <option value="location">Location</option>
+          </select>
+        </div>
+      </div>
+
+      <ul class="job-list" id="jobList" tabindex="0" aria-label="Job listings">
+        <!-- Job items inserted here dynamically -->
+      </ul>
+
+      <div class="pagination" id="pagination" aria-label="Pagination controls">
+        <button id="prevPage" disabled aria-disabled="true" aria-label="Previous page">← Previous</button>
+        <span class="page-info" id="pageInfo">Page 1 of 1</span>
+        <button id="nextPage" disabled aria-disabled="true" aria-label="Next page">Next →</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal for job details and apply -->
+  <div class="modal-overlay" id="jobModal" role="dialog" aria-modal="true" aria-labelledby="modalJobTitle" aria-describedby="modalJobDescription">
+    <div class="modal" tabindex="-1">
+      <button class="modal-close" aria-label="Close job details">&times;</button>
+      <div class="job-title" id="modalJobTitle"></div>
+      <div class="job-company" id="modalJobCompany"></div>
+      <div class="job-meta" id="modalJobMeta"></div>
+      <div class="job-description" id="modalJobDescription"></div>
+      <div class="job-requirements" id="modalJobRequirements"></div>
+
+      <div class="apply-form">
+        <h3>📝 Apply for this Position</h3>
+        <p style="margin-bottom: 20px; color: var(--color-muted);">Your profile information will be automatically included with your application.</p>
+        
+        <form id="applyForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="applicantName">Full Name <span class="required">*</span></label>
+              <input type="text" id="applicantName" name="applicantName" required placeholder="Your full name" value="Taylor Jones" />
+            </div>
+            <div class="form-group">
+              <label for="applicantEmail">Email Address <span class="required">*</span></label>
+              <input type="email" id="applicantEmail" name="applicantEmail" required placeholder="you@example.com" value="taylor.jones@student.edu" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="applicantPhone">Phone Number <span class="required">*</span></label>
+              <input type="tel" id="applicantPhone" name="applicantPhone" required placeholder="(555) 123-4567" value="(555) 123-4567" />
+            </div>
+            <div class="form-group">
+              <label for="expectedSalary">Expected Salary</label>
+              <select id="expectedSalary" name="expectedSalary">
+                <option value="">Negotiable</option>
+                <option value="80-90">$80k - $90k</option>
+                <option value="90-100">$90k - $100k</option>
+                <option value="100-110">$100k - $110k</option>
+                <option value="110-120">$110k - $120k</option>
+                <option value="120+">$120k+</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="applicantResume">Upload Resume <span class="required">*</span></label>
+            <div class="file-upload">
+              <input type="file" id="applicantResume" name="applicantResume" accept=".pdf,.doc,.docx" required onchange="handleFileUpload(this)" />
+              <label class="file-upload-label" for="applicantResume">
+                📄 Click to upload or drag resume here
+                <br><small>PDF, DOC, DOCX (Max 5MB)</small>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="applicantCoverLetter">Cover Letter</label>
+            <textarea id="applicantCoverLetter" name="applicantCoverLetter" placeholder="Tell us why you're interested in this position and what makes you a great fit..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="availableStart">Available Start Date</label>
+            <input type="date" id="availableStart" name="availableStart" />
+          </div>
+
+          <button type="submit" class="apply-button">🚀 Submit Application</button>
+        </form>
+        
+        <div id="confirmationMessage" class="confirmation" role="alert" style="display:none;">
+          ✅ Application submitted successfully! We've sent a confirmation to your email. The employer will review your application and contact you directly if there's interest.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Enhanced job data with more realistic NP positions
+    const jobs = [
+      {
+        id: 1,
+        title: "Family Nurse Practitioner - New Graduate Welcome",
+        company: "Sunrise Family Health",
+        location: "Durham, NC",
+        type: "full-time",
+        specialty: "family",
+        experience: "new-grad",
+        salary: "100-120",
+        datePosted: "2025-07-20",
+        remote: "on-site",
+        setting: "clinic",
+        description: "Join our supportive team as a Family Nurse Practitioner! We welcome new graduates and provide comprehensive mentorship program. Excellent benefits and competitive salary.",
+        requirements: [
+          "MSN from accredited program",
+          "Current NP license in NC",
+          "BLS/ACLS certification",
+          "Strong communication skills",
+          "Commitment to patient-centered care"
+        ],
+        benefits: ["Health insurance", "401k matching", "CME allowance", "Mentorship program"],
+        isNew: true
+      },
+      {
+        id: 2,
+        title: "Pediatric Nurse Practitioner - Urgent Care",
+        company: "Metro Children's Urgent Care",
+        location: "Chicago, IL",
+        type: "part-time",
+        specialty: "pediatrics",
+        experience: "2-5",
+        salary: "120-140",
+        datePosted: "2025-07-18",
+        remote: "on-site",
+        setting: "urgent-care",
+        description: "Seeking experienced Pediatric NP for busy urgent care center. Flexible scheduling, competitive pay, and great work-life balance.",
+        requirements: [
+          "2+ years pediatric experience",
+          "PNP certification",
+          "Illinois license",
+          "PALS certification",
+          "Urgent care experience preferred"
+        ],
+        benefits: ["Flexible schedule", "High hourly rate", "Malpractice coverage"],
+        isNew: false
+      },
+      {
+        id: 3,
+        title: "Psychiatric Mental Health NP - Telehealth",
+        company: "MindWell Telehealth Services",
+        location: "Remote",
+        type: "full-time",
+        specialty: "psych-mental",
+        experience: "0-2",
+        salary: "140-160",
+        datePosted: "2025-07-15",
+        remote: "remote",
+        setting: "remote",
+        description: "Revolutionary telehealth platform seeking PMHNP to provide virtual mental health services. Work from anywhere with flexible scheduling.",
+        requirements: [
+          "PMHNP certification",
+          "Multi-state license preferred",
+          "Telehealth experience",
+          "Strong technology skills",
+          "DEA license"
+        ],
+        benefits: ["Remote work", "Flexible hours", "Technology stipend", "Professional development"],
+        isNew: false
+      },
+      {
+        id: 4,
+        title: "Adult-Gerontology NP - Hospital Medicine",
+        company: "Regional Medical Center",
+        location: "Atlanta, GA",
+        type: "full-time",
+        specialty: "adult-gero",
+        experience: "5-10",
+        salary: "160+",
+        datePosted: "2025-07-12",
+        remote: "on-site",
+        setting: "hospital",
+        description: "Experienced AGNP needed for hospitalist team. Excellent opportunity for career growth in academic medical center.",
+        requirements: [
+          "5+ years hospital experience",
+          "AGNP certification",
+          "Georgia license",
+          "ACLS/BLS current",
+          "Electronic health record experience"
+        ],
+        benefits: ["Academic affiliation", "Research opportunities", "Excellent benefits", "Continuing education"],
+        isNew: false
+      },
+      {
+        id: 5,
+        title: "Women's Health NP - OB/GYN Practice",
+        company: "Women's Wellness Center",
+        location: "Phoenix, AZ",
+        type: "full-time",
+        specialty: "womens-health",
+        experience: "2-5",
+        salary: "120-140",
+        datePosted: "2025-07-10",
+        remote: "hybrid",
+        setting: "clinic",
+        description: "Join our women's health team providing comprehensive care. Mix of in-person and telehealth visits.",
+        requirements: [
+          "WHNP certification",
+          "Arizona license",
+          "2+ years women's health experience",
+          "Colposcopy experience preferred",
+          "Bilingual Spanish preferred"
+        ],
+        benefits: ["Hybrid work", "Competitive salary", "CME support", "Collaborative environment"],
+        isNew: false
+      }
+    ];
+
+    const resultsInfo = document.getElementById('resultsInfo');
+    const jobList = document.getElementById('jobList');
+    const searchForm = document.getElementById('searchForm');
+    const prevPageBtn = document.getElementById('prevPage');
+    const nextPageBtn = document.getElementById('nextPage');
+    const pageInfo = document.getElementById('pageInfo');
+
+    const modal = document.getElementById('jobModal');
+    const modalCloseBtn = modal.querySelector('.modal-close');
+    const modalJobTitle = document.getElementById('modalJobTitle');
+    const modalJobCompany = document.getElementById('modalJobCompany');
+    const modalJobMeta = document.getElementById('modalJobMeta');
+    const modalJobDescription = document.getElementById('modalJobDescription');
+    const modalJobRequirements = document.getElementById('modalJobRequirements');
+    const applyForm = document.getElementById('applyForm');
+    const confirmationMessage = document.getElementById('confirmationMessage');
+
+    const pageSize = 5;
+    let currentPage = 1;
+    let filteredJobs = jobs;
+    let savedJobs = new Set([2, 4]); // Sample saved jobs
+
+    function formatDate(dateStr) {
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      return new Date(dateStr).toLocaleDateString(undefined, options);
+    }
+
+    function formatSalary(salaryRange) {
+      if (!salaryRange) return 'Competitive';
+      return `$${salaryRange.replace('-', 'k - $')}k`;
+    }
+
+    function getDaysAgo(dateStr) {
+      const posted = new Date(dateStr);
+      const now = new Date();
+      const diffTime = Math.abs(now - posted);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 1) return '1 day ago';
+      if (diffDays < 7) return `${diffDays} days ago`;
+      if (diffDays < 14) return '1 week ago';
+      if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+      return `${Math.floor(diffDays / 30)} months ago`;
+    }
+
+    function renderJobs() {
+      jobList.innerHTML = '';
+      const start = (currentPage - 1) * pageSize;
+      const end = start + pageSize;
+      const pageJobs = filteredJobs.slice(start, end);
+
+      if (pageJobs.length === 0) {
+        jobList.innerHTML = `
+          <div class="no-results">
+            <h3>No jobs found</h3>
+            <p>Try adjusting your search criteria to find more opportunities.</p>
+            <button class="search-button" onclick="clearFilters()">Clear All Filters</button>
+          </div>
+        `;
+        resultsInfo.textContent = 'No results found.';
+        updatePagination(0);
+        return;
+      }
+
+      pageJobs.forEach(job => {
+        const li = document.createElement('li');
+        li.className = 'job-item';
+        li.tabIndex = 0;
+        li.setAttribute('role', 'button');
+        li.setAttribute('aria-label', `${job.title} at ${job.company}, ${job.location}`);
+        
+        const badges = [];
+        if (job.isNew) badges.push('<span class="job-badge new">New</span>');
+        badges.push(`<span class="job-badge ${job.type}">${job.type.replace('-', ' ')}</span>`);
+        if (job.remote === 'remote') badges.push('<span class="job-badge remote">Remote</span>');
+        
+        li.innerHTML = `
+          <div class="job-header">
+            <div>
+              <div class="job-title">${job.title}</div>
+              <div class="job-company">${job.company}</div>
+            </div>
+            <div class="job-badges">
+              ${badges.join('')}
+            </div>
+          </div>
+          <div class="job-meta">
+            <span>📍 ${job.location}</span>
+            <span>💰 ${formatSalary(job.salary)}</span>
+            <span>🕒 ${getDaysAgo(job.datePosted)}</span>
+            <span>🏥 ${job.setting.replace('-', ' ')}</span>
+          </div>
+          <div class="job-description">${job.description}</div>
+          <div class="job-actions">
+            <button class="apply-btn" onclick="event.stopPropagation(); openJobModal(${job.id})">Apply Now</button>
+            <button class="save-btn ${savedJobs.has(job.id) ? 'saved' : ''}" onclick="event.stopPropagation(); toggleSaveJob(${job.id}, this)">
+              ${savedJobs.has(job.id) ? '💾 Saved' : '🔖 Save Job'}
+            </button>
+          </div>
+        `;
+        
+        li.addEventListener('click', () => openJobModal(job.id));
+        li.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openJobModal(job.id);
+          }
+        });
+        jobList.appendChild(li);
+      });
+
+      const totalPages = Math.ceil(filteredJobs.length / pageSize);
+      resultsInfo.textContent = `Showing ${start + 1} - ${Math.min(end, filteredJobs.length)} of ${filteredJobs.length} job opportunities`;
+      updatePagination(totalPages);
+    }
+
+    function updatePagination(totalPages) {
+      prevPageBtn.disabled = currentPage === 1;
+      nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
+      prevPageBtn.setAttribute('aria-disabled', prevPageBtn.disabled.toString());
+      nextPageBtn.setAttribute('aria-disabled', nextPageBtn.disabled.toString());
+      pageInfo.textContent = totalPages > 0 ? `Page ${currentPage} of ${totalPages}` : 'No results';
+    }
+
+    function filterJobs(filters) {
+      return jobs.filter(job => {
+        if (filters.keyword && !job.title.toLowerCase().includes(filters.keyword.toLowerCase()) && 
+            !job.company.toLowerCase().includes(filters.keyword.toLowerCase()) &&
+            !job.description.toLowerCase().includes(filters.keyword.toLowerCase())) {
+          return false;
+        }
+        if (filters.location && !job.location.toLowerCase().includes(filters.location.toLowerCase())) {
+          return false;
+        }
+        if (filters.jobType && filters.jobType !== job.type) {
+          return false;
+        }
+        if (filters.specialty && filters.specialty !== job.specialty) {
+          return false;
+        }
+        if (filters.experience && filters.experience !== job.experience) {
+          return false;
+        }
+        if (filters.remote && filters.remote !== job.remote && filters.remote !== job.setting) {
+          return false;
+        }
+        if (filters.salary && filters.salary !== job.salary) {
+          return false;
+        }
+        if (filters.datePosted) {
+          const daysAgo = parseInt(filters.datePosted, 10);
+          const postedDate = new Date(job.datePosted);
+          const cutoffDate = new Date();
+          cutoffDate.setDate(cutoffDate.getDate() - daysAgo);
+          if (postedDate < cutoffDate) {
+            return false;
+          }
+        }
+        return true;
+      });
+    }
+
+    function openJobModal(jobId) {
+      const job = jobs.find(j => j.id === jobId);
+      if (!job) return;
+
+      modalJobTitle.textContent = job.title;
+      modalJobCompany.textContent = job.company;
+      modalJobMeta.innerHTML = `
+        <span>📍 ${job.location}</span> • 
+        <span>💰 ${formatSalary(job.salary)}</span> • 
+        <span>🕒 ${getDaysAgo(job.datePosted)}</span> • 
+        <span>🏥 ${job.setting.replace('-', ' ')}</span>
+      `;
+      modalJobDescription.textContent = job.description;
+      
+      if (job.requirements) {
+        modalJobRequirements.innerHTML = `
+          <h4>Requirements:</h4>
+          <ul>
+            ${job.requirements.map(req => `<li>${req}</li>`).join('')}
+          </ul>
+        `;
+      }
+
+      confirmationMessage.style.display = 'none';
+      applyForm.style.display = 'block';
+      applyForm.reset();
+      // Pre-fill with student data
+      document.getElementById('applicantName').value = 'Taylor Jones';
+      document.getElementById('applicantEmail').value = 'taylor.jones@student.edu';
+      document.getElementById('applicantPhone').value = '(555) 123-4567';
+
+      modal.classList.add('active');
+      modal.querySelector('.modal').focus();
+    }
+
+    function closeJobModal() {
+      modal.classList.remove('active');
+    }
+
+    function toggleSaveJob(jobId, button) {
+      if (savedJobs.has(jobId)) {
+        savedJobs.delete(jobId);
+        button.textContent = '🔖 Save Job';
+        button.classList.remove('saved');
+      } else {
+        savedJobs.add(jobId);
+        button.textContent = '💾 Saved';
+        button.classList.add('saved');
+      }
+      // Update stats
+      document.querySelector('.career-stats .stat-card:nth-child(3) .stat-number').textContent = savedJobs.size;
+    }
+
+    function clearFilters() {
+      searchForm.reset();
+      filteredJobs = jobs;
+      currentPage = 1;
+      renderJobs();
+    }
+
+    function sortJobs() {
+      const sortBy = document.getElementById('sortBy').value;
+      
+      filteredJobs.sort((a, b) => {
+        switch (sortBy) {
+          case 'date':
+            return new Date(b.datePosted) - new Date(a.datePosted);
+          case 'salary':
+            const aSalary = a.salary ? parseInt(a.salary.split('-')[0]) : 0;
+            const bSalary = b.salary ? parseInt(b.salary.split('-')[0]) : 0;
+            return bSalary - aSalary;
+          case 'location':
+            return a.location.localeCompare(b.location);
+          default: // relevance
+            return b.isNew ? 1 : -1;
+        }
+      });
+      
+      currentPage = 1;
+      renderJobs();
+    }
+
+    function handleFileUpload(input) {
+      const label = input.nextElementSibling;
+      if (input.files && input.files[0]) {
+        const fileName = input.files[0].name;
+        label.innerHTML = `📄 ${fileName}<br><small>File uploaded successfully</small>`;
+        label.classList.add('has-file');
+      }
+    }
+
+    // Event listeners
+    modalCloseBtn.addEventListener('click', closeJobModal);
+
+    modal.addEventListener('click', e => {
+      if (e.target === modal) {
+        closeJobModal();
+      }
+    });
+
+    modal.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        closeJobModal();
+      }
+    });
+
+    applyForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      if (!applyForm.checkValidity()) {
+        applyForm.reportValidity();
+        return;
+      }
+
+      // Simulate submission
+      applyForm.style.display = 'none';
+      confirmationMessage.style.display = 'block';
+      confirmationMessage.focus();
+      
+      // Update application count
+      const currentApps = parseInt(document.querySelector('.career-stats .stat-card:nth-child(2) .stat-number').textContent);
+      document.querySelector('.career-stats .stat-card:nth-child(2) .stat-number').textContent = currentApps + 1;
+    });
+
+    searchForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const formData = new FormData(searchForm);
+      const filters = {
+        keyword: formData.get('keyword').trim(),
+        location: formData.get('location').trim(),
+        jobType: formData.get('jobType'),
+        specialty: formData.get('specialty'),
+        experience: formData.get('experience'),
+        remote: formData.get('remote'),
+        salary: formData.get('salary'),
+        datePosted: formData.get('datePosted'),
+      };
+      filteredJobs = filterJobs(filters);
+      currentPage = 1;
+      renderJobs();
+    });
+
+    prevPageBtn.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderJobs();
+        jobList.focus();
+      }
+    });
+
+    nextPageBtn.addEventListener('click', () => {
+      const totalPages = Math.ceil(filteredJobs.length / pageSize);
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderJobs();
+        jobList.focus();
+      }
+    });
+
+    // Initial render
+    renderJobs();
+  </script>
+</body>
+</html>

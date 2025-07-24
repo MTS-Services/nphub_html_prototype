@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Add Student - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background: #2d3e50;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .logout-btn {
+      background: transparent;
+      border: 1px solid white;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .main {
+      display: flex;
+      min-height: calc(100vh - 64px);
+    }
+    .sidebar {
+      width: 250px;
+      background: #34495e;
+      color: white;
+      padding: 24px 0;
+    }
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      color: white;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .nav-item:hover,
+    .nav-item.active {
+      background: #2c3e50;
+      border-left-color: #3498db;
+    }
+    .content {
+      flex: 1;
+      padding: 32px 32px 32px 32px;
+      overflow-y: auto;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+    h2 {
+      margin-top: 0;
+      color: #2d3e50;
+      text-align: center;
+    }
+    .form-section {
+      margin-bottom: 32px;
+    }
+    .form-section h3 {
+      color: #3498db;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 4px;
+    }
+    .form-row {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 16px;
+    }
+    .form-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #34495e;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    input[type="file"],
+    select,
+    textarea {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+    textarea {
+      min-height: 60px;
+      resize: vertical;
+    }
+    .btn-primary {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 16px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      width: 100%;
+      margin-top: 16px;
+    }
+    .btn-primary:hover {
+      background: #2980b9;
+    }
+    .btn-secondary {
+      background: #95a5a6;
+      color: white;
+      border: none;
+      padding: 16px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      width: 100%;
+      margin-top: 8px;
+    }
+    .btn-secondary:hover {
+      background: #7f8c8d;
+    }
+    @media (max-width: 1000px) {
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+      .content {
+        padding: 16px;
+      }
+      .card {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Add Student</h1>
+    <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+  </div>
+  <div class="main">
+    <nav class="sidebar">
+      <a href="institution-dashboard.html" class="nav-item">🏠 Dashboard</a>
+      <a href="institution-students.html" class="nav-item active">👩‍🎓 Students</a>
+      <a href="institution-applications.html" class="nav-item">📄 Applications</a>
+      <a href="institution-rotations.html" class="nav-item">🔄 Rotations</a>
+      <a href="institution-messages.html" class="nav-item">💬 Messages</a>
+      <a href="institution-reports.html" class="nav-item">📊 Reports</a>
+      <a href="institution-billing.html" class="nav-item">💳 Billing</a>
+      <a href="institution-settings.html" class="nav-item">⚙️ Settings</a>
+    </nav>
+    <main class="content">
+      <div class="card">
+        <h2>Add New Student</h2>
+        <form id="addStudentForm" onsubmit="handleSubmit(event)">
+          <!-- Personal Info -->
+          <div class="form-section">
+            <h3>Personal Information</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="firstName">First Name *</label>
+                <input type="text" id="firstName" required />
+              </div>
+              <div class="form-group">
+                <label for="lastName">Last Name *</label>
+                <input type="text" id="lastName" required />
+              </div>
+              <div class="form-group">
+                <label for="dob">Date of Birth</label>
+                <input type="date" id="dob" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input type="email" id="email" required />
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" />
+              </div>
+              <div class="form-group">
+                <label for="studentId">Student ID</label>
+                <input type="text" id="studentId" />
+              </div>
+            </div>
+          </div>
+          <!-- Address -->
+          <div class="form-section">
+            <h3>Address</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="address">Street Address</label>
+                <input type="text" id="address" />
+              </div>
+              <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" id="city" />
+              </div>
+              <div class="form-group">
+                <label for="state">State</label>
+                <input type="text" id="state" />
+              </div>
+              <div class="form-group">
+                <label for="zip">ZIP Code</label>
+                <input type="text" id="zip" />
+              </div>
+            </div>
+          </div>
+          <!-- Academic Info -->
+          <div class="form-section">
+            <h3>Academic Information</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="program">Program *</label>
+                <select id="program" required>
+                  <option value="">Select Program</option>
+                  <option value="FNP">Family Nurse Practitioner (FNP)</option>
+                  <option value="AGNP">Adult-Gerontology Nurse Practitioner (AGNP)</option>
+                  <option value="PNP">Pediatric Nurse Practitioner (PNP)</option>
+                  <option value="WHNP">Women's Health Nurse Practitioner (WHNP)</option>
+                  <option value="PMHNP">Psychiatric Mental Health Nurse Practitioner (PMHNP)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="yearLevel">Year Level</label>
+                <select id="yearLevel">
+                  <option value="">Select Year</option>
+                  <option value="1">1st Year</option>
+                  <option value="2">2nd Year</option>
+                  <option value="3">3rd Year</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="startDate">Program Start Date</label>
+                <input type="date" id="startDate" />
+              </div>
+              <div class="form-group">
+                <label for="expectedGraduation">Expected Graduation</label>
+                <input type="date" id="expectedGraduation" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status">
+                  <option value="Active" selected>Active</option>
+                  <option value="Inactive">Inactive</option>
+                  <option value="On Hold">On Hold</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="gpa">GPA</label>
+                <input type="text" id="gpa" />
+              </div>
+              <div class="form-group">
+                <label for="advisor">Academic Advisor</label>
+                <input type="text" id="advisor" />
+              </div>
+            </div>
+          </div>
+          <!-- License & Demographics -->
+          <div class="form-section">
+            <h3>License & Demographics</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="licenseNumber">RN License Number</label>
+                <input type="text" id="licenseNumber" />
+              </div>
+              <div class="form-group">
+                <label for="licenseState">License State</label>
+                <input type="text" id="licenseState" />
+              </div>
+              <div class="form-group">
+                <label for="ethnicity">Ethnicity</label>
+                <input type="text" id="ethnicity" />
+              </div>
+              <div class="form-group">
+                <label for="gender">Gender</label>
+                <select id="gender">
+                  <option value="">Select</option>
+                  <option value="Female">Female</option>
+                  <option value="Male">Male</option>
+                  <option value="Nonbinary">Nonbinary</option>
+                  <option value="Other">Other</option>
+                  <option value="Prefer not to say">Prefer not to say</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <!-- Emergency Contact -->
+          <div class="form-section">
+            <h3>Emergency Contact</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="emergencyName">Contact Name</label>
+                <input type="text" id="emergencyName" />
+              </div>
+              <div class="form-group">
+                <label for="emergencyRelation">Relationship</label>
+                <input type="text" id="emergencyRelation" />
+              </div>
+              <div class="form-group">
+                <label for="emergencyPhone">Phone</label>
+                <input type="tel" id="emergencyPhone" />
+              </div>
+            </div>
+          </div>
+          <!-- Documents -->
+          <div class="form-section">
+            <h3>Documents</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="resume">Resume/CV</label>
+                <input type="file" id="resume" accept=".pdf,.doc,.docx" />
+              </div>
+              <div class="form-group">
+                <label for="transcript">Transcript</label>
+                <input type="file" id="transcript" accept=".pdf,.doc,.docx" />
+              </div>
+              <div class="form-group">
+                <label for="immunization">Immunization Record</label>
+                <input type="file" id="immunization" accept=".pdf,.jpg,.png" />
+              </div>
+            </div>
+          </div>
+          <!-- Notes -->
+          <div class="form-section">
+            <h3>Notes</h3>
+            <textarea id="notes" placeholder="Additional notes about the student..."></textarea>
+          </div>
+          <button type="submit" class="btn-primary">Add Student</button>
+          <button type="button" class="btn-secondary" onclick="window.location.href='institution-students.html'">Cancel</button>
+        </form>
+      </div>
+    </main>
+  </div>
+  <script>
+    function handleSubmit(event) {
+      event.preventDefault();
+      // Collect all form data (for demo, just alert)
+      alert('Student added successfully! (Form data would be sent to backend)');
+      window.location.href = 'institution-students.html';
+    }
+  </script>
+</body>
+</html>

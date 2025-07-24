@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Applications - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* Your existing styles plus additions */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; }
+    .header { background: #2d3e50; color: #fff; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 1.5rem; }
+    .header-right { display: flex; gap: 12px; align-items: center; }
+    .logout-btn { background: transparent; color: #fff; border: 1px solid #fff; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+    .back-btn { background: #95a5a6; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-bottom: 16px; }
+    .main { display: flex; min-height: calc(100vh - 64px); }
+    .sidebar { width: 250px; background: #34495e; color: #fff; padding: 24px 0; }
+    .content { flex: 1; padding: 24px; }
+    .nav-item { display: block; padding: 12px 24px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.3s; color: #fff; text-decoration: none; }
+    .nav-item:hover, .nav-item.active { background: #2c3e50; border-left-color: #3498db; }
+    .card { background: #fff; border-radius: 8px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .card h3 { margin-bottom: 16px; color: #2d3e50; }
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #f8f9fa; font-weight: 600; }
+    .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-right: 8px; }
+    .btn-primary { background: #3498db; color: #fff; }
+    .btn-success { background: #27ae60; color: #fff; }
+    .btn-warning { background: #f39c12; color: #fff; }
+    .btn-danger { background: #e74c3c; color: #fff; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 500; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .status { padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 500; }
+    .status.active { background: #d4edda; color: #155724; }
+    .status.pending { background: #fff3cd; color: #856404; }
+    .status.inactive { background: #f8d7da; color: #721c24; }
+    .status.approved { background: #d1ecf1; color: #0c5460; }
+    @media (max-width: 768px) {
+      .main { flex-direction: column; }
+      .sidebar { width: 100%; }
+      .header { flex-direction: column; gap: 12px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Applications</h1>
+    <div class="header-right">
+      <span>Clinic Admin</span>
+      <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="sidebar">
+      <a class="nav-item" href="clinic-dashboard.html">🏠 Dashboard</a>
+      <a class="nav-item active" href="clinic-applications.html">📝 Applications</a>
+      <a class="nav-item" href="clinic-students.html">👩‍🎓 Students</a>
+      <a class="nav-item" href="clinic-preceptors.html">👨‍⚕️ Preceptors</a>
+      <a class="nav-item" href="clinic-messages.html">💬 Messages</a>
+      <a class="nav-item" href="clinic-schedule.html">📅 Schedule</a>
+      <a class="nav-item" href="clinic-billing.html">💳 Billing</a>
+      <a class="nav-item" href="clinic-reports.html">📈 Reports</a>
+      <a class="nav-item" href="clinic-settings.html">⚙️ Settings</a>
+    </div>
+    <div class="content">
+      <div class="card">
+        <h3>Student Applications</h3>
+
+        <!-- Filters -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="filter-status">Filter by Status</label>
+            <select id="filter-status">
+              <option value="">All</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="filter-specialty">Filter by Specialty</label>
+            <select id="filter-specialty">
+              <option value="">All</option>
+              <option value="Family Practice">Family Practice</option>
+              <option value="Cardiology">Cardiology</option>
+              <option value="Pediatrics">Pediatrics</option>
+            </select>
+          </div>
+          <div class="form-group" style="align-self: end;">
+            <button class="btn btn-primary" id="apply-filters">Apply Filters</button>
+            <button class="btn btn-warning" id="clear-filters">Clear</button>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="select-all" aria-label="Select all applications" /></th>
+              <th>Student</th>
+              <th>Specialty</th>
+              <th>Dates</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="applications-tbody">
+            <!-- Applications will be dynamically inserted here -->
+          </tbody>
+        </table>
+
+        <div style="margin-top: 16px;">
+          <button class="btn btn-success" id="bulk-approve">Approve Selected</button>
+          <button class="btn btn-danger" id="bulk-reject">Reject Selected</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const applications = [
+      { id: 1, student: 'Lisa Chen', specialty: 'Family Practice', dates: 'Sep-Nov 2025', status: 'pending' },
+      { id: 2, student: 'Mike Wilson', specialty: 'Cardiology', dates: 'Aug-Oct 2025', status: 'approved' },
+      { id: 3, student: 'Emily Smith', specialty: 'Pediatrics', dates: 'Oct-Dec 2025', status: 'pending' }
+    ];
+
+    const tbody = document.getElementById('applications-tbody');
+    const filterStatus = document.getElementById('filter-status');
+    const filterSpecialty = document.getElementById('filter-specialty');
+    const applyFiltersBtn = document.getElementById('apply-filters');
+    const clearFiltersBtn = document.getElementById('clear-filters');
+    const selectAllCheckbox = document.getElementById('select-all');
+    const bulkApproveBtn = document.getElementById('bulk-approve');
+    const bulkRejectBtn = document.getElementById('bulk-reject');
+
+    function renderApplications(data) {
+      tbody.innerHTML = '';
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No applications found.</td></tr>';
+        return;
+      }
+      data.forEach(app => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input type="checkbox" class="select-app" data-id="${app.id}" aria-label="Select application from ${app.student}" /></td>
+          <td>${app.student}</td>
+          <td>${app.specialty}</td>
+          <td>${app.dates}</td>
+          <td><span class="status ${app.status}">${app.status.charAt(0).toUpperCase() + app.status.slice(1)}</span></td>
+          <td>
+            ${app.status === 'pending' ? `<button class="btn btn-success" onclick="updateStatus(${app.id}, 'approved')">Approve</button>
+            <button class="btn btn-danger" onclick="updateStatus(${app.id}, 'rejected')">Reject</button>` : ''}
+            <button class="btn btn-primary" onclick="viewDetails(${app.id})">View</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function applyFilters() {
+      let filtered = [...applications];
+      const status = filterStatus.value;
+      const specialty = filterSpecialty.value;
+
+      if (status) {
+        filtered = filtered.filter(app => app.status === status);
+      }
+      if (specialty) {
+        filtered = filtered.filter(app => app.specialty === specialty);
+      }
+      renderApplications(filtered);
+    }
+
+    function clearFilters() {
+      filterStatus.value = '';
+      filterSpecialty.value = '';
+      renderApplications(applications);
+    }
+
+    function updateStatus(id, newStatus) {
+      const app = applications.find(a => a.id === id);
+      if (!app) return alert('Application not found');
+      app.status = newStatus;
+      alert(`Application ${newStatus}!`);
+      applyFilters();
+    }
+
+    function viewDetails(id) {
+      // Redirect to details page (implement as needed)
+      window.location.href = `clinic-application-details.html?id=${id}`;
+    }
+
+    function toggleSelectAll() {
+      const checked = selectAllCheckbox.checked;
+      document.querySelectorAll('.select-app').forEach(cb => cb.checked = checked);
+    }
+
+    function getSelectedIds() {
+      return Array.from(document.querySelectorAll('.select-app:checked')).map(cb => parseInt(cb.dataset.id));
+    }
+
+    function bulkUpdateStatus(newStatus) {
+      const selectedIds = getSelectedIds();
+      if (selectedIds.length === 0) {
+        alert('No applications selected.');
+        return;
+      }
+      selectedIds.forEach(id => {
+        const app = applications.find(a => a.id === id);
+        if (app && app.status === 'pending') {
+          app.status = newStatus;
+        }
+      });
+      alert(`Selected applications ${newStatus}!`);
+      selectAllCheckbox.checked = false;
+      applyFilters();
+    }
+
+    applyFiltersBtn.addEventListener('click', applyFilters);
+    clearFiltersBtn.addEventListener('click', clearFilters);
+    selectAllCheckbox.addEventListener('change', toggleSelectAll);
+    bulkApproveBtn.addEventListener('click', () => bulkUpdateStatus('approved'));
+    bulkRejectBtn.addEventListener('click', () => bulkUpdateStatus('rejected'));
+
+    // Initial render
+    renderApplications(applications);
+  </script>
+</body>
+</html>
