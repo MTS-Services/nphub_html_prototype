@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Clinic Dashboard - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; }
+    .header { background: #2d3e50; color: #fff; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 1.5rem; }
+    .header-right { display: flex; gap: 12px; align-items: center; }
+    .logout-btn { background: transparent; color: #fff; border: 1px solid #fff; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+    .main { display: flex; min-height: calc(100vh - 64px); }
+    .sidebar { width: 250px; background: #34495e; color: #fff; padding: 24px 0; }
+    .content { flex: 1; padding: 24px; }
+    .nav-item { display: block; padding: 12px 24px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.3s; color: #fff; text-decoration: none; }
+    .nav-item:hover, .nav-item.active { background: #2c3e50; border-left-color: #3498db; }
+    .card { background: #fff; border-radius: 8px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .card h3 { margin-bottom: 16px; color: #2d3e50; }
+    .quick-actions { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .quick-actions .btn { font-size: 1rem; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: #fff; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; transition: box-shadow 0.2s; }
+    .stat-card:hover { box-shadow: 0 4px 16px rgba(52,152,219,0.15); }
+    .stat-number { font-size: 2rem; font-weight: bold; margin: 8px 0; }
+    .stat-label { color: #666; font-size: 0.9rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #f8f9fa; font-weight: 600; }
+    .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-right: 8px; }
+    .btn-primary { background: #3498db; color: #fff; }
+    .btn-success { background: #27ae60; color: #fff; }
+    .btn-warning { background: #f39c12; color: #fff; }
+    .btn-danger { background: #e74c3c; color: #fff; }
+    .status { padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 500; }
+    .status.active { background: #d4edda; color: #155724; }
+    .status.pending { background: #fff3cd; color: #856404; }
+    .status.inactive { background: #f8d7da; color: #721c24; }
+    .status.approved { background: #d1ecf1; color: #0c5460; }
+    @media (max-width: 768px) {
+      .main { flex-direction: column; }
+      .sidebar { width: 100%; }
+      .header { flex-direction: column; gap: 12px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .quick-actions { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Clinic Dashboard</h1>
+    <div class="header-right">
+      <span>Welcome, <strong>Sunrise Family Clinic</strong></span>
+      <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="sidebar">
+      <a class="nav-item active" href="clinic-dashboard.html">🏠 Dashboard</a>
+      <a class="nav-item" href="clinic-applications.html">📝 Applications</a>
+      <a class="nav-item" href="clinic-students.html">👩‍🎓 Students</a>
+      <a class="nav-item" href="clinic-preceptors.html">👨‍⚕️ Preceptors</a>
+      <a class="nav-item" href="clinic-messages.html">💬 Messages</a>
+      <a class="nav-item" href="clinic-schedule.html">📅 Schedule</a>
+      <a class="nav-item" href="clinic-billing.html">💳 Billing</a>
+      <a class="nav-item" href="clinic-reports.html">📈 Reports</a>
+      <a class="nav-item" href="clinic-settings.html">⚙️ Settings</a>
+      <a class="nav-item" href="clinic-job-postings.html">📋 Job Postings</a>
+    </div>
+    <div class="content">
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <button class="btn btn-success" onclick="window.location.href='clinic-preceptors.html'">Add Preceptor</button>
+        <button class="btn btn-primary" onclick="window.location.href='clinic-applications.html'">Review Applications</button>
+        <button class="btn btn-warning" onclick="window.location.href='clinic-messages.html'">Message All Students</button>
+        <button class="btn btn-primary" onclick="window.location.href='clinic-job-postings.html'">Manage Job Postings</button>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card" onclick="window.location.href='clinic-schedule.html'">
+          <div class="stat-number">12</div>
+          <div class="stat-label">Active Rotations</div>
+        </div>
+        <div class="stat-card" onclick="window.location.href='clinic-students.html'">
+          <div class="stat-number">34</div>
+          <div class="stat-label">Students</div>
+        </div>
+        <div class="stat-card" onclick="window.location.href='clinic-preceptors.html'">
+          <div class="stat-number">8</div>
+          <div class="stat-label">Preceptors</div>
+        </div>
+        <div class="stat-card" onclick="window.location.href='clinic-applications.html'">
+          <div class="stat-number">5</div>
+          <div class="stat-label">Pending Applications</div>
+        </div>
+        <div class="stat-card" onclick="window.location.href='clinic-job-postings.html'">
+          <div class="stat-number">3</div>
+          <div class="stat-label">Active Job Postings</div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="card">
+        <h3>Recent Activity</h3>
+        <table>
+          <thead>
+            <tr><th>Time</th><th>Student</th><th>Action</th><th>Details</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>10:30 AM</td>
+              <td>Mike Wilson</td>
+              <td>Logged Hours</td>
+              <td>
+                Cardiology Rotation
+                <button class="btn btn-primary" onclick="window.location.href='clinic-student-details.html'">View</button>
+              </td>
+            </tr>
+            <tr>
+              <td>09:45 AM</td>
+              <td>Lisa Chen</td>
+              <td>Application Submitted</td>
+              <td>
+                Family Practice
+                <button class="btn btn-success" onclick="window.location.href='clinic-applications.html'">Review</button>
+              </td>
+            </tr>
+            <tr>
+              <td>09:15 AM</td>
+              <td>Dr. Sarah Johnson</td>
+              <td>Evaluation Completed</td>
+              <td>
+                Student: Mike Wilson
+                <button class="btn btn-primary" onclick="window.location.href='clinic-student-details.html'">View</button>
+              </td>
+            </tr>
+            <tr>
+              <td>08:30 AM</td>
+              <td>Emily Smith</td>
+              <td>Message Sent</td>
+              <td>
+                To: Preceptor
+                <button class="btn btn-warning" onclick="window.location.href='clinic-messages.html'">Message</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

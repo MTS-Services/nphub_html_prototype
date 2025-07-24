@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Add / Edit Program Coordinator - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #ECECEC;
+      --color-white: #FFFF;
+      --color-text: #2D2D2D;
+      --border-radius: 8px;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: 0.3s ease;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      overflow: hidden;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-size: 1.5rem;
+    }
+    .logout-btn {
+      background: transparent;
+      color: var(--color-white);
+      border: 1px solid var(--color-white);
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background var(--transition);
+      user-select: none;
+    }
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    .main {
+      display: flex;
+      flex: 1 1 auto;
+      height: calc(100vh - 64px);
+      width: 100vw;
+      overflow: hidden;
+      background: var(--color-bg);
+    }
+    nav.sidebar {
+      width: 280px;
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 24px 0;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      height: 100%;
+      box-sizing: border-box;
+    }
+    .sidebar-section {
+      margin-bottom: 24px;
+      flex-shrink: 0;
+    }
+    .sidebar-section h3 {
+      padding-left: 24px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      user-select: none;
+    }
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      color: var(--color-white);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background var(--transition), border-color var(--transition);
+      cursor: pointer;
+      user-select: none;
+    }
+    .nav-item:hover,
+    .nav-item.active {
+      background: var(--color-primary);
+      border-left-color: var(--color-secondary);
+    }
+    main.content {
+      flex-grow: 1;
+      padding: 24px 30px;
+      overflow-y: auto;
+      background: var(--color-white);
+      display: flex;
+      flex-direction: column;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      width: calc(100vw - 280px);
+      box-sizing: border-box;
+      max-width: 700px;
+      margin: auto;
+      max-height: calc(100vh - 64px - 48px);
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    label {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    input[type="text"],
+    input[type="email"],
+    select,
+    textarea {
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .form-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .form-row > div {
+      flex: 1 1 45%;
+      min-width: 200px;
+    }
+    .buttons-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .buttons-row button {
+      flex: 1;
+      font-weight: 700;
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: background-color var(--transition);
+    }
+    #submitBtn {
+      background-color: var(--color-secondary);
+      color: var(--color-primary-dark);
+    }
+    #submitBtn:hover,
+    #submitBtn:focus-visible {
+      background-color: #e6c200;
+      outline: none;
+    }
+    #cancelBtn {
+      background-color: #ccc;
+      color: #333;
+    }
+    #cancelBtn:hover,
+    #cancelBtn:focus-visible {
+      background-color: #b3b3b3;
+      outline: none;
+    }
+    .error {
+      color: red;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1 id="pageTitle">Add Program Coordinator</h1>
+    <button class="logout-btn" onclick="window.location.href='admin-program-coordinators.html'">Back to List</button>
+  </div>
+
+  <div class="main">
+    <nav class="sidebar" aria-label="Admin navigation">
+      <div class="sidebar-section">
+        <h3>People</h3>
+        <a href="admin-md-collaborators.html" class="nav-item">👨‍⚕️ MD Collaborators</a>
+        <a href="admin-nps.html" class="nav-item">🩺 NPs / Job Seekers</a>
+        <a href="admin-students.html" class="nav-item">🎓 Students</a>
+        <a href="admin-program-coordinators.html" class="nav-item active">👩‍💼 Program Coordinators</a>
+        <a href="admin-preceptors.html" class="nav-item">👨‍⚕️ Preceptors</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>Services</h3>
+        <a href="admin-rotation-applications.html" class="nav-item">📝 Rotations</a>
+        <a href="admin-job-applications.html" class="nav-item">📄 Job Applications</a>
+        <a href="admin-job-postings.html" class="nav-item">📋 Job Postings</a>
+        <a href="admin-scheduling.html" class="nav-item">📅 Scheduling</a>
+        <a href="admin-billing.html" class="nav-item">💳 Billing</a>
+        <a href="admin-messaging.html" class="nav-item">💬 Messaging</a>
+        <a href="admin-md-collaborations.html" class="nav-item">🤝 MD Collaborations</a>
+        <a href="admin-practice-launchpad.html" class="nav-item">🚀 Practice Launchpad</a>
+        <a href="admin-launchpad-service-packages.html" class="nav-item">📦 Service Packages</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>Organization</h3>
+        <a href="admin-clinics.html" class="nav-item">🏥 Clinics</a>
+        <a href="admin-institutions.html" class="nav-item">🏫 Institutions</a>
+        <a href="admin-programs.html" class="nav-item">📋 Programs</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>System</h3>
+        <a href="admin-dashboard.html" class="nav-item">🏠 Dashboard</a>
+        <a href="admin-reports.html" class="nav-item">📊 Reports</a>
+        <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+      </div>
+    </nav>
+
+    <main class="content" role="main">
+      <form id="coordinatorForm" novalidate>
+        <div class="form-row">
+          <div>
+            <label for="name">Full Name *</label>
+            <input type="text" id="name" name="name" required />
+            <div class="error" id="errorName"></div>
+          </div>
+          <div>
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" required />
+            <div class="error" id="errorEmail"></div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div>
+            <label for="phone">Phone</label>
+            <input type="text" id="phone" name="phone" />
+          </div>
+          <div>
+            <label for="status">Status *</label>
+            <select id="status" name="status" required>
+              <option value="">Select status</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+            <div class="error" id="errorStatus"></div>
+          </div>
+        </div>
+
+        <div>
+          <label for="institution">Institution *</label>
+          <select id="institution" name="institution" required>
+            <option value="">Loading institutions...</option>
+          </select>
+          <div class="error" id="errorInstitution"></div>
+        </div>
+
+        <div>
+          <label for="role">Role / Title</label>
+          <input type="text" id="role" name="role" />
+        </div>
+
+        <div>
+          <label for="location">Office Location</label>
+          <input type="text" id="location" name="location" />
+        </div>
+
+        <div>
+          <label for="programs">Assigned Programs</label>
+          <select id="programs" name="programs" multiple size="5" style="height:auto;">
+            <option>Loading programs...</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="notes">Notes</label>
+          <textarea id="notes" name="notes"></textarea>
+        </div>
+
+        <div class="buttons-row">
+          <button type="submit" id="submitBtn">Save</button>
+          <button type="button" id="cancelBtn">Cancel</button>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <script type="module">
+    import { db } from './firebase-init.js';
+    import { doc, getDoc, setDoc, addDoc, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    const form = document.getElementById('coordinatorForm');
+    const pageTitle = document.getElementById('pageTitle');
+    const submitBtn = document.getElementById('submitBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
+    const statusSelect = document.getElementById('status');
+    const institutionSelect = document.getElementById('institution');
+    const roleInput = document.getElementById('role');
+    const locationInput = document.getElementById('location');
+    const programsSelect = document.getElementById('programs');
+    const notesInput = document.getElementById('notes');
+
+    const errorName = document.getElementById('errorName');
+    const errorEmail = document.getElementById('errorEmail');
+    const errorStatus = document.getElementById('errorStatus');
+    const errorInstitution = document.getElementById('errorInstitution');
+
+    let editId = getQueryParam('id');
+
+    async function loadInstitutions() {
+      institutionSelect.innerHTML = '<option value="">Select institution</option>';
+      try {
+        const instSnapshot = await getDocs(collection(db, 'institutions'));
+        instSnapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const option = document.createElement('option');
+          option.value = docSnap.id;
+          option.textContent = data.Name || 'Unnamed Institution';
+          institutionSelect.appendChild(option);
+        });
+      } catch (e) {
+        institutionSelect.innerHTML = '<option value="">Failed to load institutions</option>';
+        console.error('Error loading institutions:', e);
+      }
+    }
+
+    async function loadPrograms(institutionId = null) {
+      programsSelect.innerHTML = '';
+      try {
+        let progQuerySnapshot;
+        if (institutionId) {
+          const q = query(collection(db, 'programs'), where('InstitutionId', '==', institutionId));
+          progQuerySnapshot = await getDocs(q);
+        } else {
+          progQuerySnapshot = await getDocs(collection(db, 'programs'));
+        }
+
+        if (progQuerySnapshot.empty) {
+          programsSelect.innerHTML = '<option>No programs found for this institution</option>';
+          return;
+        }
+
+        progQuerySnapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const option = document.createElement('option');
+          option.value = docSnap.id;
+          option.textContent = data.Name || 'Unnamed Program';
+          programsSelect.appendChild(option);
+        });
+      } catch (e) {
+        programsSelect.innerHTML = '<option>Failed to load programs</option>';
+        console.error('Error loading programs:', e);
+      }
+    }
+
+    async function loadCoordinatorData(id) {
+      try {
+        const docRef = doc(db, 'programCoordinators', id);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) {
+          alert('Program Coordinator not found');
+          window.location.href = 'admin-program-coordinators.html';
+          return;
+        }
+        const data = docSnap.data();
+        nameInput.value = data.Name || '';
+        emailInput.value = data.Email || '';
+        phoneInput.value = data.Phone || '';
+        statusSelect.value = data.Status || '';
+        institutionSelect.value = data.InstitutionId || '';
+        roleInput.value = data.Role || '';
+        locationInput.value = data.OfficeLocation || '';
+        notesInput.value = data.Notes || '';
+
+        // Load programs filtered by institution, then select assigned
+        await loadPrograms(data.InstitutionId || null);
+
+        if (data.AssignedProgramIds && Array.isArray(data.AssignedProgramIds)) {
+          for (const option of programsSelect.options) {
+            option.selected = data.AssignedProgramIds.includes(option.value);
+          }
+        }
+      } catch (e) {
+        console.error('Error loading coordinator data:', e);
+        alert('Failed to load coordinator data');
+      }
+    }
+
+    function validateForm() {
+      let valid = true;
+      errorName.textContent = '';
+      errorEmail.textContent = '';
+      errorStatus.textContent = '';
+      errorInstitution.textContent = '';
+
+      if (!nameInput.value.trim()) {
+        errorName.textContent = 'Name is required';
+        valid = false;
+      }
+      if (!emailInput.value.trim()) {
+        errorEmail.textContent = 'Email is required';
+        valid = false;
+      } else if (!/\S+@\S+\.\S+/.test(emailInput.value.trim())) {
+        errorEmail.textContent = 'Invalid email format';
+        valid = false;
+      }
+      if (!statusSelect.value) {
+        errorStatus.textContent = 'Status is required';
+        valid = false;
+      }
+      if (!institutionSelect.value) {
+        errorInstitution.textContent = 'Institution is required';
+        valid = false;
+      }
+      return valid;
+    }
+
+    async function saveCoordinator(data) {
+      console.log('Saving coordinator data:', data);
+      try {
+        if (editId) {
+          const docRef = doc(db, 'programCoordinators', editId);
+          await setDoc(docRef, data, { merge: true });
+          console.log('Coordinator updated:', editId);
+          alert('Program Coordinator updated successfully');
+          window.location.href = `admin-program-coordinator-detail.html?id=${editId}`;
+        } else {
+          const colRef = collection(db, 'programCoordinators');
+          const docRef = await addDoc(colRef, data);
+          console.log('Coordinator added with ID:', docRef.id);
+          alert('Program Coordinator added successfully');
+          window.location.href = `admin-program-coordinator-detail.html?id=${docRef.id}`;
+        }
+      } catch (e) {
+        console.error('Error saving coordinator:', e);
+        alert('Failed to save coordinator');
+      }
+    }
+
+    institutionSelect.addEventListener('change', () => {
+      const selectedInstitution = institutionSelect.value;
+      loadPrograms(selectedInstitution);
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!validateForm()) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving...';
+
+      const assignedPrograms = Array.from(programsSelect.selectedOptions).map(opt => opt.value);
+
+      const coordinatorData = {
+        Name: nameInput.value.trim(),
+        Email: emailInput.value.trim(),
+        Phone: phoneInput.value.trim(),
+        Status: statusSelect.value,
+        InstitutionId: institutionSelect.value,
+        Role: roleInput.value.trim(),
+        OfficeLocation: locationInput.value.trim(),
+        Notes: notesInput.value.trim(),
+        AssignedProgramIds: assignedPrograms,
+        UpdatedAt: new Date()
+      };
+
+      await saveCoordinator(coordinatorData);
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Save';
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      window.location.href = 'admin-program-coordinators.html';
+    });
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      await loadInstitutions();
+
+      if (editId) {
+        pageTitle.textContent = 'Edit Program Coordinator';
+        await loadCoordinatorData(editId);
+      } else {
+        await loadPrograms();
+      }
+    });
+  </script>
+</body>
+</html>

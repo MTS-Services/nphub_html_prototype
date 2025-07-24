@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Detail - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #ECECEC;
+      --color-white: #FFFF;
+      --color-text: #2D2D2D;
+      --border-radius: 8px;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: 0.3s ease;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      overflow: hidden;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-size: 1.5rem;
+    }
+    .header-right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .logout-btn {
+      background: transparent;
+      color: var(--color-white);
+      border: 1px solid var(--color-white);
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background var(--transition);
+      user-select: none;
+    }
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    .main {
+      display: flex;
+      flex: 1 1 auto;
+      height: calc(100vh - 64px);
+      width: 100vw;
+      overflow: hidden;
+      background: var(--color-bg);
+    }
+    nav.sidebar {
+      width: 280px;
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 24px 0;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      height: 100%;
+      box-sizing: border-box;
+    }
+    .sidebar-section {
+      margin-bottom: 24px;
+      flex-shrink: 0;
+    }
+    .sidebar-section h3 {
+      padding-left: 24px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      user-select: none;
+    }
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      color: var(--color-white);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background var(--transition), border-color var(--transition);
+      cursor: pointer;
+      user-select: none;
+    }
+    .nav-item:hover,
+    .nav-item.active {
+      background: var(--color-primary);
+      border-left-color: var(--color-secondary);
+    }
+    main.content {
+      flex-grow: 1;
+      padding: 32px 40px;
+      overflow-y: auto;
+      background: var(--color-white);
+      display: flex;
+      flex-direction: column;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      width: calc(100vw - 280px);
+      box-sizing: border-box;
+    }
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--color-primary);
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-bottom: 8px;
+      align-self: flex-start;
+      padding: 0;
+    }
+    .back-btn:hover {
+      text-decoration: underline;
+    }
+    .btn {
+      padding: 10px 20px;
+      border-radius: var(--border-radius);
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color var(--transition);
+    }
+    .btn-primary {
+      background-color: var(--color-secondary);
+      color: var(--color-primary-dark);
+      align-self: flex-start;
+      margin-bottom: 16px;
+    }
+    .btn-primary:hover {
+      background-color: #e6c200;
+    }
+    .profile-card {
+      background-color: var(--color-white);
+      padding: 24px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    .profile-image {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--color-secondary);
+    }
+    .profile-info {
+      flex: 1;
+    }
+    .profile-info h2 {
+      margin: 0 0 8px 0;
+      color: var(--color-primary);
+    }
+    .profile-info p {
+      margin: 4px 0;
+    }
+    .content-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 2px solid var(--color-secondary);
+      margin-bottom: 16px;
+    }
+    .content-tab {
+      background: none;
+      border: none;
+      padding: 10px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+      color: var(--color-primary);
+      transition: background-color var(--transition);
+    }
+    .content-tab.active, .content-tab:hover {
+      background-color: var(--color-secondary);
+      color: var(--color-primary-dark);
+    }
+    .tab-content {
+      background-color: var(--color-white);
+      padding: 24px;
+      border-radius: 0 0 var(--border-radius) var(--border-radius);
+      box-shadow: var(--box-shadow);
+      min-height: 200px;
+      overflow-y: auto;
+    }
+    .section-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+    .section-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    table th, table td {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    .comm-log {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 12px;
+      border-radius: var(--border-radius);
+      background-color: #f9f9f9;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Student Detail</h1>
+    <div class="header-right">
+      <span>Admin User</span>
+      <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <nav class="sidebar" aria-label="Admin navigation">
+      <div class="sidebar-section">
+        <h3>People</h3>
+        <a href="admin-md-collaborators.html" class="nav-item">👨‍⚕️ MD Collaborators</a>
+        <a href="admin-nps.html" class="nav-item">🩺 NPs / Job Seekers</a>
+        <a href="admin-students.html" class="nav-item active">🎓 Students</a>
+        <a href="admin-program-coordinators.html" class="nav-item">👩‍💼 Program Coordinators</a>
+        <a href="admin-preceptors.html" class="nav-item">👨‍⚕️ Preceptors</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>Services</h3>
+        <a href="admin-rotation-applications.html" class="nav-item">📝 Rotations</a>
+        <a href="admin-job-applications.html" class="nav-item">📄 Job Applications</a>
+        <a href="admin-job-postings.html" class="nav-item">📋 Job Postings</a>
+        <a href="admin-scheduling.html" class="nav-item">📅 Scheduling</a>
+        <a href="admin-billing.html" class="nav-item">💳 Billing</a>
+        <a href="admin-messaging.html" class="nav-item">💬 Messaging</a>
+        <a href="admin-md-collaborations.html" class="nav-item">🤝 MD Collaborations</a>
+        <a href="admin-practice-launchpad.html" class="nav-item">🚀 Practice Launchpad</a>
+        <a href="admin-launchpad-service-packages.html" class="nav-item">📦 Service Packages</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>Organization</h3>
+        <a href="admin-clinics.html" class="nav-item">🏥 Clinics</a>
+        <a href="admin-institutions.html" class="nav-item">🏫 Institutions</a>
+        <a href="admin-programs.html" class="nav-item">📋 Programs</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>System</h3>
+        <a href="admin-dashboard.html" class="nav-item">🏠 Dashboard</a>
+        <a href="admin-reports.html" class="nav-item">📊 Reports</a>
+        <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+      </div>
+    </nav>
+
+    <main class="content" role="main">
+      <button class="back-btn" onclick="window.location.href='admin-students.html'">← Back to List</button>
+      <button id="editToggleBtn" class="btn btn-primary">Edit</button>
+
+      <section class="profile-card" aria-label="Student profile summary">
+        <img src="https://placehold.co/120x120" alt="Student profile picture" class="profile-image" id="studentPhoto"/>
+        <div class="profile-info">
+          <h2 id="studentName">Loading...</h2>
+          <p><strong>Email:</strong> <span id="studentEmail"></span></p>
+          <p><strong>Phone:</strong> <span id="studentPhone"></span></p>
+          <p><strong>Program:</strong> <span id="studentProgram"></span></p>
+          <p><strong>Status:</strong> <span id="studentStatus"></span></p>
+        </div>
+      </section>
+
+      <nav class="content-tabs" role="tablist" aria-label="Student detail sections">
+        <button class="content-tab active" role="tab" aria-selected="true" aria-controls="studentInfo" id="tab-studentInfo" tabindex="0">Student Info</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="education" id="tab-education" tabindex="-1">Education & Training</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="clinicalRotations" id="tab-clinicalRotations" tabindex="-1">Clinical Rotations</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="documents" id="tab-documents" tabindex="-1">Documents</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="communication" id="tab-communication" tabindex="-1">Communication & Actions</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="rotationApplications" id="tab-rotationApplications" tabindex="-1">Rotation Applications</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="evaluations" id="tab-evaluations" tabindex="-1">Evaluations</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="clinicalHours" id="tab-clinicalHours" tabindex="-1">Clinical Hours</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="attendance" id="tab-attendance" tabindex="-1">Attendance</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="licensing" id="tab-licensing" tabindex="-1">Licensing & Certifications</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="financials" id="tab-financials" tabindex="-1">Financials / Billing</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="feedback" id="tab-feedback" tabindex="-1">Feedback / Surveys</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="advisors" id="tab-advisors" tabindex="-1">Advisors / Mentors</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="alerts" id="tab-alerts" tabindex="-1">Alerts / Notifications</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="compliance" id="tab-compliance" tabindex="-1">Compliance / Background Checks</button>
+      </nav>
+
+      <section id="studentInfo" class="tab-content" role="tabpanel" aria-labelledby="tab-studentInfo">
+        <h3>Student Information</h3>
+        <p><strong>Full Name:</strong> <span id="infoName"></span></p>
+        <p><strong>Date of Birth:</strong> <span id="infoDOB"></span></p>
+        <p><strong>Address:</strong> <span id="infoAddress"></span></p>
+        <p><strong>Emergency Contact:</strong> <span id="infoEmergencyContact"></span></p>
+        <p><strong>Institution:</strong> <span id="infoInstitution"></span></p>
+        <p><strong>Institution URL:</strong> <a href="#" id="infoInstitutionURL" target="_blank" rel="noopener noreferrer"></a></p>
+        <p><strong>Location:</strong> <span id="infoLocation"></span></p>
+        <p><strong>Enrollment Date:</strong> <span id="infoEnrollmentDate"></span></p>
+      </section>
+
+      <section id="education" class="tab-content" role="tabpanel" aria-labelledby="tab-education" hidden>
+        <h3>Education & Training</h3>
+        <ul class="section-list" id="educationList"><li>Loading education data...</li></ul>
+      </section>
+
+      <section id="clinicalRotations" class="tab-content" role="tabpanel" aria-labelledby="tab-clinicalRotations" hidden>
+        <h3>Clinical Rotations</h3>
+        <ul class="section-list" id="rotationsList"><li>Loading clinical rotations data...</li></ul>
+      </section>
+
+      <section id="documents" class="tab-content" role="tabpanel" aria-labelledby="tab-documents" hidden>
+        <h3>Documents</h3>
+        <ul class="section-list" id="documentsList"><li>Loading documents...</li></ul>
+      </section>
+
+      <section id="communication" class="tab-content" role="tabpanel" aria-labelledby="tab-communication" hidden>
+        <h3>Communication & Actions</h3>
+        <div class="comm-log" tabindex="0" aria-label="Communication history" id="communicationLog">Loading communication history...</div>
+      </section>
+
+      <section id="rotationApplications" class="tab-content" role="tabpanel" aria-labelledby="tab-rotationApplications" hidden>
+        <h3>Rotation Applications</h3>
+        <table>
+          <thead>
+            <tr><th>Rotation</th><th>Status</th><th>Applied On</th></tr>
+          </thead>
+          <tbody id="rotationApplicationsList"><tr><td colspan="3">Loading rotation applications...</td></tr></tbody>
+        </table>
+      </section>
+
+      <section id="evaluations" class="tab-content" role="tabpanel" aria-labelledby="tab-evaluations" hidden>
+        <h3>Evaluations</h3>
+        <ul class="section-list" id="evaluationsList"><li>Loading evaluations...</li></ul>
+      </section>
+
+      <section id="clinicalHours" class="tab-content" role="tabpanel" aria-labelledby="tab-clinicalHours" hidden>
+        <h3>Clinical Hours</h3>
+        <ul class="section-list" id="clinicalHoursList"><li>Loading clinical hours...</li></ul>
+      </section>
+
+      <section id="attendance" class="tab-content" role="tabpanel" aria-labelledby="tab-attendance" hidden>
+        <h3>Attendance</h3>
+        <ul class="section-list" id="attendanceList"><li>Loading attendance records...</li></ul>
+      </section>
+
+      <section id="licensing" class="tab-content" role="tabpanel" aria-labelledby="tab-licensing" hidden>
+        <h3>Licensing & Certifications</h3>
+        <ul class="section-list" id="licensingList"><li>Loading licensing and certification data...</li></ul>
+      </section>
+
+      <section id="financials" class="tab-content" role="tabpanel" aria-labelledby="tab-financials" hidden>
+        <h3>Financials / Billing</h3>
+        <ul class="section-list" id="financialsList"><li>Loading financial and billing data...</li></ul>
+      </section>
+
+      <section id="feedback" class="tab-content" role="tabpanel" aria-labelledby="tab-feedback" hidden>
+        <h3>Feedback / Surveys</h3>
+        <ul class="section-list" id="feedbackList"><li>Loading feedback and survey data...</li></ul>
+      </section>
+
+      <section id="advisors" class="tab-content" role="tabpanel" aria-labelledby="tab-advisors" hidden>
+        <h3>Advisors / Mentors</h3>
+        <ul class="section-list" id="advisorsList"><li>Loading advisors and mentors data...</li></ul>
+      </section>
+
+      <section id="alerts" class="tab-content" role="tabpanel" aria-labelledby="tab-alerts" hidden>
+        <h3>Alerts / Notifications</h3>
+        <ul class="section-list" id="alertsList"><li>Loading alerts and notifications...</li></ul>
+      </section>
+
+      <section id="compliance" class="tab-content" role="tabpanel" aria-labelledby="tab-compliance" hidden>
+        <h3>Compliance / Background Checks</h3>
+        <ul class="section-list" id="complianceList"><li>Loading compliance and background check data...</li></ul>
+      </section>
+    </main>
+  </div>
+
+  <script type="module">
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    import { db } from './firebase-init.js';
+
+    const contentTabs = document.querySelectorAll('.content-tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    contentTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        activateContentTab(tab);
+      });
+      tab.addEventListener('keydown', e => {
+        let index = Array.from(contentTabs).indexOf(e.target);
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          const nextIndex = (index + 1) % contentTabs.length;
+          activateContentTab(contentTabs[nextIndex]);
+          contentTabs[nextIndex].focus();
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          const prevIndex = (index - 1 + contentTabs.length) % contentTabs.length;
+          activateContentTab(contentTabs[prevIndex]);
+          contentTabs[prevIndex].focus();
+        }
+      });
+    });
+
+    function activateContentTab(selectedTab) {
+      contentTabs.forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+        t.setAttribute('tabindex', '-1');
+      });
+      tabContents.forEach(tc => tc.hidden = true);
+
+      selectedTab.classList.add('active');
+      selectedTab.setAttribute('aria-selected', 'true');
+      selectedTab.setAttribute('tabindex', '0');
+      document.getElementById(selectedTab.getAttribute('aria-controls')).hidden = false;
+    }
+
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    async function loadStudentDetails() {
+      const studentId = getQueryParam('id');
+      if (!studentId) {
+        alert('No Student ID specified.');
+        window.location.href = 'admin-students.html';
+        return;
+      }
+      try {
+        const docRef = doc(db, 'students', studentId);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) {
+          alert('Student not found.');
+          window.location.href = 'admin-students.html';
+          return;
+        }
+        const data = docSnap.data();
+
+        // Helper for name
+        const fullName = (data.firstName && data.lastName)
+          ? `${data.firstName} ${data.lastName}`
+          : (data.FullName || 'N/A');
+
+        // Profile card
+        document.getElementById('studentName').textContent = fullName;
+        document.getElementById('studentEmail').textContent = data.email || data.Email || 'N/A';
+        document.getElementById('studentPhone').textContent = data.phone || data.Phone || 'N/A';
+        document.getElementById('studentStatus').textContent = data.status || data.Status || 'N/A';
+
+        // Profile photo (optional)
+        const photoURL = data.photoURL || data.PhotoURL;
+        if (photoURL) {
+          document.getElementById('studentPhoto').src = photoURL;
+        }
+
+        // Fetch Institution document if institutionId/InstitutionId exists
+        let institutionName = 'N/A';
+        let institutionURL = '#';
+        const institutionId = data.institutionId || data.InstitutionId;
+        if (institutionId) {
+          const instRef = doc(db, 'institutions', institutionId);
+          const instSnap = await getDoc(instRef);
+          if (instSnap.exists()) {
+            const instData = instSnap.data();
+            institutionName = instData.Name || instData.name || 'N/A';
+            institutionURL = instData.URL || instData.url || '#';
+          }
+        }
+
+        // Fetch Program document if program/programId/ProgramId exists
+        let programName = 'N/A';
+        const programId = data.program || data.programId || data.ProgramId;
+        if (programId) {
+          const progRef = doc(db, 'programs', programId);
+          const progSnap = await getDoc(progRef);
+          if (progSnap.exists()) {
+            const progData = progSnap.data();
+            programName = progData.Name || progData.name || 'N/A';
+          }
+        }
+
+        // Set Institution and Program in profile card
+        document.getElementById('studentProgram').textContent = programName;
+
+        // Student Info tab
+        document.getElementById('infoName').textContent = fullName;
+        document.getElementById('infoDOB').textContent = data.dob || data.DOB || 'N/A';
+        document.getElementById('infoAddress').textContent = data.address || data.Address || 'N/A';
+        document.getElementById('infoEmergencyContact').textContent = data.emergencyContact || data.EmergencyContact || 'N/A';
+        document.getElementById('infoInstitution').textContent = institutionName;
+
+        const instUrlEl = document.getElementById('infoInstitutionURL');
+        if (institutionURL && institutionURL !== '#') {
+          instUrlEl.href = institutionURL;
+          instUrlEl.textContent = institutionURL;
+        } else {
+          instUrlEl.href = '#';
+          instUrlEl.textContent = 'N/A';
+        }
+
+        document.getElementById('infoLocation').textContent = data.location || data.Location || 'N/A';
+        document.getElementById('infoEnrollmentDate').textContent = data.enrollmentDate || data.EnrollmentDate || 'N/A';
+
+        // Education & Training
+        const educationList = document.getElementById('educationList');
+        educationList.innerHTML = '';
+        (data.education || data.Education || []).forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.degree || item.Degree || ''} - ${item.institution || item.Institution || ''} (${item.year || item.Year || ''})`;
+          educationList.appendChild(li);
+        });
+        if ((data.education || data.Education || []).length === 0) {
+          educationList.innerHTML = '<li>No education records.</li>';
+        }
+
+        // Clinical Rotations
+        const rotationsList = document.getElementById('rotationsList');
+        rotationsList.innerHTML = '';
+        (data.clinicalRotations || data.ClinicalRotations || []).forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.name || item.Name || ''} (${item.startDate || item.StartDate || ''} - ${item.endDate || item.EndDate || ''})`;
+          rotationsList.appendChild(li);
+        });
+        if ((data.clinicalRotations || data.ClinicalRotations || []).length === 0) {
+          rotationsList.innerHTML = '<li>No clinical rotations records.</li>';
+        }
+
+        // Documents
+        const documentsList = document.getElementById('documentsList');
+        documentsList.innerHTML = '';
+        (data.documents || data.Documents || []).forEach(item => {
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = item.url || item.URL || '#';
+          a.textContent = item.name || item.Name || 'Document';
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          li.appendChild(a);
+          documentsList.appendChild(li);
+        });
+        if ((data.documents || data.Documents || []).length === 0) {
+          documentsList.innerHTML = '<li>No documents uploaded.</li>';
+        }
+
+        // Communication & Actions
+        const communicationLog = document.getElementById('communicationLog');
+        communicationLog.textContent = '';
+        (data.communication || data.Communication || []).forEach(item => {
+          communicationLog.textContent += `[${item.date || item.Date || 'N/A'}] ${item.message || item.Message || ''}\n\n`;
+        });
+        if ((data.communication || data.Communication || []).length === 0) {
+          communicationLog.textContent = 'No communication history.';
+        }
+
+        // Rotation Applications
+        const rotationApplicationsList = document.getElementById('rotationApplicationsList');
+        rotationApplicationsList.innerHTML = '';
+        (data.rotationApplications || data.RotationApplications || []).forEach(app => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${app.rotationName || app.RotationName || 'N/A'}</td>
+            <td>${app.status || app.Status || 'N/A'}</td>
+            <td>${app.appliedOn || app.AppliedOn || 'N/A'}</td>
+          `;
+          rotationApplicationsList.appendChild(tr);
+        });
+        if ((data.rotationApplications || data.RotationApplications || []).length === 0) {
+          rotationApplicationsList.innerHTML = '<tr><td colspan="3">No rotation applications.</td></tr>';
+        }
+
+        // Evaluations
+        const evaluationsList = document.getElementById('evaluationsList');
+        evaluationsList.innerHTML = '';
+        (data.evaluations || data.Evaluations || []).forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.date || item.Date || ''}: ${item.comments || item.Comments || 'No comments'}`;
+          evaluationsList.appendChild(li);
+        });
+        if ((data.evaluations || data.Evaluations || []).length === 0) {
+          evaluationsList.innerHTML = '<li>No evaluations recorded.</li>';
+        }
+
+        // Clinical Hours
+        const clinicalHoursList = document.getElementById('clinicalHoursList');
+        clinicalHoursList.innerHTML = '';
+        (data.clinicalHours || data.ClinicalHours || []).forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.date || item.Date || ''}: ${item.hours || item.Hours || 0} hours`;
+          clinicalHoursList.appendChild(li);
+        });
+        if ((data.clinicalHours || data.ClinicalHours || []).length === 0) {
+          clinicalHoursList.innerHTML = '<li>No clinical hours recorded.</li>';
+        }
+
+        // Attendance
+        const attendanceList = document.getElementById('attendanceList');
+        attendanceList.innerHTML = '';
+        (data.attendance || data.Attendance || []).forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.date || item.Date || ''}: ${item.status || item.Status || 'Unknown'}`;
+          attendanceList.appendChild(li);
+        });
+        if ((data.attendance || data.Attendance || []).length === 0) {
+          attendanceList.innerHTML = '<li>No attendance records.</li>';
+        }
+
+        // Licensing & Certifications
+        const licensingList = document.getElementById('licensingList');
+        licensingList.innerHTML = '';
+        (data.licensing || data.Licensing || []).forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.type || item.Type || 'License'} - ${item.number || item.Number || ''} (Expires: ${item.expiryDate || item.ExpiryDate || 'N/A'})`;
+          licensingList.appendChild(li);
+        });
+        if ((data.licensing || data.Licensing || []).length === 0) {
+          licensingList.innerHTML = '<li>No licenses or certifications recorded.</li>';
+        }
+
+        // Financials / Billing
+        const financialsList = document.getElementById('financialsList');
+        financialsList.innerHTML = '';
+        (data.financials || data.Financials || []).forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.description || item.Description || 'Charge'}: $${item.amount || item.Amount || '0.00'} (Status: ${item.status || item.Status || 'Unknown'})`;
+          financialsList.appendChild(li);
+        });
+        if ((data.financials || data.Financials || []).length === 0) {
+          financialsList.innerHTML = '<li>No financial or billing records.</li>';
+        }
+
+        // Feedback / Surveys
+        const feedbackList = document.getElementById('feedbackList');
+        feedbackList.innerHTML = '';
+        (data.feedback || data.Feedback || []).forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.date || item.Date || ''}: ${item.comments || item.Comments || 'No comments'}`;
+          feedbackList.appendChild(li);
+        });
+        if ((data.feedback || data.Feedback || []).length === 0) {
+          feedbackList.innerHTML = '<li>No feedback or surveys recorded.</li>';
+        }
+
+        // Advisors / Mentors
+        const advisorsList = document.getElementById('advisorsList');
+        advisorsList.innerHTML = '';
+        (data.advisors || data.Advisors || []).forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.name || item.Name || 'Advisor'} - ${item.email || item.Email || ''} - ${item.phone || item.Phone || ''}`;
+          advisorsList.appendChild(li);
+        });
+        if ((data.advisors || data.Advisors || []).length === 0) {
+          advisorsList.innerHTML = '<li>No advisors or mentors assigned.</li>';
+        }
+
+        // Alerts / Notifications
+        const alertsList = document.getElementById('alertsList');
+        alertsList.innerHTML = '';
+        (data.alerts || data.Alerts || []).forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.date || item.Date || ''}: ${item.message || item.Message || 'No message'}`;
+          alertsList.appendChild(li);
+        });
+        if ((data.alerts || data.Alerts || []).length === 0) {
+          alertsList.innerHTML = '<li>No alerts or notifications.</li>';
+        }
+
+        // Compliance / Background Checks
+        const complianceList = document.getElementById('complianceList');
+        complianceList.innerHTML = '';
+        (data.compliance || data.Compliance || []).forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.type || item.Type || 'Check'} - Status: ${item.status || item.Status || 'Unknown'} (Date: ${item.date || item.Date || 'N/A'})`;
+          complianceList.appendChild(li);
+        });
+        if ((data.compliance || data.Compliance || []).length === 0) {
+          complianceList.innerHTML = '<li>No compliance or background check records.</li>';
+        }
+
+      } catch (error) {
+        console.error('Error loading student:', error);
+        alert('Failed to load student data.');
+        window.location.href = 'admin-students.html';
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadStudentDetails();
+    });
+
+    // Edit button redirects to edit page
+    document.getElementById('editToggleBtn').addEventListener('click', () => {
+      const studentId = new URLSearchParams(window.location.search).get('id');
+      if (studentId) {
+        window.location.href = `admin-student-edit.html?id=${studentId}`;
+      }
+    });
+  </script>
+</body>
+</html>

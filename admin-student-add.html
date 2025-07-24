@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Add Student - NP Clinical Hub Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #ECECEC;
+      --color-white: #FFFF;
+      --color-text: #2D2D2D;
+      --border-radius: 8px;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: 0.3s ease;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--color-bg);
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      margin: 0;
+    }
+    .header-right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .logout-btn {
+      background: transparent;
+      color: var(--color-white);
+      border: 1px solid var(--color-white);
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background var(--transition);
+      user-select: none;
+    }
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    .main {
+      flex: 1 1 auto;
+      display: flex;
+      background: var(--color-bg);
+      min-height: 0;
+      height: calc(100vh - 64px);
+      overflow: hidden;
+    }
+    nav.sidebar {
+      width: 260px;
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 24px 0;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      box-sizing: border-box;
+      min-height: 0;
+    }
+    .sidebar-section {
+      margin-bottom: 24px;
+      flex-shrink: 0;
+    }
+    .sidebar-section h3 {
+      padding-left: 24px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      user-select: none;
+    }
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      color: var(--color-white);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background var(--transition), border-color var(--transition);
+      cursor: pointer;
+      user-select: none;
+    }
+    .nav-item:hover,
+    .nav-item.active {
+      background: var(--color-primary);
+      border-left-color: var(--color-secondary);
+    }
+    main.content {
+      flex-grow: 1;
+      padding: 32px 4vw 32px 4vw;
+      overflow-y: auto;
+      background: var(--color-white);
+      border-radius: 0;
+      box-shadow: none;
+      box-sizing: border-box;
+      min-width: 0;
+      width: 100%;
+      max-width: 100vw;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    h2 {
+      color: var(--color-primary);
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .back-btn {
+      background-color: #6c757d;
+      color: var(--color-white);
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background-color var(--transition);
+    }
+    .back-btn:hover {
+      background-color: #5a6268;
+    }
+    .form-section {
+      background: var(--color-white);
+      padding: 2vw 2vw 1vw 2vw;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 24px;
+      width: 100%;
+      min-width: 0;
+    }
+    .form-section h3 {
+      color: var(--color-primary);
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--color-secondary);
+      padding-bottom: 8px;
+    }
+    .form-row {
+      display: flex;
+      gap: 2vw;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .form-group {
+      flex: 1 1 220px;
+      min-width: 220px;
+      max-width: 100%;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      transition: border-color var(--transition);
+      box-sizing: border-box;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--color-primary);
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .required {
+      color: #dc3545;
+    }
+    .form-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: flex-end;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color var(--transition);
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+    .btn-primary {
+      background-color: var(--color-primary);
+      color: var(--color-white);
+    }
+    .btn-primary:hover {
+      background-color: var(--color-primary-dark);
+    }
+    .btn-secondary {
+      background-color: #6c757d;
+      color: var(--color-white);
+    }
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+    .alert {
+      padding: 12px 16px;
+      border-radius: var(--border-radius);
+      margin-bottom: 16px;
+      display: none;
+    }
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    @media (max-width: 900px) {
+      .main {
+        flex-direction: column;
+      }
+      nav.sidebar {
+        width: 100%;
+        min-width: 0;
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 12px 0;
+      }
+      main.content {
+        padding: 16px 2vw 16px 2vw;
+      }
+      .form-section {
+        padding: 4vw 2vw 2vw 2vw;
+      }
+      .form-row {
+        gap: 12px;
+      }
+    }
+    @media (max-width: 600px) {
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+      .form-group {
+        min-width: 0;
+      }
+      main.content {
+        padding: 8px 2vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Add Student</h1>
+    <div class="header-right">
+      <span>Admin User</span>
+      <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <nav class="sidebar" aria-label="Admin navigation">
+      <div class="sidebar-section">
+        <h3>People</h3>
+        <a href="admin-md-collaborators.html" class="nav-item">👨‍⚕️ MD Collaborators</a>
+        <a href="admin-nps.html" class="nav-item">🩺 NPs / Job Seekers</a>
+        <a href="admin-students.html" class="nav-item active">🎓 Students</a>
+        <a href="admin-program-coordinators.html" class="nav-item">👩‍💼 Program Coordinators</a>
+        <a href="admin-preceptors.html" class="nav-item">👨‍⚕️ Preceptors</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>Services</h3>
+        <a href="admin-rotation-applications.html" class="nav-item">📝 Rotations</a>
+        <a href="admin-job-applications.html" class="nav-item">📄 Job Applications</a>
+        <a href="admin-job-postings.html" class="nav-item">📋 Job Postings</a>
+        <a href="admin-scheduling.html" class="nav-item">📅 Scheduling</a>
+        <a href="admin-billing.html" class="nav-item">💳 Billing</a>
+        <a href="admin-messaging.html" class="nav-item">💬 Messaging</a>
+        <a href="admin-md-collaborations.html" class="nav-item">🤝 MD Collaborations</a>
+        <a href="admin-practice-launchpad.html" class="nav-item">🚀 Practice Launchpad</a>
+        <a href="admin-launchpad-service-packages.html" class="nav-item">📦 Service Packages</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>Organization</h3>
+        <a href="admin-clinics.html" class="nav-item">🏥 Clinics</a>
+        <a href="admin-institutions.html" class="nav-item">🏫 Institutions</a>
+        <a href="admin-programs.html" class="nav-item">📋 Programs</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>System</h3>
+        <a href="admin-dashboard.html" class="nav-item">🏠 Dashboard</a>
+        <a href="admin-reports.html" class="nav-item">📊 Reports</a>
+        <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+      </div>
+    </nav>
+
+    <main class="content" role="main">
+      <h2>
+        Add New Student
+        <a href="admin-students.html" class="back-btn">← Back to Students</a>
+      </h2>
+
+      <div id="alertContainer"></div>
+
+      <form id="addStudentForm">
+        <div class="form-section">
+          <h3>Personal Information</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name <span class="required">*</span></label>
+              <input type="text" id="firstName" name="firstName" required>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name <span class="required">*</span></label>
+              <input type="text" id="lastName" name="lastName" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Email <span class="required">*</span></label>
+              <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone</label>
+              <input type="tel" id="phone" name="phone">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Academic Information</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="institutionId">Institution <span class="required">*</span></label>
+              <select id="institutionId" name="institutionId" required>
+                <option value="">Loading institutions...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="programId">Program</label>
+              <select id="programId" name="programId" disabled>
+                <option value="">Select Institution First</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="studentId">Student ID</label>
+              <input type="text" id="studentId" name="studentId">
+            </div>
+            <div class="form-group">
+              <label for="status">Status</label>
+              <select id="status" name="status">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="pending">Pending</option>
+                <option value="graduated">Graduated</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Additional Information</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="graduationDate">Expected Graduation Date</label>
+              <input type="date" id="graduationDate" name="graduationDate">
+            </div>
+            <div class="form-group">
+              <label for="gpa">GPA</label>
+              <input type="number" id="gpa" name="gpa" step="0.01" min="0" max="4.0">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="adminNotes">Admin Notes</label>
+              <textarea id="adminNotes" name="adminNotes" placeholder="Internal notes for admin use only"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <a href="admin-students.html" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-primary">Add Student</button>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <script type="module">
+    import { collection, addDoc, getDocs, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    import { db } from './firebase-init.js';
+
+    const form = document.getElementById('addStudentForm');
+    const institutionSelect = document.getElementById('institutionId');
+    const programSelect = document.getElementById('programId');
+    const alertContainer = document.getElementById('alertContainer');
+
+    let institutions = [];
+    let programs = [];
+
+    function showAlert(message, type = 'success') {
+      alertContainer.innerHTML = `
+        <div class="alert alert-${type}" style="display: block;">
+          ${message}
+        </div>
+      `;
+      setTimeout(() => {
+        alertContainer.innerHTML = '';
+      }, 5000);
+    }
+
+    async function loadInstitutions() {
+      try {
+        console.log('Loading institutions...');
+        const snapshot = await getDocs(collection(db, 'institutions'));
+        institutions = [];
+        institutionSelect.innerHTML = '<option value="">Select Institution</option>';
+        
+        if (snapshot.empty) {
+          console.log('No institutions found in Firestore');
+          institutionSelect.innerHTML = '<option value="">No institutions available</option>';
+          return;
+        }
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          console.log('Institution data:', data);
+          
+          // Try multiple field name variations
+          const institutionName = data.name || data.Name || data.institutionName || data.InstitutionName || `Institution ${doc.id}`;
+          
+          institutions.push({ id: doc.id, name: institutionName });
+          const option = document.createElement('option');
+          option.value = doc.id;
+          option.textContent = institutionName;
+          institutionSelect.appendChild(option);
+        });
+        
+        console.log('Loaded institutions:', institutions);
+      } catch (error) {
+        console.error('Error loading institutions:', error);
+        institutionSelect.innerHTML = '<option value="">Failed to load institutions</option>';
+        showAlert('Failed to load institutions: ' + error.message, 'error');
+      }
+    }
+
+    async function loadPrograms(institutionId) {
+      try {
+        programSelect.innerHTML = '<option value="">Select Program</option>';
+        programSelect.disabled = true;
+        programs = [];
+
+        if (!institutionId) return;
+
+        console.log('Loading programs for institution:', institutionId);
+        
+        // Try both field name variations for institutionId
+        const q1 = query(collection(db, 'programs'), where('institutionId', '==', institutionId));
+        const q2 = query(collection(db, 'programs'), where('InstitutionId', '==', institutionId));
+        
+        let snapshot = await getDocs(q1);
+        if (snapshot.empty) {
+          snapshot = await getDocs(q2);
+        }
+        
+        if (snapshot.empty) {
+          console.log('No programs found for institution:', institutionId);
+          programSelect.innerHTML = '<option value="">No programs available</option>';
+          programSelect.disabled = false;
+          return;
+        }
+        
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          console.log('Program data:', data);
+          
+          // Try multiple field name variations
+          const programName = data.name || data.Name || data.programName || data.ProgramName || `Program ${doc.id}`;
+          
+          programs.push({ id: doc.id, name: programName });
+          const option = document.createElement('option');
+          option.value = doc.id;
+          option.textContent = programName;
+          programSelect.appendChild(option);
+        });
+        
+        programSelect.disabled = false;
+        console.log('Loaded programs:', programs);
+      } catch (error) {
+        console.error('Error loading programs:', error);
+        programSelect.innerHTML = '<option value="">Failed to load programs</option>';
+        programSelect.disabled = true;
+        showAlert('Failed to load programs: ' + error.message, 'error');
+      }
+    }
+
+    institutionSelect.addEventListener('change', () => {
+      loadPrograms(institutionSelect.value);
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(form);
+      const studentData = {
+        firstName: formData.get('firstName').trim(),
+        lastName: formData.get('lastName').trim(),
+        email: formData.get('email').trim(),
+        phone: formData.get('phone')?.trim() || '',
+        institutionId: formData.get('institutionId'),
+        programId: formData.get('programId') || '',
+        studentId: formData.get('studentId')?.trim() || '',
+        status: formData.get('status') || 'active',
+        graduationDate: formData.get('graduationDate') || '',
+        gpa: formData.get('gpa') ? parseFloat(formData.get('gpa')) : null,
+        adminNotes: formData.get('adminNotes')?.trim() || '',
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+
+      // Add institution and program names for easier display
+      const institution = institutions.find(i => i.id === studentData.institutionId);
+      const program = programs.find(p => p.id === studentData.programId);
+      
+      if (institution) {
+        studentData.school = institution.name;
+      }
+      if (program) {
+        studentData.program = program.name;
+      }
+
+      try {
+        console.log('Saving student data:', studentData);
+        await addDoc(collection(db, 'students'), studentData);
+        showAlert('Student added successfully!', 'success');
+        
+        // Reset form
+        form.reset();
+        programSelect.disabled = true;
+        programSelect.innerHTML = '<option value="">Select Institution First</option>';
+        
+        // Redirect after a short delay
+        setTimeout(() => {
+          window.location.href = 'admin-students.html';
+        }, 2000);
+        
+      } catch (error) {
+        console.error('Error adding student:', error);
+        showAlert('Failed to add student: ' + error.message, 'error');
+      }
+    });
+
+    // Load initial data
+    window.addEventListener('DOMContentLoaded', async () => {
+      await loadInstitutions();
+    });
+  </script>
+</body>
+</html>

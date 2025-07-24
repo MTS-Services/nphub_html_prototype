@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice Details - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; }
+    .header { background: #2d3e50; color: #fff; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 1.5rem; }
+    .header-right { display: flex; gap: 12px; align-items: center; }
+    .revenue-badge { background: #27ae60; padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; font-weight: bold; }
+    .logout-btn { background: transparent; color: #fff; border: 1px solid #fff; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+    .back-btn { background: #95a5a6; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-bottom: 16px; }
+    .main { display: flex; min-height: calc(100vh - 64px); }
+    .sidebar { width: 250px; background: #34495e; color: #fff; padding: 24px 0; }
+    .content { flex: 1; padding: 24px; }
+    .nav-item { display: block; padding: 12px 24px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.3s; color: #fff; text-decoration: none; }
+    .nav-item:hover, .nav-item.active { background: #2c3e50; border-left-color: #3498db; }
+    .card { background: #fff; border-radius: 8px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .card h3 { margin-bottom: 16px; color: #2d3e50; }
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #f8f9fa; font-weight: 600; }
+    .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-right: 8px; }
+    .btn-primary { background: #3498db; color: #fff; }
+    .btn-success { background: #27ae60; color: #fff; }
+    .btn-warning { background: #f39c12; color: #fff; }
+    .btn-danger { background: #e74c3c; color: #fff; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 500; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .status { padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 500; }
+    .status.active { background: #d4edda; color: #155724; }
+    .status.pending { background: #fff3cd; color: #856404; }
+    .status.inactive { background: #f8d7da; color: #721c24; }
+    .status.approved { background: #d1ecf1; color: #0c5460; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: #fff; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .stat-number { font-size: 2rem; font-weight: bold; margin: 8px 0; }
+    .stat-label { color: #666; font-size: 0.9rem; }
+    .revenue { color: #27ae60; }
+    .users { color: #3498db; }
+    .applications { color: #9b59b6; }
+    .sites { color: #e67e22; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .alert { padding: 12px; border-radius: 6px; margin-bottom: 16px; }
+    .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .alert-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+    .alert-danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    @media (max-width: 768px) {
+      .main { flex-direction: column; }
+      .sidebar { width: 100%; }
+      .header { flex-direction: column; gap: 12px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .info-grid { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+  <div class="header">
+  <h1>Invoice Details</h1>
+  <div class="header-right">
+    <div class="revenue-badge">💰 Monthly Revenue: $12,450</div>
+    <span>Admin User</span>
+    <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+  </div>
+</div>
+  <div class="main">
+    <div class="sidebar">
+  <a class="nav-item" href="admin-dashboard.html">📊 Dashboard</a>
+  <a class="nav-item" href="admin-users.html">👥 User Management</a>
+  <a class="nav-item" href="admin-applications.html">📝 Applications</a>
+  <a class="nav-item" href="admin-sites.html">🏥 Clinical Sites</a>
+  <a class="nav-item" href="admin-billing.html">💳 Billing & Revenue</a>
+  <a class="nav-item" href="admin-reports.html">📈 Reports</a>
+  <a class="nav-item" href="admin-settings.html">⚙️ Settings</a>
+</div>
+    <div class="content">
+      <button class="back-btn" onclick="history.back()">← Back</button>
+      
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+          <div>
+            <h3>Invoice #INV-2025-001</h3>
+            <p>Date: July 5, 2025</p>
+          </div>
+          <div>
+            <button class="btn btn-primary" onclick="alert('Invoice downloaded')">📄 Download PDF</button>
+            <button class="btn btn-success" onclick="alert('Invoice sent')">📧 Send Invoice</button>
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <div>
+            <h4>Bill To:</h4>
+            <p><strong>Metro General Hospital</strong><br>
+            123 Medical Center Drive<br>
+            Downtown, CA 90210<br>
+            admin@metro.com</p>
+          </div>
+          <div>
+            <h4>From:</h4>
+            <p><strong>NP Clinical Hub</strong><br>
+            456 Business Ave<br>
+            Tech City, CA 94000<br>
+            billing@npclinicalhub.com</p>
+          </div>
+        </div>
+
+        <table style="margin: 24px 0;">
+          <thead>
+            <tr><th>Description</th><th>Period</th><th>Quantity</th><th>Rate</th><th>Amount</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Enterprise Plan Subscription</td><td>July 2025</td><td>1</td><td>$200.00</td><td>$200.00</td></tr>
+            <tr><td>Additional Student Slots</td><td>July 2025</td><td>12</td><td>$15.00</td><td>$180.00</td></tr>
+            <tr><td>Premium Support</td><td>July 2025</td><td>1</td><td>$50.00</td><td>$50.00</td></tr>
+          </tbody>
+          <tfoot>
+            <tr style="border-top: 2px solid #ddd; font-weight: bold;">
+              <td colspan="4" style="text-align: right;">Total:</td>
+              <td>$430.00</td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <div class="alert alert-success">
+          <strong>Payment Status:</strong> Paid on July 5, 2025 via Stripe
+        </div>
+
+        <div style="margin-top: 24px; padding: 16px; background: #f8f9fa; border-radius: 6px;">
+          <h4>Payment Details</h4>
+          <p><strong>Payment Method:</strong> Credit Card ending in 4242</p>
+          <p><strong>Transaction ID:</strong> txn_1234567890</p>
+          <p><strong>Next Billing Date:</strong> August 5, 2025</p>
+        </div>
+      </div>
+    
+    </div>
+  </div>
+</body>
+</html>

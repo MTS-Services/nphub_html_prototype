@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Preceptor Evaluation - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+    --color-primary: #0A2540;
+    --color-primary-dark: #021426;
+    --color-secondary: #FFD700;
+    --color-success: #27ae60;
+    --color-success-dark: #388e3c;
+    --color-warning: #f39c12;
+    --color-warning-dark: #f57c00;
+    --color-info: #cce5ff;
+    --color-info-dark: #004085;
+    --color-bg: #ECECEC;
+    --color-text: #2D2D2D;
+    --color-muted: #6c757d;
+    --color-muted-light: #888;
+    --color-white: #FFFFFF;
+    --border-radius: 12px;
+    --transition: 0.3s ease;
+    --color-danger: #e74c3c;
+    --color-danger-dark: #c0392b;
+    --box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    --sidebar-width: 250px;
+    }
+
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    }
+
+    body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+    }
+
+    .header {
+    background: var(--color-primary);
+    color: var(--color-white);
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    flex-shrink: 0;
+    user-select: none;
+    }
+
+    .header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    flex-grow: 1;
+    }
+
+    .header-right {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    white-space: nowrap;
+    }
+
+    .upgrade-btn {
+    background: var(--color-danger);
+    color: var(--color-white);
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background-color var(--transition);
+    }
+
+    .upgrade-btn:hover,
+    .upgrade-btn:focus {
+    background: var(--color-danger-dark);
+    outline: none;
+    }
+
+    .logout-btn {
+    background: #dc3545;
+    color: var(--color-white);
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color var(--transition);
+    }
+
+    .logout-btn:hover,
+    .logout-btn:focus {
+    background: #b02a37;
+    outline: none;
+    }
+
+    .main {
+    display: flex;
+    min-height: calc(100vh - 64px);
+    overflow: hidden;
+    }
+
+    .sidebar {
+    width: var(--sidebar-width);
+    background: var(--color-primary-dark);
+    color: var(--color-white);
+    padding: 24px 0;
+    overflow-y: auto;
+    flex-shrink: 0;
+    }
+
+    .nav-item {
+    display: block;
+    padding: 12px 24px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all var(--transition);
+    color: var(--color-white);
+    text-decoration: none;
+    user-select: none;
+    }
+
+    .nav-item:hover,
+    .nav-item:focus,
+    .nav-item.active {
+    background: var(--color-primary);
+    border-left-color: var(--color-secondary);
+    outline: none;
+    }
+
+    .content {
+    flex: 1;
+    padding: 32px 48px;
+    overflow-y: auto;
+    background: var(--color-white);
+    border-radius: var(--border-radius);
+    margin: 24px;
+    box-shadow: var(--box-shadow);
+    min-width: 0;
+    }
+
+    .card {
+    background: var(--color-bg);
+    border-radius: var(--border-radius);
+    padding: 32px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .card h3 {
+    margin-bottom: 24px;
+    color: var(--color-primary-dark);
+    font-weight: 700;
+    font-size: 1.5rem;
+    }
+
+    .rotation-info {
+    background: var(--color-white);
+    border: 2px solid var(--color-primary);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    margin-bottom: 32px;
+    }
+
+    .rotation-info h4 {
+    color: var(--color-primary-dark);
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    }
+
+    .rotation-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    }
+
+    .detail-item {
+    display: flex;
+    flex-direction: column;
+    }
+
+    .detail-label {
+    font-weight: 600;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+    }
+
+    .detail-value {
+    color: var(--color-primary-dark);
+    font-weight: 600;
+    }
+
+    .form-section {
+    margin-bottom: 32px;
+    }
+
+    .form-section h4 {
+    color: var(--color-primary-dark);
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--color-primary);
+    }
+
+    .form-group {
+    margin-bottom: 20px;
+    }
+
+    .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #ddd;
+    border-radius: var(--border-radius);
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: all var(--transition);
+    background: var(--color-white);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+    border-color: var(--color-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.1);
+    }
+
+    .form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+    }
+
+    .rating-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    }
+
+    .rating-item {
+    background: var(--color-white);
+    border: 2px solid #e0e6ed;
+    border-radius: var(--border-radius);
+    padding: 16px;
+    }
+
+    .rating-item label {
+    margin-bottom: 12px;
+    }
+
+    .star-rating {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+    }
+
+    .star {
+    font-size: 1.5rem;
+    color: #ddd;
+    cursor: pointer;
+    transition: color var(--transition);
+    }
+
+    .star:hover,
+    .star.active {
+    color: var(--color-secondary);
+    }
+
+    .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all var(--transition);
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    }
+
+    .btn-primary {
+    background: var(--color-primary);
+    color: var(--color-white);
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus {
+    background: var(--color-primary-dark);
+    outline: none;
+    transform: translateY(-1px);
+    }
+
+    .btn-success {
+    background: var(--color-success);
+    color: var(--color-white);
+    }
+
+    .btn-success:hover,
+    .btn-success:focus {
+    background: var(--color-success-dark);
+    outline: none;
+    transform: translateY(-1px);
+    }
+
+    .form-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 2px solid #eee;
+    }
+
+    .required {
+    color: var(--color-danger);
+    }
+
+    @media (max-width: 1024px) {
+    .content {
+    padding: 24px;
+    margin: 16px;
+    }
+    .card {
+    padding: 24px;
+    }
+    .rotation-details {
+    grid-template-columns: 1fr;
+    }
+    }
+
+    @media (max-width: 768px) {
+    .main {
+    flex-direction: column;
+    }
+    .sidebar {
+    width: 100%;
+    }
+    .header {
+    flex-direction: column;
+    gap: 12px;
+    }
+    .rating-group {
+    grid-template-columns: 1fr;
+    }
+    .form-actions {
+    flex-direction: column;
+    }
+    .btn {
+    width: 100%;
+    }
+    }
+
+    @media (max-width: 600px) {
+    .sidebar {
+    width: 220px;
+    }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Preceptor Evaluation</h1>
+    <div class="header-right">
+    <span>Welcome, Taylor Jones</span>
+    <button class="upgrade-btn" onclick="window.location.href='student-upgrade.html'">Upgrade to Pro</button>
+    <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="sidebar">
+    <a class="nav-item" href="student-dashboard.html">📊 Overview</a>
+    <a class="nav-item" href="student-rotations.html">🏥 My Rotations</a>
+    <a class="nav-item" href="student-log-hours.html">⏰ Log Hours</a>
+    <a class="nav-item" href="student-applications.html">📝 Applications</a>
+    <a class="nav-item active" href="student-evaluations.html">⭐ Evaluations</a>
+    <a class="nav-item" href="student-payment-history.html">💳 Payment History</a>
+    <a class="nav-item" href="student-profile.html">👤 Profile</a>
+    <a class="nav-item" href="student-support.html">🆘 Support</a>
+    <a class="nav-item" href="student-job-search.html">🔍 Job Search & Apply</a>
+    </div>
+    <div class="content">
+    <div class="card">
+    <h3>Preceptor Evaluation Form</h3>
+    
+    <div class="rotation-info">
+      <h4>📋 Rotation Information</h4>
+      <div class="rotation-details">
+        <div class="detail-item">
+          <span class="detail-label">Preceptor</span>
+          <span class="detail-value">Dr. Sarah Johnson, MD</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Clinical Site</span>
+          <span class="detail-value">Sunrise Family Clinic</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Specialty</span>
+          <span class="detail-value">Family Practice</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Rotation Period</span>
+          <span class="detail-value">June 1 - July 15, 2025</span>
+        </div>
+      </div>
+    </div>
+    
+    <form onsubmit="submitEvaluation(event)">
+    
+    <div class="form-section">
+      <h4>⭐ Overall Ratings</h4>
+      <div class="rating-group">
+        <div class="rating-item">
+          <label>Teaching Effectiveness <span class="required">*</span></label>
+          <div class="star-rating" data-rating="teaching">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+          </div>
+        </div>
+        
+        <div class="rating-item">
+          <label>Clinical Knowledge <span class="required">*</span></label>
+          <div class="star-rating" data-rating="knowledge">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+          </div>
+        </div>
+        
+        <div class="rating-item">
+          <label>Availability & Support <span class="required">*</span></label>
+          <div class="star-rating" data-rating="support">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+          </div>
+        </div>
+        
+        <div class="rating-item">
+          <label>Overall Experience <span class="required">*</span></label>
+          <div class="star-rating" data-rating="overall">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-section">
+      <h4>💭 Detailed Feedback</h4>
+      
+      <div class="form-group">
+        <label>What did you find most valuable about this rotation? <span class="required">*</span></label>
+        <textarea rows="3" placeholder="Describe the most valuable aspects of your learning experience..." required></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label>Areas for improvement or suggestions</label>
+        <textarea rows="3" placeholder="Any suggestions for improving the rotation experience..."></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label>Would you recommend this preceptor to other students?</label>
+        <select required>
+          <option value="">Select an option...</option>
+          <option value="highly-recommend">Highly Recommend</option>
+          <option value="recommend">Recommend</option>
+          <option value="neutral">Neutral</option>
+          <option value="not-recommend">Would Not Recommend</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Additional Comments</label>
+        <textarea rows="4" placeholder="Any additional feedback or comments..."></textarea>
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <button type="submit" class="btn btn-success">Submit Evaluation</button>
+      <a href="student-evaluations.html" class="btn btn-primary">Cancel</a>
+    </div>
+    
+    </form>
+    </div>
+    </div>
+  </div>
+  <script>
+    // Star rating functionality
+    document.querySelectorAll('.star-rating').forEach(rating => {
+      const stars = rating.querySelectorAll('.star');
+      let currentRating = 0;
+      
+      stars.forEach((star, index) => {
+        star.addEventListener('click', () => {
+          currentRating = index + 1;
+          updateStars(rating, currentRating);
+          rating.setAttribute('data-value', currentRating);
+        });
+        
+        star.addEventListener('mouseover', () => {
+          updateStars(rating, index + 1);
+        });
+      });
+      
+      rating.addEventListener('mouseleave', () => {
+        updateStars(rating, currentRating);
+      });
+    });
+    
+    function updateStars(ratingElement, rating) {
+      const stars = ratingElement.querySelectorAll('.star');
+      stars.forEach((star, index) => {
+        if (index < rating) {
+          star.classList.add('active');
+        } else {
+          star.classList.remove('active');
+        }
+      });
+    }
+    
+    function submitEvaluation(event) {
+      event.preventDefault();
+      
+      // Validate star ratings
+      const ratings = document.querySelectorAll('.star-rating');
+      let allRated = true;
+      
+      ratings.forEach(rating => {
+        if (!rating.getAttribute('data-value')) {
+          allRated = false;
+        }
+      });
+      
+      if (!allRated) {
+        alert('Please provide ratings for all required categories.');
+        return;
+      }
+      
+      alert('Evaluation submitted successfully! Thank you for your feedback.');
+      window.location.href = 'student-evaluations.html';
+    }
+  </script>
+</body>
+</html>

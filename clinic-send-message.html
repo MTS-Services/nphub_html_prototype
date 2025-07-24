@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Send Message - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; margin: 0; }
+    .header { background: #2d3e50; color: #fff; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 1.5rem; }
+    .header-right { display: flex; gap: 12px; align-items: center; }
+    .logout-btn { background: transparent; color: #fff; border: 1px solid #fff; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+    .main { display: flex; min-height: calc(100vh - 64px); }
+    .sidebar { width: 250px; background: #34495e; color: #fff; padding: 24px 0; }
+    .nav-item { display: block; padding: 12px 24px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.3s; color: #fff; text-decoration: none; }
+    .nav-item:hover, .nav-item.active { background: #2c3e50; border-left-color: #3498db; }
+    .content { flex: 1; padding: 24px; }
+    .back-btn { background: #95a5a6; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-bottom: 16px; }
+    .card { background: #fff; border-radius: 10px; padding: 32px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); max-width: 500px; margin-left: auto; margin-right: auto; }
+    .card h3 { margin-bottom: 18px; color: #2d3e50; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; margin-bottom: 7px; font-weight: 500; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1.5px solid #ddd; border-radius: 6px; font-size: 1rem; }
+    .form-group input[type="file"] { padding: 6px; }
+    .form-group .help { color: #888; font-size: 0.92rem; margin-top: 2px; }
+    .recipient-select { width: 100%; padding: 12px; border: 1.5px solid #ddd; border-radius: 6px; font-size: 1rem; }
+    .btn { padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; margin-right: 8px; font-weight: 600; }
+    .btn-success { background: #27ae60; color: #fff; }
+    .btn-warning { background: #f39c12; color: #fff; }
+    .btn-primary { background: #3498db; color: #fff; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .char-counter { float: right; font-size: 0.92rem; color: #888; }
+    .success-message { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 6px; padding: 14px; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+    .success-message svg { color: #27ae60; }
+    .error-message { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 6px; padding: 14px; margin-bottom: 18px; }
+    .template-select { margin-bottom: 12px; }
+    @media (max-width: 600px) {
+      .card { padding: 16px; }
+      .sidebar { width: 100%; }
+      .main { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Send Message</h1>
+    <div class="header-right">
+      <span>Clinic Admin</span>
+      <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="sidebar">
+      <a class="nav-item" href="clinic-dashboard.html">🏠 Dashboard</a>
+      <a class="nav-item" href="clinic-applications.html">📝 Applications</a>
+      <a class="nav-item" href="clinic-students.html">👩‍🎓 Students</a>
+      <a class="nav-item" href="clinic-preceptors.html">👨‍⚕️ Preceptors</a>
+      <a class="nav-item" href="clinic-messages.html">💬 Messages</a>
+      <a class="nav-item" href="clinic-schedule.html">📅 Schedule</a>
+      <a class="nav-item" href="clinic-billing.html">💳 Billing</a>
+      <a class="nav-item" href="clinic-reports.html">📈 Reports</a>
+      <a class="nav-item" href="clinic-settings.html">⚙️ Settings</a>
+      <a class="nav-item" href="clinic-job-postings.html">📋 Job Postings</a>
+    </div>
+    <div class="content">
+      <button class="back-btn" onclick="history.back()">← Back</button>
+      <div class="card">
+        <h3>Send Message</h3>
+        <div id="feedback"></div>
+        <form id="messageForm" autocomplete="off">
+          <div class="form-group">
+            <label for="recipients">To <span style="color:#e74c3c">*</span></label>
+            <select id="recipients" class="recipient-select" multiple required>
+              <option value="mike">Mike Wilson (Student)</option>
+              <option value="lisa">Lisa Chen (Student)</option>
+              <option value="emily">Emily Smith (Student)</option>
+              <option value="drjohnson">Dr. Sarah Johnson (Preceptor)</option>
+              <option value="admin">Clinic Admin</option>
+            </select>
+            <div class="help">Hold Ctrl (Windows) or Cmd (Mac) to select multiple recipients.</div>
+          </div>
+          <div class="form-group template-select">
+            <label for="template">Message Template</label>
+            <select id="template">
+              <option value="">-- Select a template --</option>
+              <option value="welcome">Welcome Message</option>
+              <option value="reminder">Reminder</option>
+              <option value="docrequest">Document Request</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="subject">Subject <span style="color:#e74c3c">*</span></label>
+            <input type="text" id="subject" required autocomplete="off" placeholder="Enter subject">
+          </div>
+          <div class="form-group">
+            <label for="message">Message <span style="color:#e74c3c">*</span></label>
+            <span class="char-counter" id="charCounter">0/500</span>
+            <textarea id="message" rows="4" maxlength="500" required placeholder="Type your message..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="attachment">Attachment</label>
+            <input type="file" id="attachment" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+            <div class="help">Optional. Max size: 5MB. Allowed: PDF, JPG, PNG, DOC.</div>
+          </div>
+          <button type="submit" class="btn btn-success">Send</button>
+          <button type="button" class="btn btn-warning" onclick="window.location.href='clinic-messages.html'">Cancel</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Character counter
+    const messageInput = document.getElementById('message');
+    const charCounter = document.getElementById('charCounter');
+    messageInput.addEventListener('input', function() {
+      charCounter.textContent = `${this.value.length}/500`;
+    });
+
+    // Message templates
+    const templateSelect = document.getElementById('template');
+    templateSelect.addEventListener('change', function() {
+      const message = document.getElementById('message');
+      if (this.value === 'welcome') {
+        message.value = "Welcome to your clinical rotation! Please let us know if you have any questions.";
+      } else if (this.value === 'reminder') {
+        message.value = "This is a friendly reminder to submit your required documents by the end of the week.";
+      } else if (this.value === 'docrequest') {
+        message.value = "Please upload your latest immunization records to the portal at your earliest convenience.";
+      } else {
+        message.value = "";
+      }
+      charCounter.textContent = `${message.value.length}/500`;
+    });
+
+    // Form validation and feedback
+    document.getElementById('messageForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const feedback = document.getElementById('feedback');
+      feedback.innerHTML = `
+        <div class="success-message">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#27ae60" stroke-width="2" fill="#d4edda"/><path d="M7 13l3 3 7-7" stroke="#27ae60" stroke-width="2" fill="none"/></svg>
+          Message sent successfully!
+        </div>
+      `;
+      setTimeout(() => {
+        window.location.href = 'clinic-messages.html';
+      }, 1200);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pay Invoice - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; }
+    .header { background: #2d3e50; color: #fff; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 1.5rem; }
+    .header-right { display: flex; gap: 12px; align-items: center; }
+    .logout-btn { background: transparent; color: #fff; border: 1px solid #fff; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+    .back-btn { background: #95a5a6; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-bottom: 16px; }
+    .main { display: flex; min-height: calc(100vh - 64px); }
+    .sidebar { width: 250px; background: #34495e; color: #fff; padding: 24px 0; }
+    .content { flex: 1; padding: 24px; }
+    .nav-item { display: block; padding: 12px 24px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.3s; color: #fff; text-decoration: none; }
+    .nav-item:hover, .nav-item.active { background: #2c3e50; border-left-color: #3498db; }
+    .card { background: #fff; border-radius: 8px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .card h3 { margin-bottom: 16px; color: #2d3e50; }
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #f8f9fa; font-weight: 600; }
+    .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; margin-right: 8px; }
+    .btn-primary { background: #3498db; color: #fff; }
+    .btn-success { background: #27ae60; color: #fff; }
+    .btn-warning { background: #f39c12; color: #fff; }
+    .btn-danger { background: #e74c3c; color: #fff; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 500; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .status { padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 500; }
+    .status.active { background: #d4edda; color: #155724; }
+    .status.pending { background: #fff3cd; color: #856404; }
+    .status.inactive { background: #f8d7da; color: #721c24; }
+    .status.approved { background: #d1ecf1; color: #0c5460; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: #fff; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .stat-number { font-size: 2rem; font-weight: bold; margin: 8px 0; }
+    .stat-label { color: #666; font-size: 0.9rem; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .alert { padding: 12px; border-radius: 6px; margin-bottom: 16px; }
+    .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .alert-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+    .alert-danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    @media (max-width: 768px) {
+      .main { flex-direction: column; }
+      .sidebar { width: 100%; }
+      .header { flex-direction: column; gap: 12px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .info-grid { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+  <div class="header">
+  <h1>Pay Invoice</h1>
+  <div class="header-right">
+    <span>Clinic Admin</span>
+    <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+  </div>
+</div>
+  <div class="main">
+    <div class="sidebar">
+  <a class="nav-item" href="clinic-dashboard.html">🏠 Dashboard</a>
+  <a class="nav-item" href="clinic-applications.html">📝 Applications</a>
+  <a class="nav-item" href="clinic-students.html">👩‍🎓 Students</a>
+  <a class="nav-item" href="clinic-preceptors.html">👨‍⚕️ Preceptors</a>
+  <a class="nav-item" href="clinic-messages.html">💬 Messages</a>
+  <a class="nav-item" href="clinic-schedule.html">📅 Schedule</a>
+  <a class="nav-item" href="clinic-billing.html">💳 Billing</a>
+  <a class="nav-item" href="clinic-reports.html">📈 Reports</a>
+  <a class="nav-item" href="clinic-settings.html">⚙️ Settings</a>
+</div>
+    <div class="content">
+      <button class="back-btn" onclick="history.back()">← Back</button>
+      
+  <div class="card">
+    <h3>Pay Invoice</h3>
+    <form onsubmit="event.preventDefault();alert('Payment successful!');window.location.href='clinic-billing.html';">
+      <div class="form-group">
+        <label>Invoice #</label>
+        <input type="text" value="INV-2025-003" readonly>
+      </div>
+      <div class="form-group">
+        <label>Amount Due</label>
+        <input type="text" value="$320.00" readonly>
+      </div>
+      <div class="form-group">
+        <label>Payment Method</label>
+        <select required>
+          <option>Credit Card</option>
+          <option>ACH Bank Transfer</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Card Number</label>
+        <input type="text" placeholder="1234 5678 9012 3456">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Expiration</label>
+          <input type="text" placeholder="MM/YY">
+        </div>
+        <div class="form-group">
+          <label>CVC</label>
+          <input type="text" placeholder="123">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-success">Pay Now</button>
+      <button type="button" class="btn btn-warning" onclick="window.location.href='clinic-billing.html'">Cancel</button>
+    </form>
+  </div>
+
+    </div>
+  </div>
+</body>
+</html>

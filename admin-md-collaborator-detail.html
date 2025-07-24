@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MD Collaborator Detail - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #ECECEC;
+      --color-white: #FFFF;
+      --color-text: #2D2D2D;
+      --border-radius: 8px;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: 0.3s ease;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      overflow: hidden;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-size: 1.5rem;
+    }
+    .header-right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .logout-btn {
+      background: transparent;
+      color: var(--color-white);
+      border: 1px solid var(--color-white);
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background var(--transition);
+      user-select: none;
+    }
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    .main {
+      display: flex;
+      flex: 1 1 auto;
+      height: calc(100vh - 64px);
+      width: 100vw;
+      overflow: hidden;
+      background: var(--color-bg);
+    }
+    nav.sidebar {
+      width: 280px;
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 24px 0;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      height: 100%;
+      box-sizing: border-box;
+    }
+    .sidebar-section {
+      margin-bottom: 24px;
+      flex-shrink: 0;
+    }
+    .sidebar-section h3 {
+      padding-left: 24px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      user-select: none;
+    }
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      color: var(--color-white);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background var(--transition), border-color var(--transition);
+      cursor: pointer;
+      user-select: none;
+    }
+    .nav-item:hover,
+    .nav-item.active {
+      background: var(--color-primary);
+      border-left-color: var(--color-secondary);
+    }
+    main.content {
+      flex-grow: 1;
+      padding: 32px 40px;
+      overflow-y: auto;
+      background: var(--color-white);
+      display: flex;
+      flex-direction: column;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      width: calc(100vw - 280px);
+      box-sizing: border-box;
+    }
+    .back-btn {
+      align-self: flex-start;
+      background: #95a5a6;
+      color: var(--color-white);
+      border: none;
+      padding: 10px 20px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 24px;
+      transition: background-color var(--transition);
+      user-select: none;
+    }
+    .back-btn:hover {
+      background-color: #7f8c8d;
+    }
+    .profile-card {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 32px;
+      align-items: center;
+    }
+    .profile-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: #cfd8dc url('https://i.pravatar.cc/120?img=12') center/cover no-repeat;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+    .profile-info {
+      flex: 1;
+    }
+    .profile-info h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--color-primary);
+    }
+    .profile-info p {
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 6px;
+    }
+    .profile-info p strong {
+      color: var(--color-primary);
+    }
+    .status {
+      display: inline-block;
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-top: 12px;
+    }
+    .status.active {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .status.pending {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    .status.rejected {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .content-tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 32px;
+      background: #f1f3f6;
+      padding: 6px;
+      border-radius: 999px;
+      align-self: flex-start;
+      flex-wrap: wrap;
+    }
+    .content-tab {
+      border: none;
+      outline: none;
+      background: transparent;
+      color: #555;
+      font-size: 1.05rem;
+      font-weight: 500;
+      padding: 8px 28px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition:
+        background var(--transition),
+        color var(--transition),
+        box-shadow var(--transition),
+        font-weight var(--transition);
+      box-shadow: none;
+      position: relative;
+      margin-bottom: 0;
+    }
+    .content-tab.active {
+      background: var(--color-white);
+      color: var(--color-primary);
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      z-index: 1;
+    }
+    .content-tab:not(.active):hover,
+    .content-tab:not(.active):focus-visible {
+      background: #e9ecef;
+      color: var(--color-primary);
+      outline: none;
+    }
+    .tab-content {
+      margin-top: 0;
+      min-height: 200px;
+    }
+    .tab-content[hidden] {
+      display: none;
+    }
+    .overview-list {
+      list-style: none;
+      padding-left: 0;
+      margin-top: 12px;
+    }
+    .overview-list li {
+      margin-bottom: 8px;
+      font-size: 1rem;
+      color: #444;
+    }
+    .metrics-grid {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .metric-card {
+      flex: 1 1 150px;
+      background: #f9fbfd;
+      border-radius: var(--border-radius);
+      padding: 20px;
+      text-align: center;
+      box-shadow: inset 0 0 8px rgba(52,152,219,0.1);
+    }
+    .metric-number {
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-bottom: 6px;
+    }
+    .metric-label {
+      font-size: 1rem;
+      color: #555;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      margin-top: 16px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-top: 1px solid #ddd;
+      color: var(--color-primary);
+    }
+    th {
+      background: var(--color-bg);
+      font-weight: 600;
+    }
+    .comm-log {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      padding: 12px;
+      background: #f9fbfd;
+      font-size: 0.95rem;
+      color: #444;
+    }
+    .comm-entry {
+      margin-bottom: 12px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 8px;
+    }
+    .comm-entry:last-child {
+      border-bottom: none;
+    }
+    .comm-entry strong {
+      color: var(--color-primary);
+    }
+    .quick-actions {
+      margin-top: 24px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .quick-actions button {
+      flex: 1 1 180px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color var(--transition);
+    }
+    .btn-primary {
+      background-color: var(--color-secondary);
+      color: var(--color-primary-dark);
+    }
+    .btn-primary:hover,
+    .btn-primary:focus-visible {
+      background-color: #e6c200;
+      outline: none;
+    }
+    .btn-success {
+      background-color: #27ae60;
+      color: var(--color-white);
+    }
+    .btn-success:hover,
+    .btn-success:focus-visible {
+      background-color: #1e8449;
+      outline: none;
+    }
+    .btn-warning {
+      background-color: #f39c12;
+      color: var(--color-white);
+    }
+    .btn-warning:hover,
+    .btn-warning:focus-visible {
+      background-color: #d78e0a;
+      outline: none;
+    }
+    @media (max-width: 900px) {
+      .main {
+        flex-direction: column;
+        height: auto;
+      }
+      nav.sidebar {
+        width: 100%;
+        height: auto;
+        padding: 16px 0;
+        max-height: none;
+      }
+      main.content {
+        width: 100% !important;
+        padding: 24px 16px;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      .profile-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .profile-info h2 {
+        margin-top: 16px;
+      }
+      .content-tabs {
+        justify-content: space-around;
+        gap: 8px;
+      }
+      .quick-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>MD Collaborator Detail</h1>
+    <div class="header-right">
+      <span>Admin User</span>
+      <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <nav class="sidebar" aria-label="Admin navigation">
+      <div class="sidebar-section">
+        <h3>People</h3>
+        <a href="admin-md-collaborators.html" class="nav-item">👨‍⚕️ MD Collaborators</a>
+        <a href="admin-nps.html" class="nav-item">🩺 NPs / Job Seekers</a>
+        <a href="admin-students.html" class="nav-item">🎓 Students</a>
+        <a href="admin-program-coordinators.html" class="nav-item">👩‍💼 Program Coordinators</a>
+        <a href="admin-preceptors.html" class="nav-item">👨‍⚕️ Preceptors</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>Services</h3>
+        <a href="admin-rotation-applications.html" class="nav-item">📝 Rotations</a>
+        <a href="admin-job-applications.html" class="nav-item">📄 Job Applications</a>
+        <a href="admin-job-postings.html" class="nav-item">📋 Job Postings</a>
+        <a href="admin-scheduling.html" class="nav-item">📅 Scheduling</a>
+        <a href="admin-billing.html" class="nav-item">💳 Billing</a>
+        <a href="admin-messaging.html" class="nav-item">💬 Messaging</a>
+        <a href="admin-md-collaborations.html" class="nav-item">🤝 MD Collaborations</a>
+        <a href="admin-practice-launchpad.html" class="nav-item">🚀 Practice Launchpad</a>
+        <a href="admin-launchpad-service-packages.html" class="nav-item">📦 Service Packages</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>Organization</h3>
+        <a href="admin-clinics.html" class="nav-item">🏥 Clinics</a>
+        <a href="admin-institutions.html" class="nav-item">🏫 Institutions</a>
+        <a href="admin-programs.html" class="nav-item">📋 Programs</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>System</h3>
+        <a href="admin-dashboard.html" class="nav-item">🏠 Dashboard</a>
+        <a href="admin-reports.html" class="nav-item">📊 Reports</a>
+        <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+      </div>
+    </nav>
+    <main class="content" role="main">
+      <button class="back-btn" onclick="window.location.href='admin-md-collaborators.html'">← Back to List</button>
+      <section class="profile-card" aria-label="MD Collaborator profile summary">
+        <div class="profile-photo" role="img" aria-label="Profile photo"></div>
+        <div class="profile-info">
+          <h2 id="mdName">Loading...</h2>
+          <p><strong>Specialty:</strong> <span id="mdSpecialty">-</span></p>
+          <p><strong>Credentials:</strong> <span id="mdCredentials">-</span></p>
+          <p><strong>Contact Email:</strong> <a href="#" id="mdEmail">-</a></p>
+          <p><strong>Phone:</strong> <a href="#" id="mdPhone">-</a></p>
+          <p><strong>Office Location:</strong> <span id="mdOffice">-</span></p>
+          <p><strong>Languages Spoken:</strong> <span id="mdLanguages">-</span></p>
+          <p><strong>Years of Experience:</strong> <span id="mdExperience">-</span></p>
+          <p><strong>Status:</strong> <span id="mdStatus" class="status">-</span></p>
+        </div>
+      </section>
+      <nav class="content-tabs" role="tablist" aria-label="MD collaborator detail sections">
+        <button class="content-tab active" role="tab" aria-selected="true" aria-controls="overview" id="tab-overview" tabindex="0">Collaboration Overview</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="history" id="tab-history" tabindex="-1">Collaboration History</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="agreements" id="tab-agreements" tabindex="-1">Agreements & Docs</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="communication" id="tab-communication" tabindex="-1">Communication & Support</button>
+        <button class="content-tab" role="tab" aria-selected="false" aria-controls="resources" id="tab-resources" tabindex="-1">Additional Resources</button>
+      </nav>
+      <section id="overview" class="tab-content" role="tabpanel" aria-labelledby="tab-overview">
+        <h3>Collaboration Overview</h3>
+        <ul class="overview-list">
+          <li><strong>Collaboration Style:</strong> <span id="collabStyle">-</span></li>
+          <li><strong>Clinical Focus:</strong> <span id="clinicalFocus">-</span></li>
+          <li><strong>Patient Population:</strong> <span id="patientPopulation">-</span></li>
+          <li><strong>Availability:</strong> <span id="availability">-</span></li>
+          <li><strong>Location(s):</strong> <span id="locations">-</span></li>
+          <li><strong>Telehealth:</strong> <span id="telehealth">-</span></li>
+        </ul>
+        <div class="metrics-grid" aria-label="Collaboration metrics">
+          <div class="metric-card" role="region" aria-label="Number of NPs collaborating">
+            <div class="metric-number" id="numNps">0</div>
+            <div class="metric-label">NPs Collaborating</div>
+          </div>
+          <div class="metric-card" role="region" aria-label="Successful cases">
+            <div class="metric-number" id="successfulCases">0</div>
+            <div class="metric-label">Successful Cases</div>
+          </div>
+          <div class="metric-card" role="region" aria-label="Average response time">
+            <div class="metric-number" id="responseTime">0 hrs</div>
+            <div class="metric-label">Avg. Response Time</div>
+          </div>
+          <div class="metric-card" role="region" aria-label="Feedback rating">
+            <div class="metric-number" id="feedbackRating">0/5</div>
+            <div class="metric-label">Feedback Rating</div>
+          </div>
+        </div>
+      </section>
+      <section id="history" class="tab-content" role="tabpanel" aria-labelledby="tab-history" hidden>
+        <h3>Collaboration History</h3>
+        <ul id="collabHistoryList" class="overview-list"></ul>
+      </section>
+      <section id="agreements" class="tab-content" role="tabpanel" aria-labelledby="tab-agreements" hidden>
+        <h3>Agreements & Documentation</h3>
+        <table aria-label="Agreements and compliance documents">
+          <thead>
+            <tr>
+              <th>Document</th>
+              <th>Status</th>
+              <th>Expiry</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="agreementsTableBody"></tbody>
+        </table>
+      </section>
+      <section id="communication" class="tab-content" role="tabpanel" aria-labelledby="tab-communication" hidden>
+        <h3>Communication & Support</h3>
+        <div class="comm-log" tabindex="0" aria-label="Communication history"></div>
+        <div class="quick-actions">
+          <button class="btn btn-primary" onclick="requestConsult()">Request Consult</button>
+          <button class="btn btn-primary" onclick="scheduleMeeting()">Schedule Meeting</button>
+          <button class="btn btn-primary" onclick="sendMessage()">Send Message</button>
+        </div>
+      </section>
+      <section id="resources" class="tab-content" role="tabpanel" aria-labelledby="tab-resources" hidden>
+        <h3>Additional Resources</h3>
+        <ul class="overview-list" id="resourcesList"></ul>
+      </section>
+    </main>
+  </div>
+  <script type="module">
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    import { db } from './firebase-init.js';
+
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    const contentTabs = document.querySelectorAll('.content-tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    contentTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        activateContentTab(tab);
+      });
+      tab.addEventListener('keydown', e => {
+        let index = Array.from(contentTabs).indexOf(e.target);
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          const nextIndex = (index + 1) % contentTabs.length;
+          activateContentTab(contentTabs[nextIndex]);
+          contentTabs[nextIndex].focus();
+        } else if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          const prevIndex = (index - 1 + contentTabs.length) % contentTabs.length;
+          activateContentTab(contentTabs[prevIndex]);
+          contentTabs[prevIndex].focus();
+        }
+      });
+    });
+
+    function activateContentTab(selectedTab) {
+      contentTabs.forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+        t.setAttribute('tabindex', '-1');
+      });
+      tabContents.forEach(tc => tc.hidden = true);
+
+      selectedTab.classList.add('active');
+      selectedTab.setAttribute('aria-selected', 'true');
+      selectedTab.setAttribute('tabindex', '0');
+      document.getElementById(selectedTab.getAttribute('aria-controls')).hidden = false;
+    }
+
+    async function loadMdDetails() {
+      const mdId = getQueryParam('id');
+      if (!mdId) {
+        alert('No MD collaborator ID specified.');
+        window.location.href = 'admin-md-collaborators.html';
+        return;
+      }
+
+      try {
+        const docRef = doc(db, 'mdcollaborators', mdId);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+          alert('MD collaborator not found.');
+          window.location.href = 'admin-md-collaborators.html';
+          return;
+        }
+
+        const md = docSnap.data();
+
+        document.getElementById('mdName').textContent = md.name || 'Unknown';
+        document.getElementById('mdSpecialty').textContent = md.specialty || '-';
+        document.getElementById('mdCredentials').textContent = md.credentials || '-';
+        document.getElementById('mdEmail').textContent = md.email || '-';
+        document.getElementById('mdEmail').href = md.email ? `mailto:${md.email}` : '#';
+        document.getElementById('mdPhone').textContent = md.phone || '-';
+        document.getElementById('mdPhone').href = md.phone ? `tel:${md.phone}` : '#';
+        document.getElementById('mdOffice').textContent = md.office || '-';
+        document.getElementById('mdLanguages').textContent = md.languages || '-';
+        document.getElementById('mdExperience').textContent = md.experience ? `${md.experience} years` : '-';
+
+        const statusEl = document.getElementById('mdStatus');
+        const status = md.status || 'unknown';
+        statusEl.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+        statusEl.className = `status ${status}`;
+
+        document.getElementById('collabStyle').textContent = md.collaborationStyle || 'Consultative and collaborative approach';
+        document.getElementById('clinicalFocus').textContent = md.specialty ? `${md.specialty} and related conditions` : 'General medical consultation';
+        document.getElementById('patientPopulation').textContent = md.patientPopulation || 'Adults and general population';
+        document.getElementById('availability').textContent = md.availability || 'Contact for availability';
+        document.getElementById('locations').textContent = md.office || 'Multiple locations';
+        document.getElementById('telehealth').textContent = md.telehealth || 'Available upon request';
+
+        document.getElementById('numNps').textContent = md.numNps || '0';
+        document.getElementById('successfulCases').textContent = md.successfulCases || '0';
+        document.getElementById('responseTime').textContent = md.responseTime || '24 hrs';
+        document.getElementById('feedbackRating').textContent = md.feedbackRating || '5.0/5';
+
+        const historyList = document.getElementById('collabHistoryList');
+        historyList.innerHTML = '';
+        const history = md.collaborationHistory || [
+          `${new Date().toLocaleDateString()}: Profile created`,
+          'No collaboration history available yet'
+        ];
+        history.forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = item;
+          historyList.appendChild(li);
+        });
+
+        const agreementsBody = document.getElementById('agreementsTableBody');
+        agreementsBody.innerHTML = '';
+        const agreements = md.agreements || [
+          { document: 'Collaboration Agreement', status: 'Pending', expiry: 'TBD', file: 'pending' },
+          { document: 'Malpractice Insurance', status: 'Required', expiry: 'TBD', file: 'pending' }
+        ];
+        agreements.forEach(docItem => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${docItem.document}</td>
+            <td>${docItem.status}</td>
+            <td>${docItem.expiry}</td>
+            <td><button class="btn btn-primary" onclick="alert('Document: ${docItem.file}')">View</button></td>
+          `;
+          agreementsBody.appendChild(tr);
+        });
+
+        const commLog = document.querySelector('.comm-log');
+        commLog.innerHTML = '';
+        const communications = md.communicationLog || [
+          { sender: 'System', date: new Date().toLocaleDateString(), message: 'Profile created successfully.' }
+        ];
+        communications.forEach(entry => {
+          const div = document.createElement('div');
+          div.className = 'comm-entry';
+          div.innerHTML = `<strong>${entry.sender} (${entry.date}):</strong> ${entry.message}`;
+          commLog.appendChild(div);
+        });
+
+        const resourcesList = document.getElementById('resourcesList');
+        resourcesList.innerHTML = '';
+        const resources = md.resources || [
+          { title: 'Contact Information', url: `mailto:${md.email || ''}` },
+          { title: 'Professional Profile', url: '#' }
+        ];
+        resources.forEach(res => {
+          const li = document.createElement('li');
+          if (res.url && res.url !== '#' && res.url !== 'mailto:') {
+            li.innerHTML = `<a href="${res.url}" target="_blank" rel="noopener noreferrer">${res.title}</a>`;
+          } else {
+            li.textContent = res.title;
+          }
+          resourcesList.appendChild(li);
+        });
+
+      } catch (error) {
+        console.error('Error loading MD collaborator:', error);
+        alert('Error loading MD collaborator details. Please try again.');
+        window.location.href = 'admin-md-collaborators.html';
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadMdDetails();
+      activateContentTab(document.querySelector('.content-tab.active'));
+    });
+
+    window.requestConsult = function() {
+      const mdId = getQueryParam('id');
+      alert(`Request consult functionality for MD ID: ${mdId}`);
+    };
+
+    window.scheduleMeeting = function() {
+      const mdId = getQueryParam('id');
+      alert(`Schedule meeting functionality for MD ID: ${mdId}`);
+    };
+
+    window.sendMessage = function() {
+      const mdId = getQueryParam('id');
+      alert(`Send message functionality for MD ID: ${mdId}`);
+    };
+  </script>
+</body>
+</html>

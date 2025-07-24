@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Comprehensive Evaluation Form - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background: #2d3e50;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .logout-btn {
+      background: transparent;
+      border: 1px solid white;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .main {
+      display: flex;
+      min-height: calc(100vh - 64px);
+    }
+    .sidebar {
+      width: 250px;
+      background: #34495e;
+      color: white;
+      padding: 24px 0;
+    }
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      color: white;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .nav-item:hover,
+    .nav-item.active {
+      background: #2c3e50;
+      border-left-color: #3498db;
+    }
+    .content {
+      flex: 1;
+      padding: 24px;
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow-y: auto;
+      max-height: calc(100vh - 64px - 48px);
+    }
+    h2 {
+      margin-top: 0;
+      color: #2d3e50;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .clinic-info, .student-info {
+      background: #ecf0f1;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 24px;
+      font-weight: 600;
+      color: #34495e;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    fieldset {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 16px 24px;
+    }
+    legend {
+      font-weight: 700;
+      color: #2d3e50;
+      padding: 0 8px;
+      font-size: 1.1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #34495e;
+    }
+    .rating-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .rating-group label {
+      font-weight: normal;
+      color: #2d3e50;
+    }
+    select, textarea, input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      resize: vertical;
+    }
+    textarea {
+      min-height: 80px;
+    }
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: normal;
+      color: #2d3e50;
+    }
+    button {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      margin-top: 12px;
+      align-self: center;
+      width: 200px;
+    }
+    button:hover {
+      background: #2980b9;
+    }
+    @media (max-width: 768px) {
+      .content {
+        max-width: 100%;
+        max-height: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Comprehensive Evaluation Form</h1>
+    <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+  </div>
+  <div class="main">
+    <nav class="sidebar">
+      <a href="preceptor-dashboard.html" class="nav-item">🏠 Dashboard</a>
+      <a href="preceptor-students.html" class="nav-item">👩‍🎓 Assigned Students</a>
+      <a href="preceptor-availability.html" class="nav-item">📅 Availability</a>
+      <a href="preceptor-evaluations.html" class="nav-item active">📝 Evaluations</a>
+      <a href="preceptor-messages.html" class="nav-item">💬 Messages</a>
+      <a href="preceptor-documents.html" class="nav-item">📁 Documents</a>
+      <a href="preceptor-billing.html" class="nav-item">💳 Billing</a>
+      <a href="preceptor-settings.html" class="nav-item">⚙️ Settings</a>
+    </nav>
+    <main class="content">
+      <h2>Evaluation for Jane Smith</h2>
+      <div class="clinic-info">Clinic: Sunrise Health Clinic</div>
+      <div class="student-info">Student: Jane Smith | Rotation: Family Medicine | Dates: 2025-07-10 to 2025-08-10</div>
+      <form id="evaluationForm" onsubmit="handleSubmit(event)">
+        <fieldset>
+          <legend>Evaluation Type</legend>
+          <label for="evaluationType">Select Evaluation Type</label>
+          <select id="evaluationType" required>
+            <option value="">-- Select --</option>
+            <option value="mid">Mid-Rotation</option>
+            <option value="end">End of Rotation</option>
+          </select>
+        </fieldset>
+
+        <fieldset>
+          <legend>Core Competencies</legend>
+          <label>Professionalism</label>
+          <div class="rating-group" role="radiogroup" aria-labelledby="professionalism-label">
+            <label><input type="radio" name="professionalism" value="1" required /> 1</label>
+            <label><input type="radio" name="professionalism" value="2" /> 2</label>
+            <label><input type="radio" name="professionalism" value="3" /> 3</label>
+            <label><input type="radio" name="professionalism" value="4" /> 4</label>
+            <label><input type="radio" name="professionalism" value="5" /> 5</label>
+          </div>
+
+          <label>Clinical Skills</label>
+          <div class="rating-group" role="radiogroup" aria-labelledby="clinical-skills-label">
+            <label><input type="radio" name="clinicalSkills" value="1" required /> 1</label>
+            <label><input type="radio" name="clinicalSkills" value="2" /> 2</label>
+            <label><input type="radio" name="clinicalSkills" value="3" /> 3</label>
+            <label><input type="radio" name="clinicalSkills" value="4" /> 4</label>
+            <label><input type="radio" name="clinicalSkills" value="5" /> 5</label>
+          </div>
+
+          <label>Communication</label>
+          <div class="rating-group" role="radiogroup" aria-labelledby="communication-label">
+            <label><input type="radio" name="communication" value="1" required /> 1</label>
+            <label><input type="radio" name="communication" value="2" /> 2</label>
+            <label><input type="radio" name="communication" value="3" /> 3</label>
+            <label><input type="radio" name="communication" value="4" /> 4</label>
+            <label><input type="radio" name="communication" value="5" /> 5</label>
+          </div>
+
+          <label>Critical Thinking</label>
+          <div class="rating-group" role="radiogroup" aria-labelledby="critical-thinking-label">
+            <label><input type="radio" name="criticalThinking" value="1" required /> 1</label>
+            <label><input type="radio" name="criticalThinking" value="2" /> 2</label>
+            <label><input type="radio" name="criticalThinking" value="3" /> 3</label>
+            <label><input type="radio" name="criticalThinking" value="4" /> 4</label>
+            <label><input type="radio" name="criticalThinking" value="5" /> 5</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Skills Checklist</legend>
+          <div class="checkbox-group">
+            <label><input type="checkbox" name="skills" value="historyTaking" /> History Taking</label>
+            <label><input type="checkbox" name="skills" value="physicalExam" /> Physical Exam</label>
+            <label><input type="checkbox" name="skills" value="diagnosis" /> Diagnosis</label>
+            <label><input type="checkbox" name="skills" value="treatmentPlanning" /> Treatment Planning</label>
+            <label><input type="checkbox" name="skills" value="patientEducation" /> Patient Education</label>
+            <label><input type="checkbox" name="skills" value="documentation" /> Documentation</label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Additional Comments</legend>
+          <textarea id="comments" placeholder="Enter detailed feedback here..." rows="6"></textarea>
+        </fieldset>
+
+        <button type="submit">Submit Evaluation</button>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    function handleSubmit(event) {
+      event.preventDefault();
+      const form = event.target;
+
+      // Basic validation example
+      const evaluationType = form.evaluationType.value;
+      const professionalism = form.professionalism.value;
+      const clinicalSkills = form.clinicalSkills.value;
+      const communication = form.communication.value;
+      const criticalThinking = form.criticalThinking.value;
+
+      if (!evaluationType || !professionalism || !clinicalSkills || !communication || !criticalThinking) {
+        alert('Please complete all required fields.');
+        return;
+      }
+
+      // Collect skills checklist
+      const skills = Array.from(form.skills)
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.value);
+
+      const comments = form.comments.value.trim();
+
+      // Here you would send data to backend or process it
+      console.log({
+        evaluationType,
+        professionalism,
+        clinicalSkills,
+        communication,
+        criticalThinking,
+        skills,
+        comments
+      });
+
+      alert('Evaluation submitted successfully!');
+      form.reset();
+    }
+  </script>
+</body>
+</html>

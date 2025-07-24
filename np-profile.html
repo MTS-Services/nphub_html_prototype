@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Profile - NP Clinical Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #667eea;
+      --color-primary-dark: #4a5ccf;
+      --color-bg: #f5f7fa;
+      --color-sidebar-bg: #34495e;
+      --color-sidebar-text: #ecf0f1;
+      --color-text: #2d3e50;
+      --color-white: #fff;
+      --border-radius: 10px;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --transition: 0.3s ease;
+      --max-width: 800px;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    nav.sidebar {
+      width: 250px;
+      background: var(--color-sidebar-bg);
+      color: var(--color-sidebar-text);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+
+    nav.sidebar a {
+      color: var(--color-sidebar-text);
+      text-decoration: none;
+      padding: 14px 32px;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color var(--transition);
+      user-select: none;
+      position: relative;
+    }
+
+    nav.sidebar a.active,
+    nav.sidebar a:hover {
+      background: var(--color-primary);
+      color: var(--color-white);
+      cursor: pointer;
+    }
+
+    header.header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 20px 32px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+      width: 100%;
+    }
+
+    header.header button.logout-btn {
+      background: #dc3545;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color var(--transition);
+    }
+
+    header.header button.logout-btn:hover {
+      background: #b02a37;
+    }
+
+    main.content {
+      flex: 1;
+      padding: 32px;
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      margin: 24px;
+      box-shadow: var(--box-shadow);
+      max-width: var(--max-width);
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 24px;
+      color: var(--color-primary-dark);
+      text-align: center;
+    }
+
+    form.profile-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="file"],
+    select,
+    textarea {
+      padding: 10px 14px;
+      font-size: 1rem;
+      border: 2px solid #ccc;
+      border-radius: var(--border-radius);
+      transition: border-color var(--transition);
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus,
+    input[type="file"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--color-primary);
+      outline: none;
+      box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
+    }
+
+    button.save-btn {
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      padding: 14px 28px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      align-self: center;
+      width: 200px;
+      transition: background-color var(--transition);
+    }
+
+    button.save-btn:hover {
+      background: var(--color-primary-dark);
+    }
+
+    .profile-pic-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .profile-pic {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--color-primary);
+      background: #ddd;
+    }
+
+    .change-pic-label {
+      cursor: pointer;
+      color: var(--color-primary);
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      main.content {
+        margin: 12px;
+        padding: 20px;
+      }
+      button.save-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="sidebar" aria-label="NP Navigation">
+    <a href="job-seeker-dashboard.html">🏠 Dashboard</a>
+    <a href="np-profile.html" class="active" aria-current="page">👤 Profile</a>
+    <a href="#">💾 Saved Jobs</a>
+    <a href="#">📝 Applications</a>
+    <a href="#">✉️ Messages</a>
+    <a href="np-payment.html">💳 Payment</a>
+    <a href="np-documents.html">📁 Documents</a>
+    <a href="practice-launchpad.html">🚀 Practice Launchpad</a>
+    <a href="md-partnership-network.html">🤝 MD Partnership Network</a>
+    <a href="np-collaboration-request.html">📄 Collaboration Requests</a>
+    <a href="md-np-agreements.html">📄 My Agreements</a>
+  </nav>
+
+  <div style="flex:1; display:flex; flex-direction: column; min-height: 100vh;">
+    <header class="header">
+      My Profile
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </header>
+
+    <main class="content" tabindex="0" aria-label="User Profile">
+      <h1>Profile Information</h1>
+      <form class="profile-form" id="profileForm" onsubmit="event.preventDefault(); saveProfile();">
+        <div class="profile-pic-container">
+          <img src="https://via.placeholder.com/120" alt="Profile Picture" id="profilePic" class="profile-pic" />
+          <label for="profilePicInput" class="change-pic-label">Change Profile Picture</label>
+          <input type="file" id="profilePicInput" accept="image/*" style="display:none;" />
+        </div>
+
+        <div class="form-group">
+          <label for="fullName">Full Name</label>
+          <input type="text" id="fullName" name="fullName" required />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" name="phone" />
+        </div>
+
+        <div class="form-group">
+          <label for="address">Address</label>
+          <textarea id="address" name="address" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="licenseNumber">NP License Number</label>
+          <input type="text" id="licenseNumber" name="licenseNumber" />
+        </div>
+
+        <div class="form-group">
+          <label for="specialty">Specialty</label>
+          <select id="specialty" name="specialty">
+            <option value="">Select Specialty</option>
+            <option value="Family Medicine">Family Medicine</option>
+            <option value="Internal Medicine">Internal Medicine</option>
+            <option value="Pediatrics">Pediatrics</option>
+            <option value="Psychiatry">Psychiatry</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <button type="submit" class="save-btn">Save Profile</button>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    // Simulated user profile data (replace with real backend data)
+    const userProfile = {
+      fullName: 'Jane Doe',
+      email: 'jane.doe@example.com',
+      phone: '555-123-4567',
+      address: '123 Main St, Springfield, USA',
+      licenseNumber: 'NP-987654321',
+      specialty: 'Family Medicine',
+      profilePicUrl: 'https://via.placeholder.com/120'
+    };
+
+    const profileForm = document.getElementById('profileForm');
+    const profilePicInput = document.getElementById('profilePicInput');
+    const profilePic = document.getElementById('profilePic');
+
+    // Load profile data into form
+    function loadProfile() {
+      profileForm.fullName.value = userProfile.fullName;
+      profileForm.email.value = userProfile.email;
+      profileForm.phone.value = userProfile.phone;
+      profileForm.address.value = userProfile.address;
+      profileForm.licenseNumber.value = userProfile.licenseNumber;
+      profileForm.specialty.value = userProfile.specialty;
+      profilePic.src = userProfile.profilePicUrl;
+    }
+
+    // Handle profile picture change preview
+    profilePicInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          profilePic.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Clicking label triggers file input
+    document.querySelector('.change-pic-label').addEventListener('click', () => {
+      profilePicInput.click();
+    });
+
+    // Save profile (simulate saving)
+    function saveProfile() {
+      // Gather form data
+      const updatedProfile = {
+        fullName: profileForm.fullName.value.trim(),
+        email: profileForm.email.value.trim(),
+        phone: profileForm.phone.value.trim(),
+        address: profileForm.address.value.trim(),
+        licenseNumber: profileForm.licenseNumber.value.trim(),
+        specialty: profileForm.specialty.value,
+        profilePicUrl: profilePic.src
+      };
+
+      // Here you would send updatedProfile to your backend API
+
+      alert('Profile saved successfully!');
+      // Optionally update userProfile with new data
+      Object.assign(userProfile, updatedProfile);
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    }
+
+    // Initialize form on page load
+    window.onload = loadProfile;
+  </script>
+</body>
+</html>

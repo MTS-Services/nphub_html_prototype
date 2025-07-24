@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Students - NP Clinical Hub Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --color-primary: #0A2540;
+      --color-primary-dark: #021426;
+      --color-secondary: #FFD700;
+      --color-bg: #ECECEC;
+      --color-text: #2D2D2D;
+      --color-white: #FFFFFF;
+      --border-radius: 8px;
+      --transition: 0.3s ease;
+      --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+    }
+    .header {
+      background: var(--color-primary);
+      color: var(--color-white);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 { font-size: 1.5rem; user-select: none; }
+    .header-right {
+      display: flex; gap: 12px; align-items: center; user-select: none;
+    }
+    .logout-btn {
+      background: transparent;
+      color: var(--color-white);
+      border: 1px solid var(--color-white);
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background var(--transition);
+      user-select: none;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,0.2); }
+    .main { display: flex; min-height: calc(100vh - 64px); }
+    .sidebar {
+      width: 250px;
+      background: var(--color-primary-dark);
+      color: var(--color-white);
+      padding: 24px 0;
+      flex-shrink: 0;
+    }
+    .sidebar-section { margin-bottom: 24px; }
+    .sidebar-section h3 {
+      padding-left: 24px;
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      user-select: none;
+    }
+    .nav-item {
+      display: block;
+      padding: 12px 24px;
+      color: var(--color-white);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: background var(--transition), border-color var(--transition);
+      cursor: pointer;
+      user-select: none;
+    }
+    .nav-item:hover, .nav-item.active {
+      background: var(--color-primary);
+      border-left-color: var(--color-secondary);
+    }
+    .content {
+      flex: 1;
+      padding: 24px;
+      background: var(--color-bg);
+      overflow-y: auto;
+    }
+    .card {
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--box-shadow);
+      max-width: 100%;
+      margin-left: 0;
+      margin-right: 0;
+    }
+    h3 { margin-bottom: 16px; color: var(--color-primary); user-select: none; }
+    .filters {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .filters-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .filters-right { display: flex; gap: 12px; }
+    label { font-weight: 600; user-select: none; }
+    select, input[type="search"], input[type="text"], input[type="email"], input[type="date"], input[type="number"], textarea {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: var(--border-radius);
+      transition: border var(--transition);
+      font-size: 1rem;
+    }
+    select:focus, input[type="search"]:focus, input[type="text"]:focus, input[type="email"]:focus, input[type="date"]:focus, input[type="number"]:focus, textarea:focus {
+      border-color: var(--color-primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(10,37,64,0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      background: var(--color-white);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      vertical-align: middle;
+    }
+    th { background: var(--color-bg); font-weight: 600; }
+    tr + tr td { border-top: 1px solid #ddd; }
+    .status {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-block;
+      user-select: none;
+    }
+    .status.active { background: #d4edda; color: #155724; }
+    .status.inactive { background: #f8d7da; color: #721c24; }
+    .status.pending { background: #fff3cd; color: #856404; }
+    .status.graduated { background: #cce5ff; color: #004085; }
+    .btn {
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      user-select: none;
+      border: none;
+      transition: background var(--transition);
+    }
+    .btn-primary { background: var(--color-primary); color: var(--color-white); }
+    .btn-primary:hover { background: var(--color-primary-dark); }
+    .btn-danger { background: #e74c3c; color: #fff; }
+    .btn-danger:hover { background: #cf4334; }
+    .btn-success { background: #28a745; color: white; }
+    .btn-success:hover { background: #218838; }
+    @media (max-width: 900px) {
+      .main { flex-direction: column; }
+      .sidebar { width: 100%; }
+      .filters { flex-direction: column; align-items: stretch; }
+      .filters-left, .filters-right { justify-content: center; }
+      .filters-right { gap: 8px; }
+      .btn { width: 100%; }
+      table, thead, tbody, th, td, tr { display: block; }
+      th, td { padding: 8px; }
+      tr { margin-bottom: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Students</h1>
+    <div class="header-right">
+      <span>Admin User</span>
+      <button class="logout-btn" onclick="window.location.href='index.html'">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    <nav class="sidebar" aria-label="Admin navigation">
+      <div class="sidebar-section">
+        <h3>People</h3>
+        <a href="admin-md-collaborators.html" class="nav-item">👨‍⚕️ MD Collaborators</a>
+        <a href="admin-nps.html" class="nav-item">🩺 NPs / Job Seekers</a>
+        <a href="admin-students.html" class="nav-item active">🎓 Students</a>
+        <a href="admin-program-coordinators.html" class="nav-item">👩‍💼 Program Coordinators</a>
+        <a href="admin-preceptors.html" class="nav-item">👨‍⚕️ Preceptors</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>Services</h3>
+        <a href="admin-rotation-applications.html" class="nav-item">📝 Rotations</a>
+        <a href="admin-job-applications.html" class="nav-item">📄 Job Applications</a>
+        <a href="admin-job-postings.html" class="nav-item">📋 Job Postings</a>
+        <a href="admin-scheduling.html" class="nav-item">📅 Scheduling</a>
+        <a href="admin-billing.html" class="nav-item">💳 Billing</a>
+        <a href="admin-messaging.html" class="nav-item">💬 Messaging</a>
+        <a href="admin-md-collaborations.html" class="nav-item">🤝 MD Collaborations</a>
+        <a href="admin-practice-launchpad.html" class="nav-item">🚀 Practice Launchpad</a>
+        <a href="admin-launchpad-service-packages.html" class="nav-item">📦 Service Packages</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>Organization</h3>
+        <a href="admin-clinics.html" class="nav-item">🏥 Clinics</a>
+        <a href="admin-institutions.html" class="nav-item">🏫 Institutions</a>
+        <a href="admin-programs.html" class="nav-item">📋 Programs</a>
+      </div>
+      <div class="sidebar-section">
+        <h3>System</h3>
+        <a href="admin-dashboard.html" class="nav-item">🏠 Dashboard</a>
+        <a href="admin-reports.html" class="nav-item">📊 Reports</a>
+        <a href="admin-settings.html" class="nav-item">⚙️ Settings</a>
+      </div>
+    </nav>
+    <main class="content">
+      <div class="card">
+        <h3>Manage Students</h3>
+        <div class="filters">
+          <div class="filters-left">
+            <label for="student-institution-filter">Institution:</label>
+            <select id="student-institution-filter">
+              <option value="all">All Institutions</option>
+            </select>
+            <label for="student-status-filter" style="margin-left:12px;">Status:</label>
+            <select id="student-status-filter">
+              <option value="all">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="pending">Pending</option>
+              <option value="graduated">Graduated</option>
+            </select>
+            <label for="student-search" style="margin-left:12px;">Search:</label>
+            <input type="search" id="student-search" placeholder="Name, email..." />
+          </div>
+          <div class="filters-right">
+            <button class="btn btn-primary" onclick="openAddStudentModal()">+ Add Student</button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Institution</th>
+              <th>Program</th>
+              <th>Status</th>
+              <th>Date Added</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="students-table-body">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add/Edit Student Modal -->
+  <div id="student-modal" role="dialog" aria-modal="true" aria-labelledby="student-modal-title" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000; padding:1rem;">
+    <div style="background:var(--color-white); padding:24px; border-radius:var(--border-radius); width:500px; max-width:100%; max-height:90vh; overflow-y:auto; box-shadow:var(--box-shadow);">
+      <h3 id="student-modal-title" style="margin-top:0; color:var(--color-primary); user-select:none;">Add Student</h3>
+      <form id="student-form" novalidate style="display:flex; flex-direction:column; gap:16px;">
+        <input type="hidden" id="student-id" />
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <div style="flex:1 1 200px; min-width:200px;">
+            <label for="student-first-name" style="font-weight:600;">First Name *</label>
+            <input type="text" id="student-first-name" required />
+          </div>
+          <div style="flex:1 1 200px; min-width:200px;">
+            <label for="student-last-name" style="font-weight:600;">Last Name *</label>
+            <input type="text" id="student-last-name" required />
+          </div>
+        </div>
+        <div>
+          <label for="student-email" style="font-weight:600;">Email *</label>
+          <input type="email" id="student-email" required />
+        </div>
+        <div>
+          <label for="student-phone" style="font-weight:600;">Phone</label>
+          <input type="text" id="student-phone" />
+        </div>
+        <div>
+          <label for="student-institution" style="font-weight:600;">Institution *</label>
+          <select id="student-institution" required>
+            <!-- options loaded dynamically -->
+          </select>
+        </div>
+        <div>
+          <label for="student-program" style="font-weight:600;">Program *</label>
+          <select id="student-program" required>
+            <option value="" disabled selected>Select program</option>
+            <!-- options loaded dynamically -->
+          </select>
+        </div>
+        <div>
+          <label for="student-studentid" style="font-weight:600;">Student ID</label>
+          <input type="text" id="student-studentid" />
+        </div>
+        <div>
+          <label for="student-status" style="font-weight:600;">Status *</label>
+          <select id="student-status" required>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="pending">Pending</option>
+            <option value="graduated">Graduated</option>
+          </select>
+        </div>
+        <div>
+          <label for="student-graduation-date" style="font-weight:600;">Expected Graduation Date</label>
+          <input type="date" id="student-graduation-date" />
+        </div>
+        <div>
+          <label for="student-gpa" style="font-weight:600;">GPA</label>
+          <input type="number" id="student-gpa" step="0.01" min="0" max="4.0" />
+        </div>
+        <div>
+          <label for="student-admin-notes" style="font-weight:600;">Admin Notes</label>
+          <textarea id="student-admin-notes" rows="2"></textarea>
+        </div>
+        <div>
+          <label for="student-date-added" style="font-weight:600;">Date Added</label>
+          <input type="date" id="student-date-added" />
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:12px;">
+          <button type="button" class="btn btn-danger" onclick="closeStudentModal()">Cancel</button>
+          <button type="submit" class="btn btn-success">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    import { db } from './firebase-init.js';
+
+    let institutions = [];
+    let programs = [];
+    let students = [];
+
+    const studentsTableBody = document.getElementById('students-table-body');
+    const studentModal = document.getElementById('student-modal');
+    const studentForm = document.getElementById('student-form');
+    const studentModalTitle = document.getElementById('student-modal-title');
+    const studentInstitutionSelect = document.getElementById('student-institution');
+    const studentInstitutionFilter = document.getElementById('student-institution-filter');
+    const studentStatusFilter = document.getElementById('student-status-filter');
+    const studentSearchInput = document.getElementById('student-search');
+    const studentProgramSelect = document.getElementById('student-program');
+
+    async function loadInstitutionsFromFirestore() {
+      const instCol = collection(db, 'institutions');
+      const instSnapshot = await getDocs(instCol);
+      institutions = instSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      populateInstitutionSelect();
+      populateInstitutionFilter();
+    }
+
+    function populateInstitutionSelect() {
+      studentInstitutionSelect.innerHTML = '<option value="" disabled selected>Select institution</option>';
+      institutions.forEach(i => {
+        const opt = document.createElement('option');
+        opt.value = i.id;
+        opt.textContent = i.name || i.Name || 'Unnamed Institution';
+        studentInstitutionSelect.appendChild(opt);
+      });
+    }
+
+    function populateInstitutionFilter() {
+      studentInstitutionFilter.innerHTML = '<option value="all">All Institutions</option>';
+      institutions.forEach(i => {
+        const opt = document.createElement('option');
+        opt.value = i.id;
+        opt.textContent = i.name || i.Name || 'Unnamed Institution';
+        studentInstitutionFilter.appendChild(opt);
+      });
+    }
+
+    async function loadProgramsFromFirestore() {
+      const progCol = collection(db, 'programs');
+      const progSnapshot = await getDocs(progCol);
+      programs = progSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      populateProgramSelect();
+    }
+
+    function populateProgramSelect() {
+      studentProgramSelect.innerHTML = '<option value="" disabled selected>Select program</option>';
+      programs.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = p.name || p.Name || 'Unnamed Program';
+        studentProgramSelect.appendChild(opt);
+      });
+    }
+
+    async function loadStudentsFromFirestore() {
+      const studentsCol = collection(db, 'students');
+      const studentsSnapshot = await getDocs(studentsCol);
+      students = studentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      renderStudents();
+    }
+
+    function renderStudents() {
+      const instFilter = studentInstitutionFilter.value;
+      const statusFilter = studentStatusFilter.value;
+      const searchText = studentSearchInput.value.trim().toLowerCase();
+
+      studentsTableBody.innerHTML = '';
+      let filtered = students;
+
+      if (instFilter !== 'all') {
+        filtered = filtered.filter(s => s.institutionId === instFilter);
+      }
+      if (statusFilter !== 'all') {
+        filtered = filtered.filter(s => (s.status || '').toLowerCase() === statusFilter);
+      }
+      if (searchText) {
+        filtered = filtered.filter(s =>
+          ((s.firstName || '').toLowerCase() + ' ' + (s.lastName || '').toLowerCase()).includes(searchText) ||
+          (s.email || '').toLowerCase().includes(searchText)
+        );
+      }
+
+      if(filtered.length === 0){
+        studentsTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#888;">No students found.</td></tr>';
+        return;
+      }
+      filtered.forEach(s => {
+        const inst = institutions.find(i => i.id === s.institutionId);
+        const prog = programs.find(p => p.id === s.program);
+        const statusClass = (s.status || 'pending').toLowerCase();
+        const dateAdded = s.createdAt && s.createdAt.toDate ? s.createdAt.toDate().toISOString().split('T')[0] : (s.dateAdded || 'N/A');
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${(s.firstName || '') + ' ' + (s.lastName || '')}</td>
+          <td>${s.email || ''}</td>
+          <td>${inst ? (inst.name || inst.Name) : 'Unknown'}</td>
+          <td>${prog ? (prog.name || prog.Name) : 'Unknown'}</td>
+          <td><span class="status ${statusClass}">${(s.status || 'Pending').charAt(0).toUpperCase() + (s.status || 'Pending').slice(1)}</span></td>
+          <td>${dateAdded}</td>
+          <td>
+            <button class="btn btn-success" onclick="editStudent('${s.id}')">Edit</button>
+            <button class="btn btn-danger" onclick="deleteStudent('${s.id}')">Delete</button>
+            <button class="btn btn-primary" onclick="viewStudent('${s.id}')">View</button>
+          </td>`;
+        studentsTableBody.appendChild(tr);
+      });
+    }
+
+    function openAddStudentModal() {
+      studentModalTitle.textContent='Add Student';
+      studentForm.reset();
+      document.getElementById('student-id').value='';
+      populateInstitutionSelect();
+      populateProgramSelect();
+      studentModal.style.display='flex';
+    }
+    function closeStudentModal() {
+      studentModal.style.display='none';
+    }
+
+    function editStudent(id) {
+      const s = students.find(x=>x.id===id);
+      if(!s) return alert('Not found');
+      studentModalTitle.textContent='Edit Student';
+      document.getElementById('student-id').value=s.id || '';
+      document.getElementById('student-first-name').value=s.firstName || '';
+      document.getElementById('student-last-name').value=s.lastName || '';
+      document.getElementById('student-email').value=s.email || '';
+      document.getElementById('student-phone').value=s.phone || '';
+      populateInstitutionSelect();
+      populateProgramSelect();
+      studentInstitutionSelect.value=s.institutionId || '';
+      studentProgramSelect.value=s.program || '';
+      document.getElementById('student-studentid').value=s.studentId || '';
+      document.getElementById('student-status').value=s.status || 'active';
+      document.getElementById('student-graduation-date').value=s.graduationDate || '';
+      document.getElementById('student-gpa').value=s.gpa || '';
+      document.getElementById('student-admin-notes').value=s.adminNotes || '';
+      document.getElementById('student-date-added').value=s.dateAdded || '';
+      studentModal.style.display='flex';
+    }
+
+    async function deleteStudent(id) {
+      if(confirm('Delete this student?')){
+        try {
+          await deleteDoc(doc(db, 'students', id));
+          await loadStudentsFromFirestore();
+        } catch (error) {
+          console.error('Error deleting student:', error);
+          alert('Failed to delete student.');
+        }
+      }
+    }
+
+    function viewStudent(id) {
+      window.location.href = `admin-student-detail.html?id=${id}`;
+    }
+
+    studentForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const id = document.getElementById('student-id').value;
+      const firstName = document.getElementById('student-first-name').value.trim();
+      const lastName = document.getElementById('student-last-name').value.trim();
+      const email = document.getElementById('student-email').value.trim();
+      const phone = document.getElementById('student-phone').value.trim();
+      const institutionId = studentInstitutionSelect.value;
+      const program = studentProgramSelect.value;
+      const studentIdField = document.getElementById('student-studentid').value.trim();
+      const status = document.getElementById('student-status').value;
+      const graduationDate = document.getElementById('student-graduation-date').value;
+      const gpa = document.getElementById('student-gpa').value;
+      const adminNotes = document.getElementById('student-admin-notes').value.trim();
+      const dateAdded = document.getElementById('student-date-added').value || new Date().toISOString().split('T')[0];
+
+      if(!firstName || !lastName || !email || !institutionId || !status || !program){
+        return alert('Please fill required fields.');
+      }
+
+      const studentData = {
+        firstName,
+        lastName,
+        email,
+        phone,
+        institutionId,
+        program,
+        studentId: studentIdField,
+        status,
+        graduationDate,
+        gpa: gpa ? parseFloat(gpa) : null,
+        adminNotes,
+        dateAdded,
+        createdAt: serverTimestamp()
+      };
+
+      try {
+        if(id){
+          const studentDocRef = doc(db, 'students', id);
+          await updateDoc(studentDocRef, studentData);
+        } else {
+          const studentsCol = collection(db, 'students');
+          await addDoc(studentsCol, studentData);
+        }
+        await loadStudentsFromFirestore();
+        closeStudentModal();
+      } catch (error) {
+        console.error('Error saving student:', error);
+        alert('Failed to save student.');
+      }
+    });
+
+    window.addEventListener('click', e => { if(e.target === studentModal) closeStudentModal(); });
+    studentInstitutionFilter.addEventListener('change', renderStudents);
+    studentStatusFilter.addEventListener('change', renderStudents);
+    studentSearchInput.addEventListener('input', renderStudents);
+
+    (async () => {
+      await loadInstitutionsFromFirestore();
+      await loadProgramsFromFirestore();
+      await loadStudentsFromFirestore();
+    })();
+
+    // Expose functions to global scope for inline onclick handlers
+    window.openAddStudentModal = openAddStudentModal;
+    window.editStudent = editStudent;
+    window.deleteStudent = deleteStudent;
+    window.closeStudentModal = closeStudentModal;
+    window.viewStudent = viewStudent;
+  </script>
+</body>
+</html>
